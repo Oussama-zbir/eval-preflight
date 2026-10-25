@@ -1,0 +1,90 @@
+{
+  "name": "partial_coverage",
+  "source": "generic",
+  "cases": [
+    {
+      "case_id": "c1",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "FlakyScore()",
+          "display_name": "FlakyScore",
+          "kind": "score",
+          "value": 1.0,
+          "error": null
+        },
+        {
+          "evaluator_id": "AlwaysScores()",
+          "display_name": "AlwaysScores",
+          "kind": "score",
+          "value": 0.5,
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c2",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "FlakyScore()",
+          "display_name": "FlakyScore",
+          "kind": "score",
+          "value": null,
+          "error": "RuntimeError: judge quota exhausted"
+        },
+        {
+          "evaluator_id": "AlwaysScores()",
+          "display_name": "AlwaysScores",
+          "kind": "score",
+          "value": 0.5,
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c3",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "FlakyScore()",
+          "display_name": "FlakyScore",
+          "kind": "score",
+          "value": null,
+          "error": "RuntimeError: judge quota exhausted"
+        },
+        {
+          "evaluator_id": "AlwaysScores()",
+          "display_name": "AlwaysScores",
+          "kind": "score",
+          "value": 0.5,
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c4",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "FlakyScore()",
+          "display_name": "FlakyScore",
+          "kind": "score",
+          "value": null,
+          "error": "RuntimeError: judge quota exhausted"
+        },
+        {
+          "evaluator_id": "AlwaysScores()",
+          "display_name": "AlwaysScores",
+          "kind": "score",
+          "value": 0.5,
+          "error": null
+        }
+      ]
+    }
+  ]
+}

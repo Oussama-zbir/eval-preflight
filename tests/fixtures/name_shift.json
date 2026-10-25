@@ -1,0 +1,90 @@
+{
+  "name": "name_shift",
+  "source": "generic",
+  "cases": [
+    {
+      "case_id": "c1",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "Judge(rubric='strict')",
+          "display_name": "Judge",
+          "kind": "score",
+          "value": 0.0,
+          "error": null
+        },
+        {
+          "evaluator_id": "Judge(rubric='lenient')",
+          "display_name": "Judge_2",
+          "kind": "score",
+          "value": 1.0,
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c2",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "Judge(rubric='lenient')",
+          "display_name": "Judge",
+          "kind": "score",
+          "value": 1.0,
+          "error": null
+        },
+        {
+          "evaluator_id": "Judge(rubric='strict')",
+          "display_name": "Judge",
+          "kind": "score",
+          "value": null,
+          "error": "RuntimeError: judge quota exhausted"
+        }
+      ]
+    },
+    {
+      "case_id": "c3",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "Judge(rubric='lenient')",
+          "display_name": "Judge",
+          "kind": "score",
+          "value": 1.0,
+          "error": null
+        },
+        {
+          "evaluator_id": "Judge(rubric='strict')",
+          "display_name": "Judge",
+          "kind": "score",
+          "value": null,
+          "error": "RuntimeError: judge quota exhausted"
+        }
+      ]
+    },
+    {
+      "case_id": "c4",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "Judge(rubric='lenient')",
+          "display_name": "Judge",
+          "kind": "score",
+          "value": 1.0,
+          "error": null
+        },
+        {
+          "evaluator_id": "Judge(rubric='strict')",
+          "display_name": "Judge",
+          "kind": "score",
+          "value": null,
+          "error": "RuntimeError: judge quota exhausted"
+        }
+      ]
+    }
+  ]
+}

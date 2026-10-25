@@ -1,0 +1,90 @@
+{
+  "name": "clean_run",
+  "source": "generic",
+  "cases": [
+    {
+      "case_id": "c1",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "Correctness(rubric='default')",
+          "display_name": "Correctness",
+          "kind": "score",
+          "value": 0.9,
+          "error": null
+        },
+        {
+          "evaluator_id": "IsJson()",
+          "display_name": "IsJson",
+          "kind": "assertion",
+          "value": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c2",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "Correctness(rubric='default')",
+          "display_name": "Correctness",
+          "kind": "score",
+          "value": 0.4,
+          "error": null
+        },
+        {
+          "evaluator_id": "IsJson()",
+          "display_name": "IsJson",
+          "kind": "assertion",
+          "value": false,
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c3",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "Correctness(rubric='default')",
+          "display_name": "Correctness",
+          "kind": "score",
+          "value": 0.75,
+          "error": null
+        },
+        {
+          "evaluator_id": "IsJson()",
+          "display_name": "IsJson",
+          "kind": "assertion",
+          "value": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c4",
+      "run_index": 0,
+      "task_error": null,
+      "measurements": [
+        {
+          "evaluator_id": "Correctness(rubric='default')",
+          "display_name": "Correctness",
+          "kind": "score",
+          "value": 0.6,
+          "error": null
+        },
+        {
+          "evaluator_id": "IsJson()",
+          "display_name": "IsJson",
+          "kind": "assertion",
+          "value": true,
+          "error": null
+        }
+      ]
+    }
+  ]
+}
