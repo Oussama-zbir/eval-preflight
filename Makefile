@@ -16,7 +16,6 @@ typecheck:
 test:
 	uv run pytest --cov --cov-report=term-missing
 
-# Milestone 1 fixtures are hand-written generic files; generated pydantic-evals
-# fixtures (scripts/make_fixtures.py) arrive in Milestone 2.
+# Runs the real pydantic-evals (pinned in the script) in an isolated uv environment.
 fixtures:
-	@echo "No generated fixtures yet (Milestone 2)."
+	uv run --no-project scripts/make_fixtures.py

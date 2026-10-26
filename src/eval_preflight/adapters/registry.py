@@ -7,10 +7,11 @@ from pathlib import Path
 
 from eval_preflight.adapters import LoadError
 from eval_preflight.adapters.generic import looks_generic, parse_generic
+from eval_preflight.adapters.pydantic_evals import looks_pydantic_evals, parse_pydantic_evals
 from eval_preflight.model import EvalRun
 
-# pydantic-evals arrives in Milestone 2, promptfoo in Milestone 5.
-PARSERS = {"generic": parse_generic}
+# promptfoo arrives in Milestone 5.
+PARSERS = {"generic": parse_generic, "pydantic-evals": parse_pydantic_evals}
 FORMATS = ("auto", *PARSERS)
 
 
@@ -28,8 +29,11 @@ def _first_json_value(text: str) -> object:
 
 
 def detect(text: str) -> str:
-    if looks_generic(_first_json_value(text)):
+    document = _first_json_value(text)
+    if looks_generic(document):
         return "generic"
+    if looks_pydantic_evals(document):
+        return "pydantic-evals"
     raise LoadError("could not detect the input format; pass --format explicitly")
 
 

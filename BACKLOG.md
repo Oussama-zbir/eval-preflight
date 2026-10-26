@@ -17,3 +17,9 @@ Ideas outside the current milestone, one line each. Not implemented unless asked
 - Validate that `kind` matches the value type (e.g. `assertion` with `0.7`).
 - Decide whether `name-collision` (b) should tolerate evaluators that emit several named outputs from one source (pydantic-evals evaluators can return a dict) before the M2 adapter assigns ids.
 - Option to show full case lists instead of truncating at five in terminal output.
+
+## Found during M2
+
+- **Open question (blocks scenario C):** pydantic-evals can only give case `a` one assertion and case `b` three via case-level evaluators (coverage FAIL: each covers half the case-runs) or one evaluator returning a dict of named assertions (name-collision (b) FAIL: one id, several display names). SPEC §9 C expects "nothing else fails". Decide which check bends, or restate C, before generating it.
+- In-memory `EvaluationReport` path (`reported_aggregates` from `report.averages()`, `source_version`); needs pydantic-evals as an optional extra, which requires Python ≥ 3.11.
+- Optional `--source-version` flag for JSON reports, which do not record the producing version.

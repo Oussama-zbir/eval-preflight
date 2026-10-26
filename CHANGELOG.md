@@ -5,6 +5,14 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+- pydantic-evals adapter for JSON reports (`--format pydantic-evals`, auto-detected). Evaluator
+  identity comes from each result's `source`, never from the display key; results without a
+  source are rejected as unverifiable.
+- `scripts/make_fixtures.py` (`make fixtures`): generates the golden fixtures for scenarios A, B
+  and D by running pydantic-evals 2.61.0; the golden tests run on both the generic and the
+  generated fixtures.
+
 ## [0.0.1] — not published
 
 ### Added

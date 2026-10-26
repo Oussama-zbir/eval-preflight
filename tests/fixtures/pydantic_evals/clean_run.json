@@ -1,0 +1,172 @@
+{
+  "name": "echo",
+  "cases": [
+    {
+      "name": "c1",
+      "inputs": "c1",
+      "metadata": null,
+      "expected_output": null,
+      "output": "c1",
+      "metrics": {},
+      "attributes": {},
+      "scores": {
+        "Relevance": {
+          "name": "Relevance",
+          "value": 0.9,
+          "reason": null,
+          "source": {
+            "name": "Relevance",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "labels": {},
+      "assertions": {
+        "NonEmpty": {
+          "name": "NonEmpty",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmpty",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "c2",
+      "inputs": "c2",
+      "metadata": null,
+      "expected_output": null,
+      "output": "c2",
+      "metrics": {},
+      "attributes": {},
+      "scores": {
+        "Relevance": {
+          "name": "Relevance",
+          "value": 0.6,
+          "reason": null,
+          "source": {
+            "name": "Relevance",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "labels": {},
+      "assertions": {
+        "NonEmpty": {
+          "name": "NonEmpty",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmpty",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "c3",
+      "inputs": "c3",
+      "metadata": null,
+      "expected_output": null,
+      "output": "c3",
+      "metrics": {},
+      "attributes": {},
+      "scores": {
+        "Relevance": {
+          "name": "Relevance",
+          "value": 0.75,
+          "reason": null,
+          "source": {
+            "name": "Relevance",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "labels": {},
+      "assertions": {
+        "NonEmpty": {
+          "name": "NonEmpty",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmpty",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "c4",
+      "inputs": "c4",
+      "metadata": null,
+      "expected_output": null,
+      "output": "c4",
+      "metrics": {},
+      "attributes": {},
+      "scores": {
+        "Relevance": {
+          "name": "Relevance",
+          "value": 0.3,
+          "reason": null,
+          "source": {
+            "name": "Relevance",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "labels": {},
+      "assertions": {
+        "NonEmpty": {
+          "name": "NonEmpty",
+          "value": false,
+          "reason": null,
+          "source": {
+            "name": "NonEmpty",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    }
+  ],
+  "failures": [],
+  "analyses": [],
+  "report_evaluator_failures": [],
+  "experiment_metadata": null,
+  "trace_id": null,
+  "span_id": null,
+  "dataset_name": "clean_run"
+}
