@@ -6,6 +6,10 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Check 5, `aggregation-consistency`: compares the pooled mean with the mean of per-case means
+  per evaluator and for all assertions, and verifies that each reported aggregate is reproducible
+  from the raw results (stating which estimator and from how many cases). New flags
+  `--aggregation-tolerance` and `--strict-aggregation`.
 - pydantic-evals adapter for JSON reports (`--format pydantic-evals`, auto-detected). Evaluator
   identity comes from each result's `source`, never from the display key; results without a
   source are rejected as unverifiable.

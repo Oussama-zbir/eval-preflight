@@ -109,6 +109,43 @@ def test_warnings_as_errors_without_warnings_still_passes(
     assert code == 0
 
 
+def _repeat_divergence(tmp_path: Path) -> Path:
+    # Case "a" scored on both repeats, "b" only on one: pooled 2/3, mean of per-case means 0.5.
+    rows = [
+        {"case_id": "a", "run_index": i, "measurements": [measurement(1.0)]} for i in (0, 1)
+    ] + [
+        {"case_id": "b", "run_index": 0, "measurements": [measurement(0.0)]},
+        {"case_id": "b", "run_index": 1, "measurements": [measurement(None)]},
+    ]
+    path = tmp_path / "rep.jsonl"
+    path.write_text("".join(json.dumps(r) + "\n" for r in rows))
+    return path
+
+
+def measurement(value: float | None) -> dict[str, object]:
+    return {"evaluator_id": "e", "display_name": "e", "kind": "score", "value": value}
+
+
+def test_aggregation_divergence_warns_and_strict_fails(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    path = _repeat_divergence(tmp_path)
+    message = "e: pooled mean 0.666667 vs mean of per-case means 0.5"
+
+    code, out, _ = run_cli(capsys, str(path), "--min-coverage", "0.5")
+    assert code == 0
+    assert row("WARN", "aggregation-consistency", message) in out
+
+    code, out, _ = run_cli(capsys, str(path), "--min-coverage", "0.5", "--strict-aggregation")
+    assert code == 1
+    assert row("FAIL", "aggregation-consistency", message) in out
+
+    tolerance = ["--min-coverage", "0.5", "--aggregation-tolerance", "0.2"]
+    code, out, _ = run_cli(capsys, str(path), *tolerance, "--strict-aggregation")
+    assert code == 0
+    assert "WARN " not in out
+
+
 def test_explicit_generic_format(capsys: pytest.CaptureFixture[str]) -> None:
     code, _, _ = run_cli(capsys, str(FIXTURES / "clean_run.json"), "--format", "generic")
     assert code == 0
@@ -129,6 +166,9 @@ def test_missing_file_exits_2(tmp_path: Path, capsys: pytest.CaptureFixture[str]
         ["--max-evaluator-error-rate", "-0.1"],
         ["--max-task-failure-rate", "nan"],
         ["--min-coverage", "abc"],
+        ["--aggregation-tolerance", "-1e-9"],
+        ["--aggregation-tolerance", "inf"],
+        ["--aggregation-tolerance", "abc"],
         ["--no-such-flag"],
     ],
 )

@@ -1,8 +1,10 @@
+from typing import Any
+
 from eval_preflight import CheckConfig, EvalRun, Finding, check
 from tests.builders import case, m, run
 
 
-def findings(result_run: EvalRun, **config: float) -> dict[str, Finding]:
+def findings(result_run: EvalRun, **config: Any) -> dict[str, Finding]:
     found = check(result_run, CheckConfig(**config)).by_check("evaluator-coverage")
     return {f.details.get("evaluator_id", ""): f for f in found}
 

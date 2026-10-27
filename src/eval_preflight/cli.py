@@ -26,6 +26,16 @@ def _rate(raw: str) -> float:
     return value
 
 
+def _tolerance(raw: str) -> float:
+    try:
+        value = float(raw)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"not a number: {raw!r}") from None
+    if not math.isfinite(value) or value < 0.0:
+        raise argparse.ArgumentTypeError(f"must be a finite number >= 0, got {raw!r}")
+    return value
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="eval-preflight",
@@ -59,6 +69,18 @@ def _parser() -> argparse.ArgumentParser:
         metavar="RATE",
         help="fail the run above this task failure rate (default: 0.0)",
     )
+    run.add_argument(
+        "--aggregation-tolerance",
+        type=_tolerance,
+        default=1e-9,
+        metavar="TOL",
+        help="largest difference treated as equal when comparing averages (default: 1e-9)",
+    )
+    run.add_argument(
+        "--strict-aggregation",
+        action="store_true",
+        help="fail, not warn, when pooled and per-case averages disagree",
+    )
     run.add_argument("--warnings-as-errors", action="store_true", help="exit 1 on a WARN verdict")
     run.add_argument(
         "--quiet", action="store_true", help="print only non-PASS findings and the verdict"
@@ -78,6 +100,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         min_coverage=args.min_coverage,
         max_evaluator_error_rate=args.max_evaluator_error_rate,
         max_task_failure_rate=args.max_task_failure_rate,
+        aggregation_tolerance=args.aggregation_tolerance,
+        strict_aggregation=args.strict_aggregation,
     )
     result = check(run, config)
     render(result, Console(soft_wrap=True), quiet=args.quiet)

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from eval_preflight.checks.aggregation_consistency import check_aggregation_consistency
 from eval_preflight.checks.evaluator_coverage import check_evaluator_coverage
 from eval_preflight.checks.evaluator_errors import check_evaluator_errors
 from eval_preflight.checks.name_collision import check_name_collision
@@ -20,6 +21,8 @@ class CheckConfig(BaseModel):
     min_coverage: float = Field(default=1.0, ge=0.0, le=1.0, allow_inf_nan=False)
     max_evaluator_error_rate: float = Field(default=0.0, ge=0.0, le=1.0, allow_inf_nan=False)
     max_task_failure_rate: float = Field(default=0.0, ge=0.0, le=1.0, allow_inf_nan=False)
+    aggregation_tolerance: float = Field(default=1e-9, ge=0.0, allow_inf_nan=False)
+    strict_aggregation: bool = False
 
 
 def check(run: EvalRun, config: CheckConfig | None = None) -> CheckResult:
@@ -29,5 +32,8 @@ def check(run: EvalRun, config: CheckConfig | None = None) -> CheckResult:
         *check_evaluator_coverage(run, min_coverage=config.min_coverage),
         *check_evaluator_errors(run, max_rate=config.max_evaluator_error_rate),
         *check_name_collision(run),
+        *check_aggregation_consistency(
+            run, tolerance=config.aggregation_tolerance, strict=config.strict_aggregation
+        ),
     ]
     return CheckResult(run=run, findings=findings)

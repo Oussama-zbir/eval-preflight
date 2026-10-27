@@ -23,3 +23,8 @@ Ideas outside the current milestone, one line each. Not implemented unless asked
 - **Open question (blocks scenario C):** pydantic-evals can only give case `a` one assertion and case `b` three via case-level evaluators (coverage FAIL: each covers half the case-runs) or one evaluator returning a dict of named assertions (name-collision (b) FAIL: one id, several display names). SPEC §9 C expects "nothing else fails". Decide which check bends, or restate C, before generating it.
 - In-memory `EvaluationReport` path (`reported_aggregates` from `report.averages()`, `source_version`); needs pydantic-evals as an optional extra, which requires Python ≥ 3.11.
 - Optional `--source-version` flag for JSON reports, which do not record the producing version.
+
+## Found during check 5
+
+- **Confirm:** a reported aggregate with no numeric values under its name is a WARN ("cannot be checked"), not a FAIL. SPEC §6 only defines FAIL for "matches neither estimator"; chosen so pydantic-evals `metrics` (also in `averages()`, not measurements) do not fail every in-memory run.
+- A NaN value makes both estimators NaN and yields a misleading WARN ("pooled mean nan vs mean of per-case means nan"); same root as the NaN/inf item above.

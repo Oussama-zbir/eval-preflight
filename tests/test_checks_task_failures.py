@@ -1,8 +1,10 @@
+from typing import Any
+
 from eval_preflight import CheckConfig, EvalRun, Finding, check
 from tests.builders import case, m, run
 
 
-def findings(result_run: EvalRun, **config: float) -> list[Finding]:
+def findings(result_run: EvalRun, **config: Any) -> list[Finding]:
     return check(result_run, CheckConfig(**config)).by_check("task-failures")
 
 
