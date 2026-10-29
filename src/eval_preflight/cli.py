@@ -99,6 +99,11 @@ def _parser() -> argparse.ArgumentParser:
         help="warn when a score or label evaluator returns one value on at least N case-runs "
         "(default: 5)",
     )
+    run.add_argument(
+        "--json",
+        action="store_true",
+        help="print only a machine-readable JSON report on stdout",
+    )
     run.add_argument("--warnings-as-errors", action="store_true", help="exit 1 on a WARN verdict")
     run.add_argument(
         "--quiet", action="store_true", help="print only non-PASS findings and the verdict"
@@ -123,5 +128,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         min_cases_for_constant=args.min_cases_for_constant,
     )
     result = check(run, config)
-    render(result, Console(soft_wrap=True), quiet=args.quiet)
+    if args.json:
+        print(result.to_json())
+    else:
+        render(result, Console(soft_wrap=True), quiet=args.quiet)
     return result.exit_code(warnings_as_errors=args.warnings_as_errors)

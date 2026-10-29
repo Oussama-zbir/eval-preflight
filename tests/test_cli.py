@@ -223,3 +223,32 @@ def test_min_cases_for_constant_is_passed_through(capsys: pytest.CaptureFixture[
     assert "WARN  constant-output" not in out
     _, out, _ = run_cli(capsys, path, "--min-cases-for-constant", "4")
     assert row("WARN", "constant-output", "AlwaysScores() returned 0.5 on all 4 case-runs") in out
+
+
+@pytest.mark.parametrize(
+    ("fixture", "code", "verdict"),
+    [("clean_run.json", 0, "PASS"), ("name_shift.json", 1, "FAIL")],
+)
+def test_json_prints_only_the_machine_readable_report(
+    capsys: pytest.CaptureFixture[str], fixture: str, code: int, verdict: str
+) -> None:
+    got, out, err = run_cli(capsys, str(FIXTURES / fixture), "--json")
+    assert got == code
+    assert err == ""
+    document = json.loads(out)  # the whole of stdout is one JSON document
+    assert set(document) == {"verdict", "run", "findings"}
+    assert document["verdict"] == verdict
+    assert all(set(f) == {"check", "severity", "message", "details"} for f in document["findings"])
+
+
+def test_json_includes_pass_findings_even_with_quiet(capsys: pytest.CaptureFixture[str]) -> None:
+    _, out, _ = run_cli(capsys, str(FIXTURES / "clean_run.json"), "--json", "--quiet")
+    assert {f["severity"] for f in json.loads(out)["findings"]} == {"PASS"}
+
+
+def test_json_usage_error_keeps_stdout_empty(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    code, out, err = run_cli(capsys, str(tmp_path / "missing.json"), "--json")
+    assert (code, out) == (2, "")
+    assert "cannot read" in err

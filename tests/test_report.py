@@ -1,10 +1,12 @@
 import io
+import json
+import math
 
 import pytest
 from rich.console import Console
 
 from eval_preflight import CheckResult, Finding, IntegrityError, render
-from tests.builders import case, run
+from tests.builders import case, m, run
 
 
 def result_with(*severities: str) -> CheckResult:
@@ -68,3 +70,37 @@ def test_render_escapes_rich_markup_in_messages() -> None:
     )
     render(result, Console(file=buffer, width=200))
     assert "[bold]Judge[/bold]" in buffer.getvalue()
+
+
+def test_to_json_has_verdict_run_and_findings() -> None:
+    result = CheckResult(
+        run=run(case("a", run_index=0), case("a", run_index=1), case("b", m("e", 1.0))),
+        findings=[Finding(check="x", severity="WARN", message="m", details={"k": [1, "v"]})],
+    )
+    document = json.loads(result.to_json())
+    assert document == {
+        "verdict": "WARN",
+        "run": {
+            "name": "test",
+            "source": "generic",
+            "source_version": None,
+            "cases": 2,
+            "case_runs": 3,
+            "evaluators": ["e"],
+            "baseline": None,
+        },
+        "findings": [
+            {"check": "x", "severity": "WARN", "message": "m", "details": {"k": [1, "v"]}}
+        ],
+    }
+
+
+def test_to_json_is_valid_json_even_with_non_finite_details() -> None:
+    # Checks store non-finite values as strings; anything else becomes null, never NaN.
+    result = CheckResult(
+        run=run(case("c1")),
+        findings=[Finding(check="x", severity="PASS", message="m", details={"v": math.inf})],
+    )
+    text = result.to_json()
+    assert "Infinity" not in text
+    assert json.loads(text)["findings"][0]["details"] == {"v": None}

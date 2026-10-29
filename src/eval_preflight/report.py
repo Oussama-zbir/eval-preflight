@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
@@ -29,9 +30,23 @@ class IntegrityError(Exception):
         super().__init__(f"eval run failed {len(findings)} integrity check(s):\n{lines}")
 
 
+def _summary(run: EvalRun) -> dict[str, Any]:
+    return {
+        "name": run.name,
+        "source": run.source,
+        "source_version": run.source_version,
+        "cases": len({c.case_id for c in run.cases}),
+        "case_runs": len(run.cases),
+        "evaluators": list(
+            dict.fromkeys(m.evaluator.id for c in run.cases for m in c.measurements)
+        ),
+    }
+
+
 class CheckResult(BaseModel):
     run: EvalRun
     findings: list[Finding]
+    baseline: EvalRun | None = None
 
     @property
     def verdict(self) -> Severity:
@@ -50,6 +65,20 @@ class CheckResult(BaseModel):
         if self.verdict == "FAIL" or (self.verdict == "WARN" and warnings_as_errors):
             return 1
         return 0
+
+    def to_json(self, *, indent: int | None = 2) -> str:
+        """The machine-readable report: {"verdict", "run", "findings"}.
+
+        Always valid JSON: non-finite floats in details become null (pydantic's JSON
+        mode), and allow_nan=False guards the rest.
+        """
+        run = _summary(self.run) | {"baseline": _summary(self.baseline) if self.baseline else None}
+        document = {
+            "verdict": self.verdict,
+            "run": run,
+            "findings": [f.model_dump(mode="json") for f in self.findings],
+        }
+        return json.dumps(document, indent=indent, ensure_ascii=False, allow_nan=False)
 
     def raise_if_failed(self) -> None:
         failures = [f for f in self.findings if f.severity == "FAIL"]

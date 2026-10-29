@@ -5,6 +5,10 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+- `--json`: only a machine-readable report on stdout, `{"verdict", "run", "findings"}`; usage
+  errors still go to stderr with stdout empty. Python: `CheckResult.to_json()`.
+
 ## [0.0.2] — not published
 
 Milestone 2.
