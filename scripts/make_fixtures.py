@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import importlib.metadata
 import json
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -35,6 +36,11 @@ STACKTRACE = "<removed by scripts/make_fixtures.py>"
 
 async def echo(inputs: str) -> str:
     return inputs
+
+
+async def echo_empty_on_c2(inputs: str) -> str:
+    """Scenario E's task: a regression that returns an empty answer for c2."""
+    return "" if inputs == "c2" else inputs
 
 
 # Scenario A: partial coverage (pydantic/pydantic-ai#7928).
@@ -75,10 +81,13 @@ class CaseChecks(Evaluator[str, str, Any]):
         return {"b_check_1": False, "b_check_2": False, "b_check_3": False}
 
 
-# Scenario D: clean run, varying values.
+# Scenario D: clean run, varying values. Scenario E reuses the same evaluators, so their
+# ids match the baseline; Relevance raises on an empty answer, which only E's task gives.
 @dataclass
 class Relevance(Evaluator[str, str, Any]):
     def evaluate(self, ctx: EvaluatorContext[str, str, Any]) -> float:
+        if not ctx.output:
+            raise ValueError("cannot judge an empty answer")
         return {"c1": 0.9, "c2": 0.6, "c3": 0.75, "c4": 0.3}[ctx.inputs]
 
 
@@ -92,7 +101,10 @@ def cases(*names: str) -> list[Case[str, str, Any]]:
     return [Case(name=name, inputs=name) for name in names]
 
 
-SCENARIOS: dict[str, tuple[Dataset[str, str, Any], int]] = {
+Task = Callable[[str], Awaitable[str]]
+
+# scenario -> (dataset, repeat, task)
+SCENARIOS: dict[str, tuple[Dataset[str, str, Any], int, Task]] = {
     "partial_coverage": (
         Dataset(
             name="partial_coverage",
@@ -100,6 +112,7 @@ SCENARIOS: dict[str, tuple[Dataset[str, str, Any], int]] = {
             evaluators=[FlakyScore(), AlwaysScores()],
         ),
         1,
+        echo,
     ),
     "name_shift": (
         Dataset(
@@ -108,6 +121,7 @@ SCENARIOS: dict[str, tuple[Dataset[str, str, Any], int]] = {
             evaluators=[Judge(rubric="strict"), Judge(rubric="lenient")],
         ),
         1,
+        echo,
     ),
     "repeat_divergence": (
         Dataset(
@@ -116,6 +130,7 @@ SCENARIOS: dict[str, tuple[Dataset[str, str, Any], int]] = {
             evaluators=[CaseChecks()],
         ),
         2,
+        echo,
     ),
     "clean_run": (
         Dataset(
@@ -124,6 +139,18 @@ SCENARIOS: dict[str, tuple[Dataset[str, str, Any], int]] = {
             evaluators=[Relevance(), NonEmpty()],
         ),
         1,
+        echo,
+    ),
+    # Scenario E: the candidate compared against clean_run (the baseline): c4 removed,
+    # Relevance errors on c2.
+    "baseline_candidate": (
+        Dataset(
+            name="baseline_candidate",
+            cases=cases("c1", "c2", "c3"),
+            evaluators=[Relevance(), NonEmpty()],
+        ),
+        1,
+        echo_empty_on_c2,
     ),
 }
 
@@ -144,8 +171,8 @@ def normalise(node: Any) -> Any:
 
 def run_scenario(scenario: str) -> EvaluationReport[str, str, Any]:
     """Run one scenario with the real library (also used by the in-memory tests)."""
-    dataset, repeat = SCENARIOS[scenario]
-    return dataset.evaluate_sync(echo, progress=False, repeat=repeat, max_concurrency=1)
+    dataset, repeat, task = SCENARIOS[scenario]
+    return dataset.evaluate_sync(task, progress=False, repeat=repeat, max_concurrency=1)
 
 
 def main() -> None:

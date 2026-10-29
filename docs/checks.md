@@ -8,8 +8,8 @@ Terms: a **case-run** is the pair `(case_id, run_index)`. An **eligible** case-r
 task did not fail. Evaluator identity is the evaluator **id**, never its display name. When a run
 has repeats, case-runs are labelled `case_id[run_index]`; otherwise just `case_id`.
 
-Implemented: checks 1–4 (0.0.1), 5 and 6 (unreleased). Check 7 (`baseline-comparability`) is
-specified in [SPEC.md](../SPEC.md) §6 and not built yet.
+All seven checks of [SPEC.md](../SPEC.md) §6 are implemented: 1–4 since 0.0.1, 5–6 since
+0.0.2, 7 unreleased. Check 7 runs only with `--baseline`.
 
 ## 1. `task-failures`
 
@@ -189,3 +189,37 @@ PASS  constant-output         no score or label evaluator returned a single valu
 
 `details` (WARN): `evaluator_id`, `value` (its `repr`), `case_runs_with_value`, `eligible`,
 `min_cases`. (PASS): `min_cases`.
+
+## 7. `baseline-comparability` (only with `--baseline`)
+
+**Detects** whether a candidate run can be compared with a baseline run at all:
+
+- cases added or removed (`case_id` sets differ);
+- evaluators added or removed (evaluator id sets differ);
+- an evaluator present in both whose coverage is lower in the candidate. Coverage is computed as
+  in check 2 (finite values over eligible case-runs) and compared as exact fractions, so 3/4 and
+  6/8 are equal. A candidate with no eligible case-runs has coverage 0;
+- a case whose number of case-runs (repeats, including failed ones) differs.
+
+**Why it matters.** "The score went from 0.71 to 0.78" is only a statement about the model if
+both runs measured the same thing with the same amount of evidence. A dropped hard case, a judge
+that silently stopped scoring a third of the cases, or a different `repeat` all move the number
+without any change in quality. Statistical comparisons (`evaltrust`, `limen-eval`) assume this
+has already been checked.
+
+**Default.** WARN for case and evaluator set differences (FAIL with `--require-same-cases`);
+FAIL, per evaluator, when candidate coverage is lower than baseline coverage; WARN on repeat-count
+differences. A single PASS when the runs are comparable. `--format` applies to both files.
+
+```
+WARN  baseline-comparability  cases differ from the baseline: removed c4
+FAIL  baseline-comparability  Relevance() coverage dropped from 4/4 (100%) in the baseline to 2/3 (66.6%)
+WARN  baseline-comparability  repeat counts differ from the baseline: a 1 → 2, b 1 → 2
+```
+
+`details`: `kind` (`cases`, `evaluators`, `coverage` or `repeats`); `added`/`removed` for set
+differences; `evaluator_id`, `baseline_covered`, `baseline_eligible`, `covered`, `eligible` for
+coverage; `counts` (`case_id → [baseline, candidate]`) for repeats.
+
+Python: `check(run, config, baseline=baseline_run)`, or
+`check_pydantic_evals(report, baseline=other_report_or_run)`.

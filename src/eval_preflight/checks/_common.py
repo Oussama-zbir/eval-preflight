@@ -43,6 +43,11 @@ def has_value(m: Measurement) -> bool:
     return m.value is not None and not is_non_finite(m)
 
 
+def covers(case: CaseResult, evaluator_id: str) -> bool:
+    """The evaluator produced a usable value on this case-run (checks 2 and 7)."""
+    return any(m.evaluator.id == evaluator_id and has_value(m) for m in case.measurements)
+
+
 def pct(n: int, total: int) -> str:
     """A percentage that never rounds a partial count up to 100% or down to 0%."""
     if n == total:

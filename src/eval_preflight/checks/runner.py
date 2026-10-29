@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from eval_preflight.adapters.pydantic_evals import from_pydantic_evals
 from eval_preflight.checks.aggregation_consistency import check_aggregation_consistency
+from eval_preflight.checks.baseline_comparability import check_baseline_comparability
 from eval_preflight.checks.constant_output import check_constant_output
 from eval_preflight.checks.evaluator_coverage import check_evaluator_coverage
 from eval_preflight.checks.evaluator_errors import check_evaluator_errors
@@ -31,9 +32,13 @@ class CheckConfig(BaseModel):
     aggregation_tolerance: float = Field(default=1e-9, ge=0.0, allow_inf_nan=False)
     strict_aggregation: bool = False
     min_cases_for_constant: int = Field(default=5, ge=2)
+    require_same_cases: bool = False
 
 
-def check(run: EvalRun, config: CheckConfig | None = None) -> CheckResult:
+def check(
+    run: EvalRun, config: CheckConfig | None = None, *, baseline: EvalRun | None = None
+) -> CheckResult:
+    """Run every check; baseline-comparability runs only when a baseline is given."""
     config = config or CheckConfig()
     findings = [
         *check_task_failures(run, max_rate=config.max_task_failure_rate),
@@ -45,11 +50,23 @@ def check(run: EvalRun, config: CheckConfig | None = None) -> CheckResult:
         ),
         *check_constant_output(run, min_cases=config.min_cases_for_constant),
     ]
-    return CheckResult(run=run, findings=findings)
+    if baseline is not None:
+        findings += check_baseline_comparability(
+            run, baseline, require_same_cases=config.require_same_cases
+        )
+    return CheckResult(run=run, findings=findings, baseline=baseline)
 
 
 def check_pydantic_evals(
-    report: EvaluationReport[Any, Any, Any], config: CheckConfig | None = None
+    report: EvaluationReport[Any, Any, Any],
+    config: CheckConfig | None = None,
+    *,
+    baseline: EvaluationReport[Any, Any, Any] | EvalRun | None = None,
 ) -> CheckResult:
-    """Check an in-memory pydantic-evals report; reported aggregates come from averages()."""
-    return check(from_pydantic_evals(report), config)
+    """Check an in-memory pydantic-evals report; reported aggregates come from averages().
+
+    baseline may be another report or an already loaded EvalRun (e.g. from load()).
+    """
+    if baseline is not None and not isinstance(baseline, EvalRun):
+        baseline = from_pydantic_evals(baseline)
+    return check(from_pydantic_evals(report), config, baseline=baseline)

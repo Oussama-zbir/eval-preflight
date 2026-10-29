@@ -252,3 +252,41 @@ def test_json_usage_error_keeps_stdout_empty(
     code, out, err = run_cli(capsys, str(tmp_path / "missing.json"), "--json")
     assert (code, out) == (2, "")
     assert "cannot read" in err
+
+
+BASELINE = FIXTURES / "pydantic_evals" / "clean_run.json"
+CANDIDATE = FIXTURES / "pydantic_evals" / "baseline_candidate.json"
+
+
+def test_baseline_scenario_e(capsys: pytest.CaptureFixture[str]) -> None:
+    code, out, _ = run_cli(capsys, str(CANDIDATE), "--baseline", str(BASELINE))
+    assert code == 1
+    assert out.splitlines()[0] == (
+        "eval-preflight  baseline_candidate · 3 cases · pydantic-evals · baseline clean_run"
+    )
+    assert (
+        row("WARN", "baseline-comparability", "cases differ from the baseline: removed c4") in out
+    )
+
+
+def test_require_same_cases_fails_on_removed_case(capsys: pytest.CaptureFixture[str]) -> None:
+    _, out, _ = run_cli(capsys, str(CANDIDATE), "--baseline", str(BASELINE), "--require-same-cases")
+    assert (
+        row("FAIL", "baseline-comparability", "cases differ from the baseline: removed c4") in out
+    )
+
+
+def test_baseline_against_itself_passes(capsys: pytest.CaptureFixture[str]) -> None:
+    code, out, _ = run_cli(capsys, str(BASELINE), "--baseline", str(BASELINE), "--json")
+    document = json.loads(out)
+    assert code == 0
+    assert document["run"]["baseline"]["name"] == "clean_run"
+    assert [
+        f["severity"] for f in document["findings"] if f["check"] == "baseline-comparability"
+    ] == ["PASS"]
+
+
+def test_unreadable_baseline_exits_2(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    code, out, err = run_cli(capsys, str(BASELINE), "--baseline", str(tmp_path / "nope.json"))
+    assert (code, out) == (2, "")
+    assert err.startswith("eval-preflight: error: baseline: cannot read")

@@ -102,6 +102,8 @@ def render(result: CheckResult, console: Console, *, quiet: bool = False) -> Non
         if len(run.cases) != n_cases:
             parts.append(_plural(len(run.cases), "case-run"))
         parts.append(" ".join(p for p in (run.source, run.source_version) if p))
+        if result.baseline is not None:
+            parts.append(f"baseline {result.baseline.name}")
         console.print(escape("eval-preflight  " + " · ".join(parts)), highlight=False)
         console.print()
 

@@ -1,0 +1,133 @@
+{
+  "name": "echo_empty_on_c2",
+  "cases": [
+    {
+      "name": "c1",
+      "inputs": "c1",
+      "metadata": null,
+      "expected_output": null,
+      "output": "c1",
+      "metrics": {},
+      "attributes": {},
+      "scores": {
+        "Relevance": {
+          "name": "Relevance",
+          "value": 0.9,
+          "reason": null,
+          "source": {
+            "name": "Relevance",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "labels": {},
+      "assertions": {
+        "NonEmpty": {
+          "name": "NonEmpty",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmpty",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "c2",
+      "inputs": "c2",
+      "metadata": null,
+      "expected_output": null,
+      "output": "",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "NonEmpty": {
+          "name": "NonEmpty",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmpty",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": [
+        {
+          "name": "Relevance",
+          "error_message": "ValueError: cannot judge an empty answer",
+          "error_stacktrace": "<removed by scripts/make_fixtures.py>",
+          "source": {
+            "name": "Relevance",
+            "arguments": null
+          },
+          "evaluator_version": null,
+          "error_type": "ValueError"
+        }
+      ]
+    },
+    {
+      "name": "c3",
+      "inputs": "c3",
+      "metadata": null,
+      "expected_output": null,
+      "output": "c3",
+      "metrics": {},
+      "attributes": {},
+      "scores": {
+        "Relevance": {
+          "name": "Relevance",
+          "value": 0.75,
+          "reason": null,
+          "source": {
+            "name": "Relevance",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "labels": {},
+      "assertions": {
+        "NonEmpty": {
+          "name": "NonEmpty",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "NonEmpty",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    }
+  ],
+  "failures": [],
+  "analyses": [],
+  "report_evaluator_failures": [],
+  "experiment_metadata": null,
+  "trace_id": null,
+  "span_id": null,
+  "dataset_name": "baseline_candidate"
+}

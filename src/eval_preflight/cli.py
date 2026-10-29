@@ -57,7 +57,22 @@ def _parser() -> argparse.ArgumentParser:
 
     run = commands.add_parser("check", help="check one results file")
     run.add_argument("results", metavar="RESULTS", help="results file (JSON or JSONL)")
-    run.add_argument("--format", choices=FORMATS, default="auto")
+    run.add_argument(
+        "--format",
+        choices=FORMATS,
+        default="auto",
+        help="input format of RESULTS and BASELINE (default: auto)",
+    )
+    run.add_argument(
+        "--baseline",
+        metavar="BASELINE",
+        help="earlier results to compare against (adds baseline-comparability)",
+    )
+    run.add_argument(
+        "--require-same-cases",
+        action="store_true",
+        help="with --baseline, fail (not warn) when cases or evaluators differ",
+    )
     run.add_argument(
         "--min-coverage",
         type=_rate,
@@ -118,6 +133,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     except LoadError as exc:
         print(f"eval-preflight: error: {exc}", file=sys.stderr)
         return 2
+    baseline = None
+    if args.baseline is not None:
+        try:
+            baseline = load(args.baseline, format=args.format)
+        except LoadError as exc:
+            print(f"eval-preflight: error: baseline: {exc}", file=sys.stderr)
+            return 2
 
     config = CheckConfig(
         min_coverage=args.min_coverage,
@@ -126,8 +148,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         aggregation_tolerance=args.aggregation_tolerance,
         strict_aggregation=args.strict_aggregation,
         min_cases_for_constant=args.min_cases_for_constant,
+        require_same_cases=args.require_same_cases,
     )
-    result = check(run, config)
+    result = check(run, config, baseline=baseline)
     if args.json:
         print(result.to_json())
     else:

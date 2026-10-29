@@ -7,9 +7,9 @@ returned one gets its own "non-finite value" FAIL finding (SPEC §15, amendment 
 from __future__ import annotations
 
 from eval_preflight.checks._common import (
+    covers,
     eligible,
     evaluator_ids,
-    has_value,
     is_non_finite,
     labeller,
     listed,
@@ -36,11 +36,7 @@ def check_evaluator_coverage(run: EvalRun, *, min_coverage: float) -> list[Findi
     cases = eligible(run)
     findings = []
     for evaluator_id in ids:
-        uncovered = [
-            labels[(c.case_id, c.run_index)]
-            for c in cases
-            if not any(m.evaluator.id == evaluator_id and has_value(m) for m in c.measurements)
-        ]
+        uncovered = [labels[(c.case_id, c.run_index)] for c in cases if not covers(c, evaluator_id)]
         n, total = len(cases) - len(uncovered), len(cases)
         details = {
             "evaluator_id": evaluator_id,

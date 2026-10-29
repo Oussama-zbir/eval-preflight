@@ -6,6 +6,11 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Check 7, `baseline-comparability` (`--baseline BASELINE`, `--require-same-cases`): WARN when
+  cases or evaluators differ from the baseline (FAIL with `--require-same-cases`), FAIL when an
+  evaluator's coverage dropped, WARN when repeat counts differ. Python: `check(run,
+  baseline=...)` and `check_pydantic_evals(report, baseline=...)`.
+- Golden scenario E (baseline), generated from pydantic-evals 2.61.0 with scenario D as baseline.
 - `--json`: only a machine-readable report on stdout, `{"verdict", "run", "findings"}`; usage
   errors still go to stderr with stdout empty. Python: `CheckResult.to_json()`.
 
