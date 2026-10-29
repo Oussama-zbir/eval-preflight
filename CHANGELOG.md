@@ -12,6 +12,9 @@ All notable changes to this project are documented here. The format follows
   render positionally: `Judge('strict')`.
 
 ### Added
+- In-memory pydantic-evals path: `check_pydantic_evals(report)` and `from_pydantic_evals(report)`,
+  behind the optional extra `eval-preflight[pydantic-evals]`. Adds `reported_aggregates` from
+  `report.averages()` and `source_version`; the JSON path still works without the extra.
 - Multi-output pydantic-evals evaluators: each named output gets its own id,
   `Name(...)[output]`.
 - Golden scenario C (repeat divergence), generated from pydantic-evals 2.61.0.

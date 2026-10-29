@@ -1,8 +1,11 @@
-"""pydantic-evals adapter: an EvaluationReport serialized to JSON (SPEC.md §7.2).
+"""pydantic-evals adapter (SPEC.md §7.2): a JSON report or an in-memory EvaluationReport.
 
-The input is what `TypeAdapter(EvaluationReport).dump_json(report, by_alias=True)`
+The JSON input is what `TypeAdapter(EvaluationReport).dump_json(report, by_alias=True)`
 writes. Parsing reads only the fields the mapping needs and ignores the rest
 (inputs, outputs, durations, stack traces), so pydantic-evals is not required.
+The in-memory path (`from_pydantic_evals`) needs the optional `pydantic-evals` extra; it
+builds the same document from the report's attributes and adds what only the live
+report knows: `report.averages()` and the installed version.
 
 Evaluator identity comes from each result's `source` (the evaluator's class name
 and serialization arguments), never from the dict key it is filed under: the key
@@ -12,14 +15,20 @@ evaluator that returns a dict of named outputs yields one id per output name.
 
 from __future__ import annotations
 
+import importlib.metadata
 import json
 import re
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, ValidationError
+from pydantic_core import to_jsonable_python
 
 from eval_preflight.adapters import LoadError
 from eval_preflight.model import CaseResult, EvalRun, EvaluatorRef, Kind, Measurement
+
+if TYPE_CHECKING:
+    from pydantic_evals.evaluators.spec import EvaluatorSpec
+    from pydantic_evals.reporting import EvaluationReport
 
 SOURCE = "pydantic-evals"
 _REPEAT_SUFFIX = re.compile(r" \[(\d+)/(\d+)\]$")
@@ -107,6 +116,91 @@ def parse_pydantic_evals(text: str, *, default_name: str) -> EvalRun:
         document = json.loads(text)
     except json.JSONDecodeError as exc:
         raise LoadError(f"pydantic-evals report is not valid JSON ({exc.msg})") from exc
+    return _from_document(document, default_name=default_name)
+
+
+def from_pydantic_evals(report: EvaluationReport[Any, Any, Any]) -> EvalRun:
+    """Convert an in-memory EvaluationReport. Requires the `pydantic-evals` extra."""
+    try:
+        from pydantic_evals.reporting import EvaluationReport
+    except ImportError as exc:
+        raise ImportError(
+            "the in-memory pydantic-evals path needs the optional extra: "
+            "pip install 'eval-preflight[pydantic-evals]'"
+        ) from exc
+    if not isinstance(report, EvaluationReport):
+        raise TypeError(f"expected a pydantic_evals EvaluationReport, got {type(report).__name__}")
+
+    run = _from_document(_document(report), default_name=report.name)
+    return run.model_copy(
+        update={
+            "source_version": importlib.metadata.version("pydantic-evals"),
+            "reported_aggregates": _reported_aggregates(report),
+        }
+    )
+
+
+def _document(report: EvaluationReport[Any, Any, Any]) -> dict[str, Any]:
+    """The JSON report's shape, read from attributes so inputs and outputs are never
+    serialized. Arguments go through to_jsonable_python, as pydantic-evals' own
+    serializer does, so ids match the JSON path exactly."""
+
+    def spec(source: EvaluatorSpec) -> dict[str, Any]:
+        arguments = to_jsonable_python(source.arguments, serialize_unknown=True)
+        return {"name": source.name, "arguments": arguments}
+
+    def results(section: dict[str, Any]) -> dict[str, Any]:
+        return {
+            key: {"name": r.name, "value": r.value, "source": spec(r.source)}
+            for key, r in section.items()
+        }
+
+    return {
+        "name": report.name,
+        "dataset_name": report.dataset_name,
+        "cases": [
+            {
+                "name": case.name,
+                "source_case_name": case.source_case_name,
+                "scores": results(case.scores),
+                "assertions": results(case.assertions),
+                "labels": results(case.labels),
+                "evaluator_failures": [
+                    {
+                        "name": f.name,
+                        "error_message": f.error_message,
+                        "error_type": f.error_type,
+                        "source": spec(f.source),
+                    }
+                    for f in case.evaluator_failures
+                ],
+            }
+            for case in report.cases
+        ],
+        "failures": [
+            {
+                "name": f.name,
+                "source_case_name": f.source_case_name,
+                "error_message": f.error_message,
+            }
+            for f in report.failures
+        ],
+    }
+
+
+def _reported_aggregates(report: EvaluationReport[Any, Any, Any]) -> dict[str, float]:
+    """report.averages(): scores, metrics and the assertion pass rate, by display name.
+    Labels are distributions, not numbers, and are left out."""
+    averages = report.averages()
+    if averages is None:
+        return {}
+    reported: dict[str, float] = {**averages.metrics, **averages.scores}
+    if averages.assertions is not None:
+        reported["assertions"] = averages.assertions
+    return reported
+
+
+def _from_document(document: object, *, default_name: str) -> EvalRun:
     if not looks_pydantic_evals(document):
         raise LoadError("not a pydantic-evals report: expected an object with cases and failures")
     try:

@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+
 from pydantic import BaseModel, ConfigDict, Field
 
+from eval_preflight.adapters.pydantic_evals import from_pydantic_evals
 from eval_preflight.checks.aggregation_consistency import check_aggregation_consistency
 from eval_preflight.checks.constant_output import check_constant_output
 from eval_preflight.checks.evaluator_coverage import check_evaluator_coverage
@@ -12,6 +15,9 @@ from eval_preflight.checks.name_collision import check_name_collision
 from eval_preflight.checks.task_failures import check_task_failures
 from eval_preflight.model import EvalRun
 from eval_preflight.report import CheckResult
+
+if TYPE_CHECKING:
+    from pydantic_evals.reporting import EvaluationReport
 
 
 class CheckConfig(BaseModel):
@@ -40,3 +46,10 @@ def check(run: EvalRun, config: CheckConfig | None = None) -> CheckResult:
         *check_constant_output(run, min_cases=config.min_cases_for_constant),
     ]
     return CheckResult(run=run, findings=findings)
+
+
+def check_pydantic_evals(
+    report: EvaluationReport[Any, Any, Any], config: CheckConfig | None = None
+) -> CheckResult:
+    """Check an in-memory pydantic-evals report; reported aggregates come from averages()."""
+    return check(from_pydantic_evals(report), config)

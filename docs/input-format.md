@@ -96,5 +96,27 @@ catch.
 From JSON, `source_version` and `reported_aggregates` are left empty: the file does not record
 the producing version, and `report.averages()` needs the in-memory report.
 
+## In-memory `EvaluationReport`
+
+```python
+from eval_preflight import check_pydantic_evals
+
+report = dataset.evaluate_sync(task)
+result = check_pydantic_evals(report)   # or from_pydantic_evals(report) -> EvalRun
+result.raise_if_failed()
+```
+
+Needs the optional extra: `pip install 'eval-preflight[pydantic-evals]'` (Python ≥ 3.11, tested
+with pydantic-evals 2.61.0). The JSON path above never imports pydantic-evals.
+
+The adapter reads the same fields from the report's attributes, so cases, measurements and ids
+are identical to loading the report's JSON dump (tested for every golden scenario). Inputs and
+outputs are never serialized. Two things only the live report knows are added:
+
+- `reported_aggregates` from `report.averages()`: scores and metrics by display name, plus the
+  assertion pass rate under `assertions`. Labels are distributions and are left out. Metrics are
+  not measurements, so `aggregation-consistency` reports them as WARN "cannot be checked".
+- `source_version` from the installed pydantic-evals.
+
 `--format auto` picks this adapter for a JSON object that has `cases` and `failures` lists and no
 `"source": "generic"`.

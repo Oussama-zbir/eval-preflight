@@ -22,12 +22,19 @@ dependencies = [
     "rich>=13",
 ]
 
+[project.optional-dependencies]
+# Only for the in-memory EvaluationReport path; JSON reports never import it.
+pydantic-evals = ["pydantic-evals>=2.61,<3"]
+
 [project.scripts]
 eval-preflight = "eval_preflight.cli:main"
 
 [dependency-groups]
 dev = [
     "mypy>=1.11",
+    # Same version as tests/fixtures/pydantic_evals/VERSION: the in-memory tests compare
+    # live reports with the generated fixtures.
+    "pydantic-evals==2.61.0",
     "pytest>=8.2",
     "pytest-cov>=5",
     "ruff>=0.6",

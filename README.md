@@ -14,6 +14,8 @@ inconsistent aggregation, so the number you gate on is the number your eval actu
 - Six checks ([docs/checks.md](docs/checks.md)): `task-failures`, `evaluator-coverage`,
   `evaluator-errors`, `name-collision`, `aggregation-consistency`, `constant-output`.
 - `eval-preflight check RESULTS`: exit `0` on PASS or WARN, `1` on FAIL, `2` on a usage error.
+- Python: `check(load(path))`, or `check_pydantic_evals(report)` for an in-memory pydantic-evals
+  report (optional extra `eval-preflight[pydantic-evals]`, which adds the reported averages).
 
 ```console
 $ uv run eval-preflight check tests/fixtures/pydantic_evals/name_shift.json
