@@ -5,6 +5,10 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.2] — not published
+
+Milestone 2.
+
 ### Changed
 - Python floor raised to 3.11; CI runs 3.11, 3.12 and 3.13.
 - pydantic-evals evaluator ids use the approved `Name(key=repr(value), ...)` form with sorted keys

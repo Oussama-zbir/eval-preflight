@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "eval-preflight"
-version = "0.0.1"
+version = "0.0.2"
 description = "A pre-flight check for LLM eval results: catches partial runs, failed judges, mislabelled scores and inconsistent aggregation."
 readme = "README.md"
 requires-python = ">=3.11"

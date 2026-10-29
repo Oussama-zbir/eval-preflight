@@ -7,7 +7,7 @@ from eval_preflight.checks.runner import CheckConfig, check, check_pydantic_eval
 from eval_preflight.model import CaseResult, EvalRun, EvaluatorRef, Kind, Measurement
 from eval_preflight.report import CheckResult, Finding, IntegrityError, Severity, render
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 __all__ = [
     "CaseResult",
