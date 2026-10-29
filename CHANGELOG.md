@@ -5,6 +5,10 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.3] — not published
+
+Milestone 3.
+
 ### Added
 - Check 7, `baseline-comparability` (`--baseline BASELINE`, `--require-same-cases`): WARN when
   cases or evaluators differ from the baseline (FAIL with `--require-same-cases`), FAIL when an
