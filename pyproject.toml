@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "eval-preflight"
-version = "0.0.3"
+dynamic = ["version"]
 description = "A pre-flight check for LLM eval results: catches partial runs, failed judges, mislabelled scores and inconsistent aggregation."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -15,12 +15,21 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
 dependencies = [
     "pydantic>=2",
     "rich>=13",
 ]
+
+[project.urls]
+Repository = "https://github.com/Oussama-zbir/eval-preflight"
+Documentation = "https://github.com/Oussama-zbir/eval-preflight/tree/main/docs"
+Issues = "https://github.com/Oussama-zbir/eval-preflight/issues"
+Changelog = "https://github.com/Oussama-zbir/eval-preflight/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 # Only for the in-memory EvaluationReport path; JSON reports never import it.
@@ -41,6 +50,13 @@ dev = [
     "pytest-cov>=5",
     "ruff>=0.6",
 ]
+
+# One version, in the package; `eval-preflight --version` and the wheel agree by construction.
+[tool.hatch.version]
+path = "src/eval_preflight/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+exclude = [".github", "CLAUDE.md"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/eval_preflight"]

@@ -1,0 +1,57 @@
+name: Publish
+
+# Publishing is deliberate: it runs only when a maintainer pushes a v* tag, never on a
+# branch push. PyPI trusted publishing (OIDC), so no API token is stored in the repo.
+# One-time setup on PyPI: add a (pending) trusted publisher for this repository,
+# workflow "publish.yml", environment "pypi".
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          python-version: "3.12"
+
+      - name: make check
+        run: make check
+
+      - name: Build sdist and wheel
+        run: uv build
+
+      - name: Check the metadata PyPI will render
+        run: uvx twine check --strict dist/*
+
+      # Fails if the tag (v0.1.0) and the package version (0.1.0) disagree.
+      - name: Install the wheel in a clean venv and run the quickstart
+        run: scripts/smoke_dist.sh dist "${GITHUB_REF_NAME#v}"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  pypi:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/eval-preflight/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+
+      - uses: pypa/gh-action-pypi-publish@v1.14.3

@@ -5,6 +5,18 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+- `.github/workflows/publish.yml`: publishes to PyPI with trusted publishing, only when a `v*`
+  tag is pushed, after `make check`, `twine check` and a clean-install smoke test, and only if
+  the tag matches the package version.
+- `scripts/smoke_dist.sh`, run by CI on every push: installs the built wheel in a fresh
+  virtualenv outside the checkout and runs the CLI and Python quickstart against it.
+- Package metadata: project URLs and supported Python versions.
+
+### Changed
+- The version is defined once, in `eval_preflight.__version__`; `pyproject.toml` reads it.
+- The sdist no longer includes `.github/` or `CLAUDE.md`.
+
 ## [0.0.3] — not published
 
 Milestone 3.

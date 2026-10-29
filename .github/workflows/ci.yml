@@ -51,3 +51,25 @@ jobs:
             echo "expected the example to fail on partial_coverage.json"
             exit 1
           fi
+
+  # What `pip install eval-preflight` would give a user: the built wheel, in a fresh
+  # virtualenv outside the checkout, running the quickstart. The publish workflow
+  # runs the same script before uploading.
+  package:
+    name: package (build, metadata, clean install)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Build sdist and wheel
+        run: uv build
+
+      - name: Check the metadata PyPI will render
+        run: uvx twine check --strict dist/*
+
+      - name: Install the wheel in a clean venv and run the quickstart
+        run: scripts/smoke_dist.sh dist
