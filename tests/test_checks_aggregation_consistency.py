@@ -171,3 +171,26 @@ def test_booleans_average_as_zero_and_one() -> None:
         case("c1", m("ok", True, kind="assertion")), case("c2", m("ok", False, kind="assertion"))
     )
     assert by_subject(findings(result_run))["ok"].details["pooled"] == 0.5
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf")])
+def test_non_finite_values_are_excluded_from_both_estimators(bad: float) -> None:
+    found = by_subject(
+        findings(run(case("c1", m("e", 0.2)), case("c2", m("e", 0.4)), case("c3", m("e", bad))))
+    )
+    finding = found["e"]
+    assert finding.severity == "PASS"
+    assert finding.details["pooled"] == pytest.approx(0.3)
+    assert finding.details["mean_of_cases"] == pytest.approx(0.3)
+    assert finding.details["values"] == 2
+
+
+def test_only_non_finite_values_produce_no_estimator_finding() -> None:
+    assert by_subject(findings(run(case("c1", m("e", float("nan")))))) == {}
+
+
+def test_reported_aggregate_ignores_non_finite_raw_values() -> None:
+    result_run = reported(run(case("c1", m("e", 1.0)), case("c2", m("e", float("nan")))), e=1.0)
+    finding = reported_finding(findings(result_run))
+    assert finding.severity == "PASS"
+    assert finding.message == 'reported "e" = 1 reproduced from 1 of 2 cases'

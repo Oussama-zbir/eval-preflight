@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from collections.abc import Iterable
 
-from eval_preflight.model import CaseResult, EvalRun
+from eval_preflight.model import CaseResult, EvalRun, Measurement
 
 MAX_LISTED = 5
 
@@ -31,6 +31,16 @@ def evaluator_ids(run: EvalRun) -> list[str]:
         for m in case.measurements:
             seen.setdefault(m.evaluator.id)
     return list(seen)
+
+
+def is_non_finite(m: Measurement) -> bool:
+    """NaN or ±inf: a broken number, not evidence (SPEC §15, amendment 3)."""
+    return isinstance(m.value, float) and not math.isfinite(m.value)
+
+
+def has_value(m: Measurement) -> bool:
+    """The evaluator produced a usable value: not null and not NaN/inf."""
+    return m.value is not None and not is_non_finite(m)
 
 
 def pct(n: int, total: int) -> str:

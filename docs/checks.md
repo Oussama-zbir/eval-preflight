@@ -31,8 +31,9 @@ FAIL  task-failures           1/4 case-runs (25%) raised: TimeoutError: model to
 
 ## 2. `evaluator-coverage`
 
-**Detects**, per evaluator id, how many eligible case-runs it produced a non-null value for.
-`0`, `0.0` and `false` are values; only `null` (or no measurement at all) is missing.
+**Detects**, per evaluator id, how many eligible case-runs it produced a value for, and any
+non-finite values. `0`, `0.0` and `false` are values; `null` (or no measurement at all) is
+missing, and so are `NaN`, `Infinity` and `-Infinity`.
 
 **Why it matters.** In pydantic-evals, a judge that scores 1 case of 4 and raises on the rest
 reports the same average as one that scored all 4
@@ -50,6 +51,21 @@ PASS  evaluator-coverage      Judge(rubric='lenient') scored 4/4 case-runs (100%
 ```
 
 `details`: `evaluator_id`, `covered`, `eligible`, `coverage`, `threshold`, `uncovered_case_runs`.
+
+**Non-finite values** ([SPEC.md](../SPEC.md) §15, amendment 3). A NaN or infinite score is a
+broken number, not evidence: averaged in, it turns every mean into NaN. Python's `json` module
+reads the `NaN` and `Infinity` literals, so a generic file can carry them. pydantic-evals 2.61.0
+rejects non-finite evaluator outputs itself, so its reports should never contain one. An
+evaluator that returned one on any eligible case-run gets a second finding, always FAIL with no
+threshold, so a relaxed `--min-coverage` cannot hide it. The values are excluded from
+`aggregation-consistency`.
+
+```
+FAIL  evaluator-coverage      e returned a non-finite value on 1/2 case-runs: nan
+```
+
+`details`: `kind: "non_finite"`, `evaluator_id`, `non_finite_case_runs`, `values` (as strings,
+since NaN is not valid JSON).
 
 ## 3. `evaluator-errors`
 
@@ -110,7 +126,8 @@ FAIL  name-collision          Judge(rubric='lenient') → "Judge_2" on c1; "Judg
 - a reported headline number (`reported_aggregates`) cannot be reproduced from the raw results by
   either estimator.
 
-Booleans count as 1 and 0. Errored or missing values are excluded from both estimators, which is
+Booleans count as 1 and 0. Errored, missing and non-finite (NaN, ±inf) values are excluded from
+both estimators, which is
 exactly why coverage (check 2) matters: an average can be reproducible and still describe one case
 of four.
 
@@ -127,7 +144,8 @@ means 0.5.
 makes it a FAIL. For each reported aggregate, keyed by display name (`assertions` falls back to
 the assertion group when no evaluator has that display name): PASS stating which estimator
 reproduces it and from how many of the eligible cases; FAIL when it matches neither; WARN when
-no numeric values were filed under that name, because there is nothing to check it against. A
+no numeric values were filed under that name, because there is nothing to check it against
+([SPEC.md](../SPEC.md) §15, amendment 2). A
 run with no numeric values produces no findings.
 
 ```

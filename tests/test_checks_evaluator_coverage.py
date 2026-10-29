@@ -1,4 +1,7 @@
+import math
 from typing import Any
+
+import pytest
 
 from eval_preflight import CheckConfig, EvalRun, Finding, check
 from tests.builders import case, m, run
@@ -6,7 +9,9 @@ from tests.builders import case, m, run
 
 def findings(result_run: EvalRun, **config: Any) -> dict[str, Finding]:
     found = check(result_run, CheckConfig(**config)).by_check("evaluator-coverage")
-    return {f.details.get("evaluator_id", ""): f for f in found}
+    return {
+        f.details.get("evaluator_id", ""): f for f in found if f.details.get("kind") != "non_finite"
+    }
 
 
 def test_full_coverage_passes_with_n_of_n() -> None:
@@ -96,3 +101,47 @@ def test_run_without_any_evaluator_fails() -> None:
     [finding] = result.values()
     assert finding.severity == "FAIL"
     assert finding.message == "no evaluator produced a measurement on any case-run"
+
+
+def non_finite(result_run: EvalRun) -> list[Finding]:
+    found = check(result_run).by_check("evaluator-coverage")
+    return [f for f in found if f.details.get("kind") == "non_finite"]
+
+
+@pytest.mark.parametrize("bad", [math.nan, math.inf, -math.inf])
+def test_non_finite_value_is_not_coverage_and_fails(bad: float) -> None:
+    result_run = run(case("c1", m("e", 1.0)), case("c2", m("e", bad)))
+    assert findings(result_run)["e"].message == "e scored 1/2 case-runs (50%)"
+    assert findings(result_run)["e"].details["uncovered_case_runs"] == ["c2"]
+    [finding] = non_finite(result_run)
+    assert finding.severity == "FAIL"
+    assert finding.message == f"e returned a non-finite value on 1/2 case-runs: {bad!r}"
+    assert finding.details["non_finite_case_runs"] == ["c2"]
+    # Strings, so a JSON report of the details stays valid JSON.
+    assert finding.details["values"] == [repr(bad)]
+
+
+def test_non_finite_fails_even_when_coverage_threshold_tolerates_the_gap() -> None:
+    result_run = run(*[case(f"c{i}", m("e", 0.5)) for i in range(9)], case("c9", m("e", math.nan)))
+    result = check(result_run, CheckConfig(min_coverage=0.9))
+    coverage = [f for f in result.by_check("evaluator-coverage") if "covered" in f.details]
+    assert [f.severity for f in coverage] == ["PASS"]
+    assert [f.severity for f in non_finite(result_run)] == ["FAIL"]
+    assert result.verdict == "FAIL"
+
+
+def test_finite_values_produce_no_non_finite_finding() -> None:
+    result_run = run(case("c1", m("e", 1e308)), case("c2", m("e", -0.0)), case("c3", m("b", True)))
+    assert non_finite(result_run) == []
+
+
+def test_non_finite_on_failed_task_is_ignored() -> None:
+    result_run = run(case("c1", m("e", 1.0)), case("c2", m("e", math.nan), task_error="boom"))
+    found = check(result_run, CheckConfig(max_task_failure_rate=1.0)).by_check("evaluator-coverage")
+    assert [f.details.get("kind") for f in found] == [None]
+
+
+def test_case_run_with_a_finite_and_a_non_finite_value_is_covered_but_flagged() -> None:
+    result_run = run(case("c1", m("e", 1.0), m("e", math.inf)))
+    assert findings(result_run)["e"].severity == "PASS"
+    assert [f.severity for f in non_finite(result_run)] == ["FAIL"]

@@ -193,3 +193,22 @@ def test_console_script_entry_point() -> None:
     )
     assert proc.returncode == 1
     assert "name-collision" in proc.stdout
+
+
+def test_nan_in_generic_input_fails_the_run(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # Python's json module reads the NaN literal; it must not count as a score.
+    path = tmp_path / "r.jsonl"
+    meas = '{"evaluator_id": "e", "display_name": "e", "kind": "score", "value": %s}'
+    path.write_text(
+        f'{{"case_id": "c1", "measurements": [{meas % "0.5"}]}}\n'
+        f'{{"case_id": "c2", "measurements": [{meas % "NaN"}]}}\n'
+    )
+    code, out, _ = run_cli(capsys, str(path))
+    assert code == 1
+    assert (
+        row("FAIL", "evaluator-coverage", "e returned a non-finite value on 1/2 case-runs: nan")
+        in out
+    )
+    assert row("PASS", "aggregation-consistency", "e: pooled = mean of per-case means = 0.5") in out

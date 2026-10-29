@@ -6,8 +6,9 @@ Two estimators over the numeric values of eligible case-runs:
 - mean of per-case means: average within each case_id (over repeats), then across cases.
 
 They differ only when cases contribute unequal numbers of values (repeats with gaps, several
-assertions per case). pydantic-evals uses the pooled mean for single runs and the mean of
-per-case means for repeated runs, so a reported number is checked against both.
+assertions per case). NaN and ±inf are excluded from both (SPEC §15, amendment 3).
+pydantic-evals uses the pooled mean for single runs and the mean of per-case means for
+repeated runs, so a reported number is checked against both.
 """
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ import math
 from collections import defaultdict
 from collections.abc import Callable
 
-from eval_preflight.checks._common import eligible, evaluator_ids
+from eval_preflight.checks._common import eligible, evaluator_ids, has_value
 from eval_preflight.model import EvalRun, Measurement
 from eval_preflight.report import Finding, Severity
 
@@ -27,9 +28,11 @@ _Values = dict[str, list[float]]  # case_id -> numeric values, in case-run order
 
 
 def _numeric(m: Measurement) -> float | None:
-    if m.evaluator.kind == "label" or isinstance(m.value, str) or m.value is None:
+    # NaN/inf are excluded from both estimators; evaluator-coverage flags them.
+    value = m.value
+    if m.evaluator.kind == "label" or not isinstance(value, bool | float) or not has_value(m):
         return None
-    return float(m.value)
+    return float(value)
 
 
 def _collect(run: EvalRun, keep: Callable[[Measurement], bool]) -> _Values:

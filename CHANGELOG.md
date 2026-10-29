@@ -15,6 +15,8 @@ All notable changes to this project are documented here. The format follows
 - Multi-output pydantic-evals evaluators: each named output gets its own id,
   `Name(...)[output]`.
 - Golden scenario C (repeat divergence), generated from pydantic-evals 2.61.0.
+- Non-finite values (NaN, ±inf) no longer count as coverage: `evaluator-coverage` adds a FAIL
+  "non-finite value" finding, and `aggregation-consistency` excludes them from both estimators.
 - Check 5, `aggregation-consistency`: compares the pooled mean with the mean of per-case means
   per evaluator and for all assertions, and verifies that each reported aggregate is reproducible
   from the raw results (stating which estimator and from how many cases). New flags
