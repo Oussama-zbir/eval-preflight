@@ -5,6 +5,7 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, Field
 
 from eval_preflight.checks.aggregation_consistency import check_aggregation_consistency
+from eval_preflight.checks.constant_output import check_constant_output
 from eval_preflight.checks.evaluator_coverage import check_evaluator_coverage
 from eval_preflight.checks.evaluator_errors import check_evaluator_errors
 from eval_preflight.checks.name_collision import check_name_collision
@@ -23,6 +24,7 @@ class CheckConfig(BaseModel):
     max_task_failure_rate: float = Field(default=0.0, ge=0.0, le=1.0, allow_inf_nan=False)
     aggregation_tolerance: float = Field(default=1e-9, ge=0.0, allow_inf_nan=False)
     strict_aggregation: bool = False
+    min_cases_for_constant: int = Field(default=5, ge=2)
 
 
 def check(run: EvalRun, config: CheckConfig | None = None) -> CheckResult:
@@ -35,5 +37,6 @@ def check(run: EvalRun, config: CheckConfig | None = None) -> CheckResult:
         *check_aggregation_consistency(
             run, tolerance=config.aggregation_tolerance, strict=config.strict_aggregation
         ),
+        *check_constant_output(run, min_cases=config.min_cases_for_constant),
     ]
     return CheckResult(run=run, findings=findings)

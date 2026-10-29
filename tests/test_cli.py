@@ -166,6 +166,8 @@ def test_missing_file_exits_2(tmp_path: Path, capsys: pytest.CaptureFixture[str]
         ["--max-evaluator-error-rate", "-0.1"],
         ["--max-task-failure-rate", "nan"],
         ["--min-coverage", "abc"],
+        ["--min-cases-for-constant", "1"],
+        ["--min-cases-for-constant", "2.5"],
         ["--aggregation-tolerance", "-1e-9"],
         ["--aggregation-tolerance", "inf"],
         ["--aggregation-tolerance", "abc"],
@@ -212,3 +214,12 @@ def test_nan_in_generic_input_fails_the_run(
         in out
     )
     assert row("PASS", "aggregation-consistency", "e: pooled = mean of per-case means = 0.5") in out
+
+
+def test_min_cases_for_constant_is_passed_through(capsys: pytest.CaptureFixture[str]) -> None:
+    # AlwaysScores returns 0.5 on all 4 case-runs: below the default of 5, a WARN at 4.
+    path = str(FIXTURES / "partial_coverage.json")
+    _, out, _ = run_cli(capsys, path)
+    assert "WARN  constant-output" not in out
+    _, out, _ = run_cli(capsys, path, "--min-cases-for-constant", "4")
+    assert row("WARN", "constant-output", "AlwaysScores() returned 0.5 on all 4 case-runs") in out

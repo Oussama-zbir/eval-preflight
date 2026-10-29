@@ -8,8 +8,8 @@ Terms: a **case-run** is the pair `(case_id, run_index)`. An **eligible** case-r
 task did not fail. Evaluator identity is the evaluator **id**, never its display name. When a run
 has repeats, case-runs are labelled `case_id[run_index]`; otherwise just `case_id`.
 
-Implemented: checks 1–4 (0.0.1) and 5 (unreleased). Checks 6–7 (`constant-output`,
-`baseline-comparability`) are specified in [SPEC.md](../SPEC.md) §6 and not built yet.
+Implemented: checks 1–4 (0.0.1), 5 and 6 (unreleased). Check 7 (`baseline-comparability`) is
+specified in [SPEC.md](../SPEC.md) §6 and not built yet.
 
 ## 1. `task-failures`
 
@@ -159,3 +159,33 @@ FAIL  aggregation-consistency reported "e" = 0.9 matches neither pooled mean 0.5
 `mean_of_cases`, `values`, `cases`, `tolerance`. For reported aggregates: `reported_key`,
 `reported`, `pooled`, `mean_of_cases`, `reproduced_by` (`pooled`, `mean_of_cases`, `both` or
 `null`), `cases_with_values`, `eligible_cases`, `tolerance`.
+
+## 6. `constant-output`
+
+**Detects** a score or label evaluator that returned the identical value on every eligible
+case-run where it produced a finite value, over at least `--min-cases-for-constant` (5) such
+case-runs. Values compare numerically, so `1` and `1.0` are the same score.
+
+**Why it matters.** A judge that returns `1.0` for every case is usually stuck (a parsing fallback,
+a cached response, a rubric that cannot fail) rather than reporting a perfect model. The average
+looks great and carries no information.
+
+**Default.** WARN, one finding per constant evaluator; a single PASS finding when none is
+constant (including runs too small to judge). Two choices made by the spec author
+([SPEC.md](../SPEC.md) §15):
+
+- assertions are exempt: an assertion that passes on every case is the goal of a test suite, and
+  warning on it would make `--warnings-as-errors` unusable for passing runs;
+- only case-runs with a finite value count, so gaps (errors, missing values) do not disable the
+  check. Those gaps are already reported by `evaluator-coverage` and `evaluator-errors`.
+
+`--min-cases-for-constant` must be at least 2.
+
+```
+WARN  constant-output         Judge(rubric='lenient') returned 1.0 on all 6 case-runs
+WARN  constant-output         Judge(rubric='lenient') returned 1.0 on all 5 case-runs with a value (of 7 eligible)
+PASS  constant-output         no score or label evaluator returned a single value on ≥5 case-runs
+```
+
+`details` (WARN): `evaluator_id`, `value` (its `repr`), `case_runs_with_value`, `eligible`,
+`min_cases`. (PASS): `min_cases`.

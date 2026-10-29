@@ -36,6 +36,16 @@ def _tolerance(raw: str) -> float:
     return value
 
 
+def _min_cases(raw: str) -> int:
+    try:
+        value = int(raw)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"not an integer: {raw!r}") from None
+    if value < 2:
+        raise argparse.ArgumentTypeError(f"must be at least 2, got {raw!r}")
+    return value
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="eval-preflight",
@@ -81,6 +91,14 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help="fail, not warn, when pooled and per-case averages disagree",
     )
+    run.add_argument(
+        "--min-cases-for-constant",
+        type=_min_cases,
+        default=5,
+        metavar="N",
+        help="warn when a score or label evaluator returns one value on at least N case-runs "
+        "(default: 5)",
+    )
     run.add_argument("--warnings-as-errors", action="store_true", help="exit 1 on a WARN verdict")
     run.add_argument(
         "--quiet", action="store_true", help="print only non-PASS findings and the verdict"
@@ -102,6 +120,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         max_task_failure_rate=args.max_task_failure_rate,
         aggregation_tolerance=args.aggregation_tolerance,
         strict_aggregation=args.strict_aggregation,
+        min_cases_for_constant=args.min_cases_for_constant,
     )
     result = check(run, config)
     render(result, Console(soft_wrap=True), quiet=args.quiet)
