@@ -110,11 +110,11 @@ Defaults are deliberately strict; everything is configurable.
 | # | Check id | Detects | Default outcome |
 |---|---|---|---|
 | 1 | `task-failures` | case-runs with `task_error` | FAIL if rate > `--max-task-failure-rate` (0.0). Always report n/N. |
-| 2 | `evaluator-coverage` | per evaluator id: case-runs with a non-null value / eligible case-runs | FAIL if any evaluator < `--min-coverage` (1.0). Always print `n/N (pct)` per evaluator. |
+| 2 | `evaluator-coverage` | per evaluator id: case-runs with a non-null, finite value / eligible case-runs; NaN/inf values do not count as covered | FAIL if any evaluator < `--min-coverage` (1.0). Always print `n/N (pct)` per evaluator. A separate "non-finite value" finding per evaluator with any NaN/inf value: FAIL, no threshold (§15). |
 | 3 | `evaluator-errors` | per evaluator id: case-runs where `error` is set | FAIL if rate > `--max-evaluator-error-rate` (0.0). Include the most common error message. |
 | 4 | `name-collision` | (a) one display name maps to ≥2 evaluator ids across the run; (b) one evaluator id maps to ≥2 display names | FAIL. Message must show the mapping, e.g. `"Judge" → Judge(rubric='strict') on c1; Judge(rubric='lenient') on c2, c3, c4`. |
-| 5 | `aggregation-consistency` | per evaluator id (score/assertion): pooled mean over all case-runs vs mean of per-case means; and, if `reported_aggregates` is present, whether the reported number is reproducible from the raw results by either estimator | WARN when the two estimators differ by more than `--aggregation-tolerance` (1e-9), stating both values; FAIL when a reported aggregate matches neither estimator. `--strict-aggregation` turns the WARN into FAIL. |
-| 6 | `constant-output` | an evaluator returned the identical value on every eligible case-run, with ≥ `--min-cases-for-constant` (5) case-runs | WARN (likely a stuck judge or a degenerate rubric). |
+| 5 | `aggregation-consistency` | per evaluator id (score/assertion): pooled mean over all case-runs vs mean of per-case means; and, if `reported_aggregates` is present, whether the reported number is reproducible from the raw results by either estimator | WARN when the two estimators differ by more than `--aggregation-tolerance` (1e-9), stating both values; FAIL when a reported aggregate matches neither estimator; WARN ("cannot be checked") when a reported aggregate has no numeric values under its name. NaN/inf values are excluded from both estimators. `--strict-aggregation` turns the estimator WARN into FAIL. |
+| 6 | `constant-output` | a score or label evaluator returned the identical value on every eligible case-run where it produced a finite value, with ≥ `--min-cases-for-constant` (5) such case-runs; assertions are exempt (§15) | WARN (likely a stuck judge or a degenerate rubric). |
 | 7 | `baseline-comparability` (only with `--baseline`) | case_id sets differ (added/removed); evaluator id sets differ; candidate coverage lower than baseline for any evaluator; different repeat counts | WARN for added/removed cases and evaluator-set differences (FAIL with `--require-same-cases`); FAIL when candidate coverage < baseline coverage for an evaluator; WARN on repeat-count mismatch. |
 
 Overall verdict: `FAIL` if any FAIL finding; `WARN` if only WARN findings (exit 0 unless `--warnings-as-errors`);
@@ -139,15 +139,21 @@ Input is either an in-memory `EvaluationReport` (Python API) or a JSON file prod
 pydantic-ai `main`, Oct 2026). Mapping:
 
 - `cases[].scores | assertions | labels` → measurements. `kind` from the section. `display_name` = the dict key.
-  `evaluator.id` = canonical string of `source.name` + `source.arguments` (e.g. `Judge(rubric='strict')`; use
-  `json.dumps(arguments, sort_keys=True)` for determinism). **Never derive identity from the dict key.**
+  `evaluator.id` = `source.name` + `source.arguments` rendered as `Name(key=repr(value), ...)` with keys sorted,
+  e.g. `Judge(rubric='strict')`; no arguments → `Name()`. Nested values render with sorted keys, so the id is
+  deterministic. pydantic-evals writes a single non-default argument that sits in the evaluator's first dataclass
+  field as a one-element list (`"arguments": ["strict"]`) without the field name; the report (JSON or in-memory)
+  does not contain that name, so the id renders it positionally, `Judge('strict')`, and never invents a key.
+  A result whose `name` differs from `source.name` is a named output of a multi-output evaluator: its id is
+  `f"{source_id}[{name}]"` (§15, amendment 1). **Never derive identity from the dict key.**
 - `cases[].evaluator_failures[]` → one measurement per failure with `value=None`, `error=f"{error_type}: {error_message}"`,
   identity from its `source`, `kind` unknown → use `"score"` unless the same identity appears elsewhere with a known kind.
 - `failures[]` (top-level task failures) → `CaseResult(task_error=...)`.
 - Repeats: when `source_case_name` is set, `case_id = source_case_name` and `run_index` is parsed from the
   ` [i/n]` suffix of `name` (0-based). Otherwise `case_id = name`, `run_index = 0`.
 - `reported_aggregates`: only when given the in-memory report, from `report.averages()` (scores, metrics and
-  `assertions`), keyed by display name. From JSON, leave `None`.
+  `assertions`), keyed by display name. From JSON, leave `None`. The in-memory path requires the optional
+  `pydantic-evals` extra (Python ≥ 3.11); the JSON path never imports it.
 - `source_version` from `importlib.metadata.version("pydantic-evals")` when available.
 - **Identity guard:** if the source metadata needed to recover an evaluator's identity is missing,
   do not silently infer identity from a display key. Report the attribution as unverifiable and
@@ -218,7 +224,9 @@ the script, library version and command are committed next to the fixture. Never
 - **C. Repeat divergence.** 2 cases, `repeat=2`. Case `a` has one assertion that passes; case `b` has three
   that fail. No errors. Expect: aggregation-consistency WARN for the assertion group: pooled 0.25 vs
   mean-of-cases 0.5; with `reported_aggregates["assertions"] == 0.5` the finding states the framework used
-  mean-of-cases. Nothing else fails.
+  mean-of-cases. The assertions come from one evaluator returning a dict of named outputs (§15, amendment 1), so:
+  evaluator-coverage FAIL for each of the four output ids (each covers 2 of 4 case-runs); name-collision must
+  NOT fire; task-failures and evaluator-errors PASS.
 - **D. Clean run.** 4 cases, 2 evaluators, no errors, no repeats, varying values. Expect: every check PASS,
   exit 0. This is the no-false-positive guard; keep it in CI forever.
 - **E. Baseline.** Baseline = scenario D. Candidate = D minus case `c4`, with one evaluator erroring on `c2`.
@@ -255,7 +263,8 @@ README.md  CHANGELOG.md  BACKLOG.md  CLAUDE.md  LICENSE (MIT)  pyproject.toml  M
   D in generic format, `test_golden.py`. Tag `v0.0.1` (no publish). *Done when*: `eval-preflight check` on
   fixture B prints the name-collision mapping and exits 1; fixture D exits 0.
 - **M2 (days 3–4)**: pydantic-evals adapter (JSON + in-memory), `scripts/make_fixtures.py`, fixtures A/B/C
-  regenerated from real runs, checks 5–6. *Done when*: all golden scenarios A–D pass from generated fixtures.
+  regenerated from real runs, checks 5–6, non-finite value detection (§15, amendment 3). *Done when*: all golden
+  scenarios A–D pass from generated fixtures.
 - **M3 (days 5–6)**: baseline comparability (check 7), `--json`, `examples/github-action.yml`, `docs/` complete.
   *Done when*: scenario E passes and the action example runs in this repo's own CI against fixture D.
 - **M4 (day 7)**: first verify/reserve the PyPI distribution name, then README, CHANGELOG, `v0.1.0` on PyPI. *Done when*: `pip install eval-preflight` works in a
@@ -315,3 +324,32 @@ from the README and from the CLI's FAIL output footer.
 - Emit an OpenTelemetry/Logfire attribute set with the verdict.
 - Pre-commit hook and a pytest plugin (`assert_integrity(report)`).
 - Upstream contributions: pydantic-evals coverage counts (#7928) and name-collision fix (#10636).
+
+## 15. Amendments
+
+Decided by the spec author on 2026-10-29. They override conflicting earlier text; the sections above have been
+updated to match.
+
+1. Scenario C is restated. An evaluator that returns a dict of named outputs is several measurements from one source. In the pydantic-evals adapter, give each output its own evaluator id: `f"{source_id}[{key}]"` with display_name = key. Consequences for scenario C (case a: 1 passing assertion; case b: 3 failing; repeat=2; no errors):
+   - aggregation-consistency: WARN (pooled 0.25 vs mean-of-cases 0.5), which is the point of the scenario
+   - evaluator-coverage: FAIL for each of the four ids (each covers 2 of 4 case-runs). This is a correct finding, not a false positive: those outputs only exist on half the cases.
+   - name-collision: must NOT fire (one id per output key)
+   - task-failures, evaluator-errors: PASS
+   Replace "nothing else fails" in §9 C with the list above. Scenario D (clean run) is unchanged and must still pass with exit 0.
+2. Confirmed: a reported aggregate with no numeric values under its name is WARN ("cannot be checked"), not FAIL.
+3. Promote from BACKLOG into M2: NaN/inf score values are flagged by a new finding in evaluator-coverage ("non-finite value") and excluded from both estimators in aggregation-consistency, instead of silently counting as covered.
+
+Settled points (same date):
+
+- Evaluator id format: human-readable, `Name(key=repr(value), ...)` with keys sorted, e.g. `Judge(rubric='strict')`.
+  The earlier `json.dumps` sentence was about determinism, not the exact string.
+- The three strict defaults from M1 stay: an empty run fails task-failures; a run with no evaluators fails
+  evaluator-coverage; name-collision counts only measurements with a value (errors are attributed through
+  `source`, so coverage and errors cover them).
+- Python floor is 3.11 for the whole package; CI runs 3.11, 3.12, 3.13.
+
+Clarifications answered by the spec author during implementation (2026-10-29):
+
+- The "non-finite value" finding is FAIL with no threshold.
+- `constant-output` skips assertions (an all-pass assertion is the goal, not a stuck judge) and counts the
+  case-runs where the evaluator produced a finite value, so gaps do not disable it.

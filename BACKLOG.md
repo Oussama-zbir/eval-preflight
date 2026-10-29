@@ -11,20 +11,17 @@ Ideas outside the current milestone, one line each. Not implemented unless asked
 - Pre-commit hook and a pytest plugin (`assert_integrity(report)`).
 - Upstream contributions: pydantic-evals coverage counts (#7928) and name-collision fix (#10636).
 
-## Found during M1
+## Open
 
-- Reject or flag NaN/inf score values; today they count as covered.
 - Validate that `kind` matches the value type (e.g. `assertion` with `0.7`).
-- Decide whether `name-collision` (b) should tolerate evaluators that emit several named outputs from one source (pydantic-evals evaluators can return a dict) before the M2 adapter assigns ids.
 - Option to show full case lists instead of truncating at five in terminal output.
-
-## Found during M2
-
-- **Open question (blocks scenario C):** pydantic-evals can only give case `a` one assertion and case `b` three via case-level evaluators (coverage FAIL: each covers half the case-runs) or one evaluator returning a dict of named assertions (name-collision (b) FAIL: one id, several display names). SPEC §9 C expects "nothing else fails". Decide which check bends, or restate C, before generating it.
-- In-memory `EvaluationReport` path (`reported_aggregates` from `report.averages()`, `source_version`); needs pydantic-evals as an optional extra, which requires Python ≥ 3.11.
 - Optional `--source-version` flag for JSON reports, which do not record the producing version.
 
-## Found during check 5
+## Resolved (SPEC.md §15, 2026-10-29)
 
-- **Confirm:** a reported aggregate with no numeric values under its name is a WARN ("cannot be checked"), not a FAIL. SPEC §6 only defines FAIL for "matches neither estimator"; chosen so pydantic-evals `metrics` (also in `averages()`, not measurements) do not fail every in-memory run.
-- A NaN value makes both estimators NaN and yields a misleading WARN ("pooled mean nan vs mean of per-case means nan"); same root as the NaN/inf item above.
+- NaN/inf values: promoted into M2 as a FAIL "non-finite value" finding in evaluator-coverage, excluded from aggregation.
+- Multi-output evaluators: each named output gets its own id `f"{source_id}[{key}]"`, so name-collision (b) does not fire.
+- Scenario C: restated; coverage FAIL per output id is the expected finding, name-collision must not fire.
+- In-memory `EvaluationReport` path: part of M2, behind the optional `pydantic-evals` extra; Python floor raised to 3.11.
+- A reported aggregate with no numeric values under its name is WARN ("cannot be checked"), confirmed.
+- Evaluator id format: `Name(key=repr(value), ...)` with sorted keys; positional rendering when pydantic-evals drops the field name.
