@@ -227,11 +227,11 @@ the script, library version and command are committed next to the fixture. Never
 
 ## 10. Engineering standard
 
-- Python ≥ 3.10. Runtime deps: `pydantic>=2`, `rich`. Nothing else without a written reason. Optional extra
+- Python ≥ 3.11. Runtime deps: `pydantic>=2`, `rich`. Nothing else without a written reason. Optional extra
   `pydantic-evals` for the adapter's in-memory path (JSON path must work without it installed).
 - Tooling: `uv`, `ruff` (lint + format), `mypy --strict` on `src` and `tests`, `pytest` with coverage ≥ 95% on
   `src`. `make check` runs all four; `make fixtures` regenerates fixtures.
-- CI: GitHub Actions on 3.10, 3.12, 3.13 running `make check`. Publishing: a separate workflow on tags `v*`
+- CI: GitHub Actions on 3.11, 3.12, 3.13 running `make check`. Publishing: a separate workflow on tags `v*`
   using PyPI trusted publishing. Publishing is a deliberate manual tag, never automated on push.
 - Layout:
 
