@@ -64,17 +64,34 @@ not need pydantic-evals installed. Verified against reports generated with pydan
 |---|---|
 | `dataset_name` (else `name`, the task name) | `EvalRun.name` |
 | `cases[].scores` / `assertions` / `labels` | one measurement each, kind `score` / `assertion` / `label`; `display_name` is the dict key |
-| `cases[].*.source` | evaluator id, e.g. `Judge("strict")` (see below). Never the dict key. |
+| `cases[].*.source` + `name` | evaluator id, e.g. `Judge(rubric='strict')` or `Checks()[fmt]` (see below). Never the dict key. |
 | `cases[].evaluator_failures[]` | a measurement with `value: null` and `error` = `error_message` (prefixed with `error_type` only if pydantic-evals did not already); kind taken from the same evaluator elsewhere in the run, else `score` |
 | `failures[]` | a case-run with `task_error` = `error_message` |
 | `source_case_name` + name suffix ` [i/n]` | `case_id` = `source_case_name`, `run_index` = `i - 1` |
 
-Evaluator ids are the source's class name plus its serialization arguments, which pydantic-evals
-writes as `null` (no non-default arguments), a one-element list (one) or a dict (several). Values
-are JSON-encoded with sorted keys: `NonEmpty()`, `Judge("strict")`,
-`Judge(model="m", rubric="strict")`. A result or failure without `source` is rejected (exit 2):
-its identity cannot be verified, and inferring it from the display key would hide the
-mislabelling that `name-collision` exists to catch.
+Evaluator ids are `Name(key=repr(value), ...)` with keys sorted at every level, built from the
+source's class name and serialization arguments: `NonEmpty()`, `Judge(model='m', rubric='strict')`.
+
+pydantic-evals serializes only non-default fields (`BaseEvaluator.as_spec`): none as `null`,
+several as a dict, and a single one as a dict too, **except** when that field is the evaluator's
+first dataclass field, which it writes as a one-element list without the field name
+(`"arguments": ["strict"]`). The name is not in the report, JSON or in-memory, so the id renders
+the value positionally, `Judge('strict')`, the same call that reconstructs the evaluator. It
+never invents a key. The consequence: the same evaluator gets `Judge('strict')` from a
+pydantic-evals report and whatever id you choose (e.g. `Judge(rubric='strict')`) in a generic file;
+do not compare runs across the two formats by id.
+
+Multi-output evaluators: a result's `name` is the evaluator's own name for a scalar output and
+the dict key for a named output. When it differs from the source name, the id gets the output
+name appended, `Checks()[fmt]`, so each output is its own evaluator and the outputs of one
+evaluator do not trip `name-collision`. The display name stays the section key, which carries
+pydantic-evals' per-case `_2` suffixes. A failure carries the evaluator's own name, so a failed
+scalar evaluator shares its results' id, while a failed multi-output evaluator appears under the
+bare source id (its outputs are unknown when it raises).
+
+A result or failure without `source` is rejected (exit 2): its identity cannot be verified, and
+inferring it from the display key would hide the mislabelling that `name-collision` exists to
+catch.
 
 From JSON, `source_version` and `reported_aggregates` are left empty: the file does not record
 the producing version, and `report.averages()` needs the in-memory report.

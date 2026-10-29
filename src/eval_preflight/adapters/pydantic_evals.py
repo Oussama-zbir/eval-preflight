@@ -6,7 +6,8 @@ writes. Parsing reads only the fields the mapping needs and ignores the rest
 
 Evaluator identity comes from each result's `source` (the evaluator's class name
 and serialization arguments), never from the dict key it is filed under: the key
-is the display name that pydantic-evals deduplicates per case (#10636).
+is the display name that pydantic-evals deduplicates per case (#10636). An
+evaluator that returns a dict of named outputs yields one id per output name.
 """
 
 from __future__ import annotations
@@ -35,6 +36,7 @@ class _Source(BaseModel):
 
 
 class _Result(BaseModel):
+    name: str
     value: float | bool | str
     source: _Source | None = None
 
@@ -78,21 +80,26 @@ def looks_pydantic_evals(document: object) -> bool:
     )
 
 
-def evaluator_id(source: _Source) -> str:
-    """Canonical identity: class name plus serialization arguments.
+def evaluator_id(source: _Source, output_name: str) -> str:
+    """Canonical identity: `Name(key=repr(value), ...)` with sorted keys (SPEC §7.2).
 
-    pydantic-evals serializes no arguments as null, a single non-default argument
-    as a one-element list and several as a dict; values are JSON-encoded with
-    sorted keys so the id is deterministic.
+    pydantic-evals (`BaseEvaluator.as_spec`) serializes non-default fields only: none
+    as null, several as a dict, and a single one that is the first dataclass field
+    as a one-element list without its name. That name is not in the report, so the
+    value is rendered positionally, `Judge('strict')`, rather than under a guessed key.
+
+    A result whose name differs from the evaluator's name is a named output of a
+    multi-output evaluator and gets its own id, `Name(...)[output]`.
     """
     arguments = source.arguments
-    if arguments is None:
+    if not arguments:
         rendered: list[str] = []
     elif isinstance(arguments, dict):
-        rendered = [f"{key}={_dump(arguments[key])}" for key in sorted(arguments)]
+        rendered = [f"{key}={_render(arguments[key])}" for key in sorted(arguments)]
     else:
-        rendered = [_dump(value) for value in arguments]
-    return f"{source.name}({', '.join(rendered)})"
+        rendered = [_render(value) for value in arguments]
+    base = f"{source.name}({', '.join(rendered)})"
+    return base if output_name == source.name else f"{base}[{output_name}]"
 
 
 def parse_pydantic_evals(text: str, *, default_name: str) -> EvalRun:
@@ -130,8 +137,14 @@ def parse_pydantic_evals(text: str, *, default_name: str) -> EvalRun:
         raise LoadError(str(exc)) from exc
 
 
-def _dump(value: Any) -> str:
-    return json.dumps(value, sort_keys=True, ensure_ascii=False)
+def _render(value: Any) -> str:
+    """repr() of a JSON value, with dict keys sorted at every level."""
+    if isinstance(value, dict):
+        items = ", ".join(f"{key!r}: {_render(value[key])}" for key in sorted(value))
+        return f"{{{items}}}"
+    if isinstance(value, list):
+        return f"[{', '.join(_render(item) for item in value)}]"
+    return repr(value)
 
 
 def _require_source(source: _Source | None, case_name: str, display_name: str) -> _Source:
@@ -150,7 +163,8 @@ def _known_kinds(cases: list[_Case]) -> dict[str, Kind]:
     for case in cases:
         for section, kind in _SECTIONS:
             for key, result in getattr(case, section).items():
-                kinds[evaluator_id(_require_source(result.source, case.name, key))] = kind
+                source = _require_source(result.source, case.name, key)
+                kinds[evaluator_id(source, result.name)] = kind
     return kinds
 
 
@@ -160,10 +174,13 @@ def _case(case: _Case, known_kinds: dict[str, Kind]) -> CaseResult:
     for section, kind in _SECTIONS:
         for key, result in getattr(case, section).items():
             source = _require_source(result.source, case.name, key)
-            ref = EvaluatorRef(id=evaluator_id(source), display_name=key, kind=kind)
+            ref = EvaluatorRef(id=evaluator_id(source, result.name), display_name=key, kind=kind)
             measurements.append(Measurement(evaluator=ref, value=result.value))
     for failure in case.evaluator_failures:
-        identity = evaluator_id(_require_source(failure.source, case.name, failure.name))
+        # A failure carries the evaluator's own name: a scalar evaluator's results use the
+        # same name, so they share an id; a multi-output evaluator's outputs are unknown.
+        source = _require_source(failure.source, case.name, failure.name)
+        identity = evaluator_id(source, failure.name)
         ref = EvaluatorRef(
             id=identity,
             display_name=failure.name,

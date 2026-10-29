@@ -1,0 +1,168 @@
+{
+  "name": "echo",
+  "cases": [
+    {
+      "name": "a [1/2]",
+      "inputs": "a",
+      "metadata": null,
+      "expected_output": null,
+      "output": "a",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "a_check": {
+          "name": "a_check",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "CaseChecks",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": "a",
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "a [2/2]",
+      "inputs": "a",
+      "metadata": null,
+      "expected_output": null,
+      "output": "a",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "a_check": {
+          "name": "a_check",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "CaseChecks",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": "a",
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "b [1/2]",
+      "inputs": "b",
+      "metadata": null,
+      "expected_output": null,
+      "output": "b",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "b_check_1": {
+          "name": "b_check_1",
+          "value": false,
+          "reason": null,
+          "source": {
+            "name": "CaseChecks",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "b_check_2": {
+          "name": "b_check_2",
+          "value": false,
+          "reason": null,
+          "source": {
+            "name": "CaseChecks",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "b_check_3": {
+          "name": "b_check_3",
+          "value": false,
+          "reason": null,
+          "source": {
+            "name": "CaseChecks",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": "b",
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "b [2/2]",
+      "inputs": "b",
+      "metadata": null,
+      "expected_output": null,
+      "output": "b",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "b_check_1": {
+          "name": "b_check_1",
+          "value": false,
+          "reason": null,
+          "source": {
+            "name": "CaseChecks",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "b_check_2": {
+          "name": "b_check_2",
+          "value": false,
+          "reason": null,
+          "source": {
+            "name": "CaseChecks",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "b_check_3": {
+          "name": "b_check_3",
+          "value": false,
+          "reason": null,
+          "source": {
+            "name": "CaseChecks",
+            "arguments": null
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": "b",
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    }
+  ],
+  "failures": [],
+  "analyses": [],
+  "report_evaluator_failures": [],
+  "experiment_metadata": null,
+  "trace_id": null,
+  "span_id": null,
+  "dataset_name": "repeat_divergence"
+}

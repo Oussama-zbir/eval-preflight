@@ -65,8 +65,14 @@ class Judge(Evaluator[str, str, Any]):
         return 0.0
 
 
-# Scenario C (repeat divergence) is not generated yet: as specified it cannot be
-# expressed without tripping checks 2 or 4 (see BACKLOG.md).
+# Scenario C: repeat divergence (SPEC §9 C as amended in §15). One evaluator returns a
+# dict of named assertions: one passing on case a, three failing on case b.
+@dataclass
+class CaseChecks(Evaluator[str, str, Any]):
+    def evaluate(self, ctx: EvaluatorContext[str, str, Any]) -> dict[str, bool]:
+        if ctx.inputs == "a":
+            return {"a_check": True}
+        return {"b_check_1": False, "b_check_2": False, "b_check_3": False}
 
 
 # Scenario D: clean run, varying values.
@@ -103,6 +109,14 @@ SCENARIOS: dict[str, tuple[Dataset[str, str, Any], int]] = {
         ),
         1,
     ),
+    "repeat_divergence": (
+        Dataset(
+            name="repeat_divergence",
+            cases=cases("a", "b"),
+            evaluators=[CaseChecks()],
+        ),
+        2,
+    ),
     "clean_run": (
         Dataset(
             name="clean_run",
@@ -128,11 +142,17 @@ def normalise(node: Any) -> Any:
     return node
 
 
+def run_scenario(scenario: str) -> EvaluationReport[str, str, Any]:
+    """Run one scenario with the real library (also used by the in-memory tests)."""
+    dataset, repeat = SCENARIOS[scenario]
+    return dataset.evaluate_sync(echo, progress=False, repeat=repeat, max_concurrency=1)
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     adapter = TypeAdapter(EvaluationReport)
-    for scenario, (dataset, repeat) in SCENARIOS.items():
-        report = dataset.evaluate_sync(echo, progress=False, repeat=repeat, max_concurrency=1)
+    for scenario in SCENARIOS:
+        report = run_scenario(scenario)
         document = normalise(json.loads(adapter.dump_json(report, by_alias=True)))
         path = OUT / f"{scenario}.json"
         path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
