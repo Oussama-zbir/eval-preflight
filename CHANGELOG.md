@@ -11,6 +11,9 @@ All notable changes to this project are documented here. The format follows
   evaluator's coverage dropped, WARN when repeat counts differ. Python: `check(run,
   baseline=...)` and `check_pydantic_evals(report, baseline=...)`.
 - Golden scenario E (baseline), generated from pydantic-evals 2.61.0 with scenario D as baseline.
+- `examples/github-action.yml`, run by this repo's CI against the clean-run fixture (must pass)
+  and the partial-coverage fixture (must fail) via `scripts/run_action_example.py`.
+- `docs/ci.md`: exit codes, flags, baseline gating and the JSON report.
 - `--json`: only a machine-readable report on stdout, `{"verdict", "run", "findings"}`; usage
   errors still go to stderr with stdout empty. Python: `CheckResult.to_json()`.
 

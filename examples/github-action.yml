@@ -1,0 +1,44 @@
+# Gate a pull request on eval results that eval-preflight has checked first.
+#
+# Copy into .github/workflows/ and replace the "Run evals" step with your own; it must
+# write the results file named in RESULTS (a pydantic-evals JSON report or the generic
+# format, see docs/input-format.md). This repo's CI runs the steps whose id starts with
+# "preflight" against its clean-run fixture (scripts/run_action_example.py).
+name: evals
+
+on:
+  pull_request:
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    env:
+      RESULTS: eval-results.json
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      # eval-preflight is not on PyPI yet; install a tagged release from GitHub.
+      - name: Install eval-preflight
+        run: pip install "eval-preflight @ git+https://github.com/Oussama-zbir/eval-preflight@v0.0.2"
+
+      - name: Run evals
+        run: python -m my_project.evals --output "$RESULTS"  # replace with your eval command
+
+      # Exit 1 on FAIL blocks the merge; WARN passes unless --warnings-as-errors is added.
+      # To compare with the main branch, add: --baseline baseline-results.json
+      - name: Pre-flight check
+        id: preflight
+        run: |
+          eval-preflight check "$RESULTS" --json > preflight.json || true
+          eval-preflight check "$RESULTS"
+
+      - name: Upload the pre-flight report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: preflight
+          path: preflight.json

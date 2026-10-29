@@ -27,3 +27,27 @@ jobs:
 
       - name: make check
         run: make check
+
+  # SPEC M3: the GitHub Actions example runs in this repo's own CI against fixture D.
+  action-example:
+    name: action example (fixture D)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Install this checkout
+        run: uv sync
+
+      - name: Run the example's pre-flight steps on the clean run (must pass)
+        run: uv run python scripts/run_action_example.py --results tests/fixtures/pydantic_evals/clean_run.json
+
+      - name: The same steps on the partial run (must block)
+        run: |
+          if uv run python scripts/run_action_example.py --results tests/fixtures/pydantic_evals/partial_coverage.json; then
+            echo "expected the example to fail on partial_coverage.json"
+            exit 1
+          fi

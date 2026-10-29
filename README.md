@@ -15,6 +15,8 @@ inconsistent aggregation, so the number you gate on is the number your eval actu
   `evaluator-errors`, `name-collision`, `aggregation-consistency`, `constant-output`, and
   `baseline-comparability` with `--baseline`.
 - `eval-preflight check RESULTS`: exit `0` on PASS or WARN, `1` on FAIL, `2` on a usage error.
+- CI ([docs/ci.md](docs/ci.md)): `--json` report, `--baseline` comparison, and a GitHub Actions
+  workflow ([examples/github-action.yml](examples/github-action.yml)) that this repo's CI runs.
 - Python: `check(load(path))`, or `check_pydantic_evals(report)` for an in-memory pydantic-evals
   report (optional extra `eval-preflight[pydantic-evals]`, which adds the reported averages).
 

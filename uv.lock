@@ -248,6 +248,7 @@ dev = [
     { name = "pydantic-evals" },
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "pyyaml" },
     { name = "ruff" },
 ]
 
@@ -265,6 +266,7 @@ dev = [
     { name = "pydantic-evals", specifier = "==2.61.0" },
     { name = "pytest", specifier = ">=8.2" },
     { name = "pytest-cov", specifier = ">=5" },
+    { name = "pyyaml", specifier = ">=6" },
     { name = "ruff", specifier = ">=0.6" },
 ]
 
