@@ -16,6 +16,8 @@ All notable changes to this project are documented here. The format follows
 ### Changed
 - The version is defined once, in `eval_preflight.__version__`; `pyproject.toml` reads it.
 - The sdist no longer includes `.github/` or `CLAUDE.md`.
+- README rewritten for the 0.1.0 release: the problem, install, CLI/Python/CI quickstart, the
+  checks table, supported inputs, relation to `evaltrust` and `limen-eval`, and limitations.
 
 ## [0.0.3] — not published
 
