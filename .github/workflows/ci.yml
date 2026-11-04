@@ -5,6 +5,12 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # Dependencies are floors, and the pydantic-evals extra allows any 2.x: a new upstream
+  # release can break a user's install with no change here. Weekly, staggered from the
+  # other portfolio repos.
+  schedule:
+    - cron: "17 6 * * 4"
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -73,3 +79,36 @@ jobs:
 
       - name: Install the wheel in a clean venv and run the quickstart
         run: scripts/smoke_dist.sh dist
+
+  # The pydantic-evals extra allows >=2.61,<3, but the dev group pins the version the
+  # fixtures were generated with. This job installs the newest 2.x release and checks
+  # that (1) live reports still load exactly like the committed fixtures and (2) the
+  # generator still writes byte-identical fixtures, i.e. the JSON format has not moved.
+  upstream:
+    name: newest pydantic-evals 2.x
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Install this checkout, then upgrade pydantic-evals past the dev pin
+        run: |
+          uv sync
+          uv pip install --upgrade "pydantic-evals>=2.61,<3"
+          version="$(uv run --no-sync python -c 'import importlib.metadata as m; print(m.version("pydantic-evals"))')"
+          echo "Tested pydantic-evals ${version} (fixtures: $(cat tests/fixtures/pydantic_evals/VERSION))" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Test suite against the committed fixtures
+        # The only expected failure is the guard that the installed version is the
+        # generating one; that mismatch is the point of this job.
+        run: >-
+          uv run --no-sync pytest -q
+          --deselect tests/test_adapter_pydantic_evals_inmemory.py::test_fixtures_were_generated_with_the_installed_version
+
+      - name: Regenerate the fixtures; any change means the report format moved
+        run: |
+          uv run --no-sync python scripts/make_fixtures.py
+          git diff --exit-code -- tests/fixtures ':(exclude)tests/fixtures/pydantic_evals/VERSION'

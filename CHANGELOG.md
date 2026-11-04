@@ -12,6 +12,10 @@ All notable changes to this project are documented here. The format follows
 - `scripts/smoke_dist.sh`, run by CI on every push: installs the built wheel in a fresh
   virtualenv outside the checkout and runs the CLI and Python quickstart against it.
 - Package metadata: project URLs and supported Python versions.
+- CI job `upstream`: installs the newest pydantic-evals 2.x (the extra allows `>=2.61,<3`, the
+  fixtures are pinned to 2.61.0), runs the suite against the committed fixtures and regenerates
+  them, failing on any byte change. CI also runs weekly and on demand to catch upstream drift.
+  First result: pydantic-evals 2.66.0 writes byte-identical fixtures.
 
 ### Changed
 - The version is defined once, in `eval_preflight.__version__`; `pyproject.toml` reads it.
