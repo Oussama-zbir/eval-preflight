@@ -11,7 +11,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from eval_preflight.adapters import LoadError
+from eval_preflight.adapters import LoadError, loads_json
 from eval_preflight.model import CaseResult, EvalRun, EvaluatorRef, Kind, Measurement
 
 
@@ -68,7 +68,7 @@ def looks_generic(document: object) -> bool:
 
 def parse_generic(text: str, *, default_name: str) -> EvalRun:
     try:
-        document = json.loads(text)
+        document = loads_json(text)
     except json.JSONDecodeError:
         document = None
     if isinstance(document, dict) and "case_id" not in document:
@@ -102,7 +102,7 @@ def _parse_jsonl(text: str, *, default_name: str) -> EvalRun:
         if not raw.strip():
             continue
         try:
-            row = json.loads(raw)
+            row = loads_json(raw)
         except json.JSONDecodeError as exc:
             raise LoadError(f"line {number}: not valid JSON ({exc.msg})") from exc
         if not isinstance(row, dict):

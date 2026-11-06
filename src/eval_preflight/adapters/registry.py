@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from eval_preflight.adapters import LoadError
+from eval_preflight.adapters import LoadError, loads_json
 from eval_preflight.adapters.generic import looks_generic, parse_generic
 from eval_preflight.adapters.pydantic_evals import looks_pydantic_evals, parse_pydantic_evals
 from eval_preflight.model import EvalRun
@@ -18,12 +18,12 @@ FORMATS = ("auto", *PARSERS)
 def _first_json_value(text: str) -> object:
     """The whole text as JSON, else its first non-blank line (JSONL)."""
     try:
-        return json.loads(text)
+        return loads_json(text)
     except json.JSONDecodeError:
         pass
     first = next(line for line in text.splitlines() if line.strip())
     try:
-        return json.loads(first)
+        return loads_json(first)
     except json.JSONDecodeError as exc:
         raise LoadError(f"input is not valid JSON or JSONL ({exc.msg})") from exc
 

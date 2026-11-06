@@ -23,6 +23,10 @@ All notable changes to this project are documented here. The format follows
 - README rewritten for the 0.1.0 release: the problem, install, CLI/Python/CI quickstart, the
   checks table, supported inputs, relation to `evaltrust` and `limen-eval`, and limitations.
 
+### Fixed
+- JSON nested too deeply for the parser raised an uncaught `RecursionError` (traceback, exit 1,
+  which reads as a FAIL verdict). `load()` now raises `LoadError` and the CLI exits 2.
+
 ## [0.0.3] — not published
 
 Milestone 3.

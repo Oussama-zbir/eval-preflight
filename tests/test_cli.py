@@ -158,6 +158,26 @@ def test_missing_file_exits_2(tmp_path: Path, capsys: pytest.CaptureFixture[str]
     assert "cannot read" in err
 
 
+@pytest.mark.parametrize("format", ["auto", "generic", "pydantic-evals"])
+@pytest.mark.parametrize(
+    "content",
+    [
+        "[" * 100_000 + "]" * 100_000,
+        '{"case_id": "c1", "x": ' + "[" * 100_000 + "]" * 100_000 + "}",
+    ],
+    ids=["document", "jsonl-row"],
+)
+def test_json_nested_too_deeply_exits_2(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], format: str, content: str
+) -> None:
+    path = tmp_path / "deep.json"
+    path.write_text(content)
+    code, out, err = run_cli(capsys, str(path), "--format", format)
+    assert code == 2
+    assert out == ""
+    assert "nested too deeply" in err
+
+
 @pytest.mark.parametrize(
     "args",
     [

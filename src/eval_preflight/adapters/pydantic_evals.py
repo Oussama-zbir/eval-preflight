@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, Any
 from pydantic import BaseModel, ValidationError
 from pydantic_core import to_jsonable_python
 
-from eval_preflight.adapters import LoadError
+from eval_preflight.adapters import LoadError, loads_json
 from eval_preflight.model import CaseResult, EvalRun, EvaluatorRef, Kind, Measurement
 
 if TYPE_CHECKING:
@@ -113,7 +113,7 @@ def evaluator_id(source: _Source, output_name: str) -> str:
 
 def parse_pydantic_evals(text: str, *, default_name: str) -> EvalRun:
     try:
-        document = json.loads(text)
+        document = loads_json(text)
     except json.JSONDecodeError as exc:
         raise LoadError(f"pydantic-evals report is not valid JSON ({exc.msg})") from exc
     return _from_document(document, default_name=default_name)

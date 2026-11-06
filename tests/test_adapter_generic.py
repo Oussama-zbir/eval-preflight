@@ -142,6 +142,13 @@ def test_duplicate_case_runs_are_rejected(tmp_path: Path) -> None:
         load(path)
 
 
+def test_json_nested_too_deeply_is_a_load_error(tmp_path: Path) -> None:
+    path = tmp_path / "r.json"
+    path.write_text("[" * 100_000 + "]" * 100_000)
+    with pytest.raises(LoadError, match="nested too deeply"):
+        load(path)
+
+
 def test_missing_file(tmp_path: Path) -> None:
     with pytest.raises(LoadError, match="cannot read"):
         load(tmp_path / "missing.json")
