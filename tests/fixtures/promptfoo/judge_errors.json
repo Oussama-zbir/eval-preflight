@@ -1,0 +1,808 @@
+{
+  "evalId": "<removed>",
+  "results": {
+    "version": 3,
+    "timestamp": "<removed>",
+    "prompts": [
+      {
+        "id": "<removed>",
+        "raw": "Q: {{q}}",
+        "label": "Q: {{q}}",
+        "provider": "echo-task",
+        "metrics": {
+          "score": 2.9999999999999996,
+          "testPassCount": 1,
+          "testFailCount": 3,
+          "testErrorCount": 0,
+          "testCacheHitCount": 0,
+          "assertPassCount": 9,
+          "assertFailCount": 3,
+          "totalLatencyMs": "<removed>",
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 4,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 4,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "namedScores": {
+            "nonempty": 4
+          },
+          "namedScoresCount": {
+            "nonempty": 4
+          },
+          "namedScoreWeights": {
+            "nonempty": 4
+          },
+          "cost": 0
+        }
+      }
+    ],
+    "results": [
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {
+            "nonempty": 1
+          },
+          "namedScoreWeights": {
+            "nonempty": 1
+          },
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "contains",
+                "value": "answer"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "output.length > 3",
+                "metric": "nonempty"
+              }
+            },
+            {
+              "assertion": {
+                "type": "llm-rubric",
+                "value": "is polite",
+                "provider": "file://flaky_judge.js"
+              },
+              "pass": true,
+              "score": 1,
+              "reason": "polite",
+              "tokensUsed": {
+                "total": 0,
+                "prompt": 0,
+                "completion": 0,
+                "cached": 0,
+                "numRequests": 0,
+                "completionDetails": {
+                  "reasoning": 0,
+                  "acceptedPrediction": 0,
+                  "rejectedPrediction": 0
+                }
+              },
+              "metadata": {
+                "renderedGradingPrompt": "[{\"role\":\"system\",\"content\":\"You are grading output according to a user-specified rubric. If the statement in the rubric is true, then the output passes the test. You respond with a JSON object with this structure: {reason: string, pass: boolean, score: number}\\n\\nExamples:\\n\\n<Output>Hello world</Output>\\n<Rubric>Content contains a greeting</Rubric>\\n{\\\"reason\\\": \\\"the content contains the word 'Hello'\\\", \\\"pass\\\": true, \\\"score\\\": 1.0}\\n\\n<Output>Avast ye swabs, repel the invaders!</Output>\\n<Rubric>Does not speak like a pirate</Rubric>\\n{\\\"reason\\\": \\\"'avast ye' is a common pirate term\\\", \\\"pass\\\": false, \\\"score\\\": 0.0}\"},{\"role\":\"user\",\"content\":\"<Output>\\nanswer: c1\\n</Output>\\n<Rubric>\\nis polite\\n</Rubric>\"}]"
+              }
+            }
+          ]
+        },
+        "id": "<removed>",
+        "latencyMs": "<removed>",
+        "namedScores": {
+          "nonempty": 1
+        },
+        "prompt": {
+          "raw": "Q: c1",
+          "label": "Q: {{q}}",
+          "config": {}
+        },
+        "promptId": "8a420d3cd28d7b29d3f502d121786407e188762fe1a7c40d059f1fee6bff978e",
+        "promptIdx": 0,
+        "provider": {
+          "id": "<removed>",
+          "label": ""
+        },
+        "response": {
+          "output": "answer: c1"
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "c1",
+          "vars": {
+            "q": "c1"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "answer"
+            },
+            {
+              "type": "javascript",
+              "value": "output.length > 3",
+              "metric": "nonempty"
+            },
+            {
+              "type": "llm-rubric",
+              "value": "is polite",
+              "provider": "file://flaky_judge.js"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "q": "c1"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "error": "judge quota exhausted",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.6666666666666666,
+          "reason": "judge quota exhausted",
+          "namedScores": {
+            "nonempty": 1
+          },
+          "namedScoreWeights": {
+            "nonempty": 1
+          },
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "contains",
+                "value": "answer"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "output.length > 3",
+                "metric": "nonempty"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "judge quota exhausted",
+              "score": 0,
+              "tokensUsed": {
+                "total": 0,
+                "prompt": 0,
+                "completion": 0,
+                "cached": 0,
+                "numRequests": 1,
+                "completionDetails": {
+                  "reasoning": 0,
+                  "acceptedPrediction": 0,
+                  "rejectedPrediction": 0
+                }
+              },
+              "metadata": {
+                "graderError": true
+              },
+              "assertion": {
+                "type": "llm-rubric",
+                "value": "is polite",
+                "provider": "file://flaky_judge.js"
+              }
+            }
+          ]
+        },
+        "id": "<removed>",
+        "latencyMs": "<removed>",
+        "namedScores": {
+          "nonempty": 1
+        },
+        "prompt": {
+          "raw": "Q: c2",
+          "label": "Q: {{q}}",
+          "config": {}
+        },
+        "promptId": "8a420d3cd28d7b29d3f502d121786407e188762fe1a7c40d059f1fee6bff978e",
+        "promptIdx": 0,
+        "provider": {
+          "id": "<removed>",
+          "label": ""
+        },
+        "response": {
+          "output": "answer: c2"
+        },
+        "score": 0.6666666666666666,
+        "success": false,
+        "testCase": {
+          "description": "c2",
+          "vars": {
+            "q": "c2"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "answer"
+            },
+            {
+              "type": "javascript",
+              "value": "output.length > 3",
+              "metric": "nonempty"
+            },
+            {
+              "type": "llm-rubric",
+              "value": "is polite",
+              "provider": "file://flaky_judge.js"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "q": "c2"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0,
+        "error": "judge quota exhausted",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.6666666666666666,
+          "reason": "judge quota exhausted",
+          "namedScores": {
+            "nonempty": 1
+          },
+          "namedScoreWeights": {
+            "nonempty": 1
+          },
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "contains",
+                "value": "answer"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "output.length > 3",
+                "metric": "nonempty"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "judge quota exhausted",
+              "score": 0,
+              "tokensUsed": {
+                "total": 0,
+                "prompt": 0,
+                "completion": 0,
+                "cached": 0,
+                "numRequests": 1,
+                "completionDetails": {
+                  "reasoning": 0,
+                  "acceptedPrediction": 0,
+                  "rejectedPrediction": 0
+                }
+              },
+              "metadata": {
+                "graderError": true
+              },
+              "assertion": {
+                "type": "llm-rubric",
+                "value": "is polite",
+                "provider": "file://flaky_judge.js"
+              }
+            }
+          ]
+        },
+        "id": "<removed>",
+        "latencyMs": "<removed>",
+        "namedScores": {
+          "nonempty": 1
+        },
+        "prompt": {
+          "raw": "Q: c3",
+          "label": "Q: {{q}}",
+          "config": {}
+        },
+        "promptId": "8a420d3cd28d7b29d3f502d121786407e188762fe1a7c40d059f1fee6bff978e",
+        "promptIdx": 0,
+        "provider": {
+          "id": "<removed>",
+          "label": ""
+        },
+        "response": {
+          "output": "answer: c3"
+        },
+        "score": 0.6666666666666666,
+        "success": false,
+        "testCase": {
+          "description": "c3",
+          "vars": {
+            "q": "c3"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "answer"
+            },
+            {
+              "type": "javascript",
+              "value": "output.length > 3",
+              "metric": "nonempty"
+            },
+            {
+              "type": "llm-rubric",
+              "value": "is polite",
+              "provider": "file://flaky_judge.js"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 2,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "q": "c3"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0,
+        "error": "judge quota exhausted",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.6666666666666666,
+          "reason": "judge quota exhausted",
+          "namedScores": {
+            "nonempty": 1
+          },
+          "namedScoreWeights": {
+            "nonempty": 1
+          },
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "contains",
+                "value": "answer"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "output.length > 3",
+                "metric": "nonempty"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "judge quota exhausted",
+              "score": 0,
+              "tokensUsed": {
+                "total": 0,
+                "prompt": 0,
+                "completion": 0,
+                "cached": 0,
+                "numRequests": 1,
+                "completionDetails": {
+                  "reasoning": 0,
+                  "acceptedPrediction": 0,
+                  "rejectedPrediction": 0
+                }
+              },
+              "metadata": {
+                "graderError": true
+              },
+              "assertion": {
+                "type": "llm-rubric",
+                "value": "is polite",
+                "provider": "file://flaky_judge.js"
+              }
+            }
+          ]
+        },
+        "id": "<removed>",
+        "latencyMs": "<removed>",
+        "namedScores": {
+          "nonempty": 1
+        },
+        "prompt": {
+          "raw": "Q: c4",
+          "label": "Q: {{q}}",
+          "config": {}
+        },
+        "promptId": "8a420d3cd28d7b29d3f502d121786407e188762fe1a7c40d059f1fee6bff978e",
+        "promptIdx": 0,
+        "provider": {
+          "id": "<removed>",
+          "label": ""
+        },
+        "response": {
+          "output": "answer: c4"
+        },
+        "score": 0.6666666666666666,
+        "success": false,
+        "testCase": {
+          "description": "c4",
+          "vars": {
+            "q": "c4"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "answer"
+            },
+            {
+              "type": "javascript",
+              "value": "output.length > 3",
+              "metric": "nonempty"
+            },
+            {
+              "type": "llm-rubric",
+              "value": "is polite",
+              "provider": "file://flaky_judge.js"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 3,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "q": "c4"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      }
+    ],
+    "stats": {
+      "successes": 1,
+      "failures": 3,
+      "errors": 0,
+      "tokenUsage": {
+        "prompt": 0,
+        "completion": 0,
+        "cached": 0,
+        "total": 0,
+        "numRequests": 4,
+        "completionDetails": {
+          "reasoning": 0,
+          "acceptedPrediction": 0,
+          "rejectedPrediction": 0,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0
+        },
+        "assertions": {
+          "total": 0,
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "numRequests": 4,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          }
+        }
+      },
+      "durationMs": "<removed>",
+      "evaluationDurationMs": "<removed>"
+    }
+  },
+  "config": {
+    "tags": {},
+    "description": "judge_errors",
+    "prompts": [
+      "Q: {{q}}"
+    ],
+    "providers": [
+      "file://task.js"
+    ],
+    "tests": [
+      {
+        "description": "c1",
+        "vars": {
+          "q": "c1"
+        }
+      },
+      {
+        "description": "c2",
+        "vars": {
+          "q": "c2"
+        }
+      },
+      {
+        "description": "c3",
+        "vars": {
+          "q": "c3"
+        }
+      },
+      {
+        "description": "c4",
+        "vars": {
+          "q": "c4"
+        }
+      }
+    ],
+    "env": {},
+    "sharing": false,
+    "outputPath": [
+      "judge_errors.out.json"
+    ],
+    "extensions": [],
+    "metadata": {},
+    "evaluateOptions": {},
+    "defaultTest": {
+      "assert": [
+        {
+          "type": "contains",
+          "value": "answer"
+        },
+        {
+          "type": "javascript",
+          "value": "output.length > 3",
+          "metric": "nonempty"
+        },
+        {
+          "type": "llm-rubric",
+          "value": "is polite",
+          "provider": "file://flaky_judge.js"
+        }
+      ],
+      "vars": {},
+      "options": {},
+      "metadata": {}
+    },
+    "basePath": "<tmp>"
+  },
+  "shareableUrl": null,
+  "metadata": {
+    "promptfooVersion": "0.125.1",
+    "nodeVersion": "<removed>",
+    "platform": "<removed>",
+    "arch": "<removed>",
+    "exportedAt": "<removed>",
+    "evaluationCreatedAt": "<removed>"
+  },
+  "vars": [
+    "q"
+  ],
+  "runtimeOptions": {
+    "eventSource": "cli",
+    "showProgressBar": true,
+    "repeat": 1,
+    "maxConcurrency": 1,
+    "cache": false
+  }
+}

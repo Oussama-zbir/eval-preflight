@@ -1,4 +1,4 @@
-.PHONY: check lint format typecheck test fixtures
+.PHONY: check lint format typecheck test fixtures promptfoo-fixtures
 
 check: lint typecheck test
 
@@ -19,3 +19,7 @@ test:
 # Runs the real pydantic-evals (pinned in the script) in an isolated uv environment.
 fixtures:
 	uv run --no-project scripts/make_fixtures.py
+
+# Runs the real promptfoo (pinned in the script) through npx; needs Node.js.
+promptfoo-fixtures:
+	uv run --no-project scripts/make_promptfoo_fixtures.py

@@ -7,11 +7,15 @@ from pathlib import Path
 
 from eval_preflight.adapters import LoadError, loads_json
 from eval_preflight.adapters.generic import looks_generic, parse_generic
+from eval_preflight.adapters.promptfoo import looks_promptfoo, parse_promptfoo
 from eval_preflight.adapters.pydantic_evals import looks_pydantic_evals, parse_pydantic_evals
 from eval_preflight.model import EvalRun
 
-# promptfoo arrives in Milestone 5.
-PARSERS = {"generic": parse_generic, "pydantic-evals": parse_pydantic_evals}
+PARSERS = {
+    "generic": parse_generic,
+    "pydantic-evals": parse_pydantic_evals,
+    "promptfoo": parse_promptfoo,
+}
 FORMATS = ("auto", *PARSERS)
 
 
@@ -34,6 +38,8 @@ def detect(text: str) -> str:
         return "generic"
     if looks_pydantic_evals(document):
         return "pydantic-evals"
+    if looks_promptfoo(document):
+        return "promptfoo"
     raise LoadError("could not detect the input format; pass --format explicitly")
 
 

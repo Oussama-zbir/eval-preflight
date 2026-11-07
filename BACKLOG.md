@@ -16,6 +16,9 @@ Ideas outside the current milestone, one line each. Not implemented unless asked
 - Validate that `kind` matches the value type (e.g. `assertion` with `0.7`).
 - Option to show full case lists instead of truncating at five in terminal output.
 - Optional `--source-version` flag for JSON reports, which do not record the producing version.
+- promptfoo: multi-prompt/provider exports (needs a decision on whether case ids include the provider).
+- promptfoo: a throwing `javascript`/`python` assertion is an unflagged FAIL; detect it only if promptfoo flags it.
+- promptfoo: check named-score sums (`prompts[].metrics.namedScores`) as reported aggregates.
 
 ## Resolved (SPEC.md §15, 2026-10-29)
 
