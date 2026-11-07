@@ -3,7 +3,7 @@
 A pre-flight check for eval results. It catches partial runs, failed judges, mislabelled scores and
 inconsistent aggregation, so the number you gate on is the number your eval actually produced.
 
-**Status: alpha (0.0.3).** Not yet on PyPI; the first PyPI release will be 0.1.0.
+**Status: alpha (0.1.0).** The first release on PyPI.
 [SPEC.md](SPEC.md) is the contract the code is built against.
 
 ## The problem in ten seconds
@@ -48,11 +48,9 @@ a report written by the real pydantic-evals 2.61.0 ([`scripts/make_fixtures.py`]
 Python 3.11+. Runtime dependencies: pydantic and rich. No network access, no telemetry.
 
 ```console
-$ pip install "eval-preflight @ git+https://github.com/Oussama-zbir/eval-preflight@v0.0.3"
+$ pip install eval-preflight
+$ pip install "eval-preflight[pydantic-evals]"   # also the in-memory pydantic-evals path
 ```
-
-From 0.1.0: `pip install eval-preflight`. For the in-memory pydantic-evals path add the extra:
-`eval-preflight[pydantic-evals]`.
 
 ## Quickstart
 
@@ -159,7 +157,7 @@ precise about the wrong number.
   same spec, or an evaluator whose return type varies by case ([input format](docs/input-format.md)).
 - JSON reports from pydantic-evals do not record the producing version or the framework's averages;
   only the in-memory path can check reported aggregates.
-- Alpha: the data model is stable from 0.1.0; flags and messages may still change before then.
+- Alpha: the data model is stable from 0.1.0; flags and messages may still change before 1.0.
 
 ## Development
 

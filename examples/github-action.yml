@@ -21,9 +21,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      # eval-preflight is not on PyPI yet; install a tagged release from GitHub.
       - name: Install eval-preflight
-        run: pip install "eval-preflight @ git+https://github.com/Oussama-zbir/eval-preflight@v0.0.3"
+        run: pip install "eval-preflight==0.1.0"
 
       - name: Run evals
         run: python -m my_project.evals --output "$RESULTS"  # replace with your eval command

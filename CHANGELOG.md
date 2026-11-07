@@ -5,6 +5,10 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-11-07
+
+First release on PyPI. The data model (SPEC §5) is frozen from this version.
+
 ### Added
 - `.github/workflows/publish.yml`: publishes to PyPI with trusted publishing, only when a `v*`
   tag is pushed, after `make check`, `twine check` and a clean-install smoke test, and only if
