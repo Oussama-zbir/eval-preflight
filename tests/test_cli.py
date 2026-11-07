@@ -178,6 +178,51 @@ def test_json_nested_too_deeply_exits_2(
     assert "nested too deeply" in err
 
 
+def _measurement(evaluator_id: str, kind: str, value: object) -> dict[str, object]:
+    return {
+        "evaluator_id": evaluator_id,
+        "display_name": evaluator_id,
+        "kind": kind,
+        "value": value,
+    }
+
+
+@pytest.mark.parametrize(
+    ("rows", "message"),
+    [
+        (
+            [{"case_id": "c1", "measurements": [_measurement("e", "score", 1.0)] * 2}],
+            "duplicate evaluator id 'e' in case-run ('c1', 0)",
+        ),
+        (
+            [
+                {"case_id": "c1", "measurements": [_measurement("e", "score", 1.0)]},
+                {"case_id": "c2", "measurements": [_measurement("e", "assertion", True)]},
+            ],
+            "evaluator id 'e' has conflicting kinds",
+        ),
+    ],
+    ids=["duplicate-id", "conflicting-kinds"],
+)
+@pytest.mark.parametrize("as_baseline", [False, True], ids=["results", "baseline"])
+def test_ambiguous_evaluator_ids_exit_2(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    rows: list[dict[str, object]],
+    message: str,
+    as_baseline: bool,
+) -> None:
+    path = tmp_path / "bad.jsonl"
+    path.write_text("".join(json.dumps(r) + "\n" for r in rows))
+    clean = str(FIXTURES / "clean_run.json")
+    args = [clean, "--baseline", str(path)] if as_baseline else [str(path)]
+    code, out, err = run_cli(capsys, *args, "--json")
+    assert code == 2
+    assert out == ""
+    assert message in err
+    assert ("baseline:" in err) is as_baseline
+
+
 @pytest.mark.parametrize(
     "args",
     [

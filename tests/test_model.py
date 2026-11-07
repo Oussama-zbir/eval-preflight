@@ -56,3 +56,62 @@ def test_eval_run_optional_fields() -> None:
     result = EvalRun(name="r", source="generic", cases=[])
     assert result.source_version is None
     assert result.reported_aggregates is None
+
+
+def test_duplicate_evaluator_id_in_one_case_run_is_rejected() -> None:
+    with pytest.raises(
+        ValidationError, match=r"duplicate evaluator id 'e' in case-run \('c1', 0\)"
+    ):
+        run(case("c1", m("e", 1.0), m("e", 0.0)))
+
+
+def test_duplicate_evaluator_id_is_rejected_even_when_one_is_an_error() -> None:
+    with pytest.raises(ValidationError, match="duplicate evaluator id 'e'"):
+        run(case("c1", m("e", 1.0), m("e", None, error="x")))
+
+
+def test_duplicate_evaluator_id_is_rejected_on_a_failed_task() -> None:
+    with pytest.raises(ValidationError, match="duplicate evaluator id 'e'"):
+        run(case("c1", m("e", None), m("e", None), task_error="boom"))
+
+
+def test_same_evaluator_id_in_different_case_runs_is_allowed() -> None:
+    result = run(
+        case("c1", m("e", 1.0)), case("c1", m("e", 0.0), run_index=1), case("c2", m("e", 1.0))
+    )
+    assert len(result.cases) == 3
+
+
+def test_one_display_name_for_two_ids_in_one_case_run_is_allowed() -> None:
+    # A display-name collision is a finding (name-collision), not a load error.
+    result = run(case("c1", m("strict", 0.0, display="Judge"), m("lenient", 1.0, display="Judge")))
+    assert len(result.cases[0].measurements) == 2
+
+
+def test_conflicting_kinds_for_one_evaluator_id_are_rejected() -> None:
+    with pytest.raises(
+        ValidationError,
+        match=(
+            r"evaluator id 'e' has conflicting kinds: 'score' in case-run \('c1', 0\), "
+            r"'assertion' in case-run \('c2', 0\)"
+        ),
+    ):
+        run(case("c1", m("e", 1.0)), case("c2", m("e", True, kind="assertion")))
+
+
+def test_conflicting_kind_on_an_error_measurement_is_rejected() -> None:
+    with pytest.raises(ValidationError, match="conflicting kinds"):
+        run(case("c1", m("e", "yes", kind="label")), case("c2", m("e", None, error="x")))
+
+
+def test_conflicting_kinds_across_repeats_are_rejected() -> None:
+    with pytest.raises(ValidationError, match="conflicting kinds"):
+        run(case("c1", m("e", 1.0)), case("c1", m("e", "a", kind="label"), run_index=1))
+
+
+def test_one_kind_per_evaluator_id_is_allowed() -> None:
+    result = run(
+        case("c1", m("a", True, kind="assertion"), m("s", 1.0)),
+        case("c2", m("a", None, kind="assertion", error="x"), m("s", 0.5)),
+    )
+    assert len(result.cases) == 2

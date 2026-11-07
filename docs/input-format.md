@@ -40,11 +40,16 @@ name is the file name without its extension.
 | `case_id` | string, required | Stable across runs. For repeats, the original case name. |
 | `run_index` | int ≥ 0, default 0 | 0-based repeat index. `(case_id, run_index)` must be unique. |
 | `task_error` | string or null | The task under test raised; no measurements expected. |
-| `measurements[].evaluator_id` | string, required | Stable evaluator identity, e.g. `Judge(rubric='strict')`. Never derive it from the display name. |
+| `measurements[].evaluator_id` | string, required | Stable evaluator identity, e.g. `Judge(rubric='strict')`. Never derive it from the display name. At most once per case-run. |
 | `measurements[].display_name` | string, required | The name the framework reported, e.g. `Judge` or `Judge_2`. |
-| `measurements[].kind` | `score` \| `assertion` \| `label` | |
+| `measurements[].kind` | `score` \| `assertion` \| `label` | The same for every measurement of an evaluator id across the run. |
 | `measurements[].value` | number, bool, string or null | `null` when the evaluator produced nothing. |
 | `measurements[].error` | string or null | Set when the evaluator failed on this case-run. |
+
+A run that breaks either evaluator-id rule is rejected (exit 2), not checked: two measurements
+with one id in a case-run would be pooled like repeats, and an id with two kinds has no single
+correct verdict ([SPEC.md](../SPEC.md) §15, amendment 4). Two ids sharing a display name are
+valid input; `name-collision` reports them.
 
 ## Detection
 
@@ -92,6 +97,12 @@ bare source id (its outputs are unknown when it raises).
 A result or failure without `source` is rejected (exit 2): its identity cannot be verified, and
 inferring it from the display key would hide the mislabelling that `name-collision` exists to
 catch.
+
+The evaluator-id rules above apply to pydantic-evals reports too, and real reports can break
+them: two evaluators with the same spec (class and non-default arguments) share one id in every
+case (filed as `Judge` and `Judge_2`), and pydantic-evals files each result by its runtime value
+type, so an evaluator that returns a bool on one case and a number on another has two kinds. Both
+are rejected with exit 2; give such evaluators distinct arguments or a consistent return type.
 
 From JSON, `source_version` and `reported_aggregates` are left empty: the file does not record
 the producing version, and `report.averages()` needs the in-memory report.

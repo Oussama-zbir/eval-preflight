@@ -154,6 +154,9 @@ precise about the wrong number.
 - Identity is only as good as the framework's evaluator spec. pydantic-evals omits the field name
   for a single positional argument, so the id renders positionally (`Judge('strict')`) and is not
   comparable with an id written by hand in the generic format.
+- A run with two measurements under one evaluator id in a case-run, or one id with two kinds, is
+  rejected (exit 2) rather than checked. pydantic-evals can produce both: two evaluators with the
+  same spec, or an evaluator whose return type varies by case ([input format](docs/input-format.md)).
 - JSON reports from pydantic-evals do not record the producing version or the framework's averages;
   only the in-memory path can check reported aggregates.
 - Alpha: the data model is stable from 0.1.0; flags and messages may still change before then.

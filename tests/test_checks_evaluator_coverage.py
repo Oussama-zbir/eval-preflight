@@ -83,8 +83,14 @@ def test_zero_coverage_reads_zero_percent() -> None:
 
 
 def test_false_and_zero_count_as_coverage() -> None:
-    result = findings(run(case("c1", m("a", False, kind="assertion")), case("c2", m("a", 0.0))))
+    result = findings(
+        run(
+            case("c1", m("a", False, kind="assertion"), m("s", 0.0)),
+            case("c2", m("a", False, kind="assertion"), m("s", 0.0)),
+        )
+    )
     assert result["a"].severity == "PASS"
+    assert result["s"].severity == "PASS"
 
 
 def test_evaluator_seen_only_on_failed_tasks_has_no_eligible_case_runs() -> None:
@@ -139,9 +145,3 @@ def test_non_finite_on_failed_task_is_ignored() -> None:
     result_run = run(case("c1", m("e", 1.0)), case("c2", m("e", math.nan), task_error="boom"))
     found = check(result_run, CheckConfig(max_task_failure_rate=1.0)).by_check("evaluator-coverage")
     assert [f.details.get("kind") for f in found] == [None]
-
-
-def test_case_run_with_a_finite_and_a_non_finite_value_is_covered_but_flagged() -> None:
-    result_run = run(case("c1", m("e", 1.0), m("e", math.inf)))
-    assert findings(result_run)["e"].severity == "PASS"
-    assert [f.severity for f in non_finite(result_run)] == ["FAIL"]

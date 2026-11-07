@@ -259,6 +259,36 @@ def test_missing_source_is_unverifiable_not_guessed(tmp_path: Path, section: str
         load_doc(tmp_path, report(report_case("c1", **{section: entry})))
 
 
+def test_two_evaluators_with_the_same_spec_are_rejected(tmp_path: Path) -> None:
+    # Two identical Judge instances get one id; pydantic-evals files them as Judge and Judge_2.
+    scores = {
+        "Judge": result("Judge", 1.0, ["strict"]),
+        "Judge_2": result("Judge", 0.0, ["strict"]),
+    }
+    with pytest.raises(LoadError, match=r"duplicate evaluator id \"Judge\('strict'\)\""):
+        load_doc(tmp_path, report(report_case("c1", scores=scores)))
+
+
+def test_one_evaluator_in_two_sections_is_rejected(tmp_path: Path) -> None:
+    # pydantic-evals files each result by its runtime value type, so one evaluator can
+    # land in `scores` on one case and in `assertions` on another.
+    document = report(
+        report_case("c1", scores={"E": result("E", 0.5)}),
+        report_case("c2", assertions={"E": result("E", True)}),
+    )
+    with pytest.raises(LoadError, match="evaluator id 'E\\(\\)' has conflicting kinds"):
+        load_doc(tmp_path, document)
+
+
+def test_failure_takes_the_known_kind_so_kinds_stay_consistent(tmp_path: Path) -> None:
+    document = report(
+        report_case("c1", assertions={"E": result("E", True)}),
+        report_case("c2", evaluator_failures=[failure("E", "RuntimeError: x", "RuntimeError")]),
+    )
+    run = load_doc(tmp_path, document)
+    assert {m.evaluator.kind for c in run.cases for m in c.measurements} == {"assertion"}
+
+
 def test_run_name_prefers_dataset_name(tmp_path: Path) -> None:
     case = report_case("c1", scores={"S": result("S", 1.0)})
     assert load_doc(tmp_path, report(case)).name == "ds"

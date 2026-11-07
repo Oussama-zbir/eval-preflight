@@ -62,13 +62,3 @@ def test_error_rate_just_above_threshold_fails() -> None:
         max_evaluator_error_rate=0.49,
     )
     assert result["e"].severity == "FAIL"
-
-
-def test_one_case_run_with_two_errors_counts_once() -> None:
-    result = findings(
-        run(
-            case("c1", m("e", None, error="x"), m("e", None, error="y")),
-            case("c2", m("e", 1.0)),
-        )
-    )
-    assert result["e"].message == "e errored on 1/2: x"

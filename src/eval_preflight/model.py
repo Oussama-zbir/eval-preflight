@@ -52,3 +52,25 @@ class EvalRun(_Model):
                 raise ValueError(f"duplicate case-run {key!r}")
             seen.add(key)
         return self
+
+    @model_validator(mode="after")
+    def _evaluator_ids_are_unambiguous(self) -> EvalRun:
+        # SPEC §15, amendment 4: one measurement per evaluator id per case-run, and one
+        # kind per evaluator id across the run. Either would otherwise change a verdict
+        # silently (a duplicate pools like a repeat; a mixed kind splits the checks).
+        kinds: dict[str, tuple[Kind, tuple[str, int]]] = {}
+        for case in self.cases:
+            key = (case.case_id, case.run_index)
+            ids: set[str] = set()
+            for measurement in case.measurements:
+                ref = measurement.evaluator
+                if ref.id in ids:
+                    raise ValueError(f"duplicate evaluator id {ref.id!r} in case-run {key!r}")
+                ids.add(ref.id)
+                first = kinds.setdefault(ref.id, (ref.kind, key))
+                if first[0] != ref.kind:
+                    raise ValueError(
+                        f"evaluator id {ref.id!r} has conflicting kinds: "
+                        f"{first[0]!r} in case-run {first[1]!r}, {ref.kind!r} in case-run {key!r}"
+                    )
+        return self

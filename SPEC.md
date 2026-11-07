@@ -100,7 +100,9 @@ class EvalRun(BaseModel):
 
 Rules: evaluator identity is `EvaluatorRef.id`. Display names are data to be checked, not trusted.
 A case-run is the pair `(case_id, run_index)`. Coverage denominators count case-runs whose task did not fail,
-unless stated otherwise.
+unless stated otherwise. An `EvalRun` is rejected (`LoadError`, CLI exit 2) when a case-run is duplicated, when
+one case-run has two measurements with the same evaluator id, or when one evaluator id has more than one `kind`
+across the run (§15, amendment 4).
 
 ## 6. Checks (MVP: exactly these seven)
 
@@ -347,6 +349,22 @@ Settled points (same date):
   evaluator-coverage; name-collision counts only measurements with a value (errors are attributed through
   `source`, so coverage and errors cover them).
 - Python floor is 3.11 for the whole package; CI runs 3.11, 3.12, 3.13.
+
+4. Decided by the maintainer on 2026-11-07, before the model freezes at 0.1.0. Both rules hold for every
+   measurement, including error measurements and those on case-runs whose task failed, and are enforced by
+   `EvalRun` validation, so every adapter and the Python API reject the run; `load()` raises `LoadError` and the
+   CLI exits 2, for the results file and for `--baseline`.
+   - **Duplicate evaluator id in one case-run: rejected.** Accepting it would pool the two values as if they
+     were repeats, so a clean run could turn into an aggregation WARN, and an error next to a value would count
+     the case-run as both covered and errored. In pydantic-evals this happens when a dataset holds two
+     evaluators with the same spec (same class, same non-default arguments): they are filed as `Judge` and
+     `Judge_2` but share one id.
+   - **One evaluator id with conflicting `kind`s across the run: rejected.** Checks group by id and treat
+     scores, assertions and labels differently (estimators, `constant-output`'s assertion exemption), so a mixed
+     id has no single correct verdict. pydantic-evals files each result by its runtime value type
+     (`_group_evaluator_outputs_by_type` in `pydantic_evals/dataset.py`), so an evaluator returning `True` on
+     one case and `0.5` on another lands in two sections.
+   A display name shared by two ids remains valid input: that is what `name-collision` reports.
 
 Clarifications answered by the spec author during implementation (2026-10-29):
 

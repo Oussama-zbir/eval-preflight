@@ -69,8 +69,7 @@ since NaN is not valid JSON).
 
 ## 3. `evaluator-errors`
 
-**Detects**, per evaluator id, eligible case-runs where the evaluator reported an `error`. A
-case-run with several errors from the same evaluator counts once.
+**Detects**, per evaluator id, eligible case-runs where the evaluator reported an `error`.
 
 **Why it matters.** An evaluator error is not a low score. Coverage tells you a value is missing;
 this check tells you why, and how often.

@@ -142,6 +142,27 @@ def test_duplicate_case_runs_are_rejected(tmp_path: Path) -> None:
         load(path)
 
 
+def test_duplicate_evaluator_id_in_one_case_run_is_rejected(tmp_path: Path) -> None:
+    path = write_jsonl(tmp_path / "r.jsonl", [line("c1", meas("e", 1.0), meas("e", 0.0))])
+    with pytest.raises(LoadError, match=r"duplicate evaluator id 'e' in case-run \('c1', 0\)"):
+        load(path)
+
+
+def test_conflicting_kinds_in_a_json_document_are_rejected(tmp_path: Path) -> None:
+    path = tmp_path / "r.json"
+    document = {
+        "name": "r",
+        "source": "generic",
+        "cases": [
+            line("c1", meas("e", 1.0)),
+            line("c2", meas("e", True, kind="assertion")),
+        ],
+    }
+    path.write_text(json.dumps(document))
+    with pytest.raises(LoadError, match="evaluator id 'e' has conflicting kinds"):
+        load(path)
+
+
 def test_json_nested_too_deeply_is_a_load_error(tmp_path: Path) -> None:
     path = tmp_path / "r.json"
     path.write_text("[" * 100_000 + "]" * 100_000)

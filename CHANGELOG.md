@@ -18,6 +18,12 @@ All notable changes to this project are documented here. The format follows
   First result: pydantic-evals 2.66.0 writes byte-identical fixtures.
 
 ### Changed
+- `EvalRun` rejects two measurements with the same evaluator id in one case-run, and one evaluator
+  id with conflicting `kind`s across the run (SPEC §15, amendment 4). `load()` raises `LoadError`
+  and the CLI exits 2, for results and `--baseline`. Both were accepted silently before: the
+  duplicate was pooled like a repeat, and a mixed-kind id raised no finding. pydantic-evals
+  reports can hit both (two evaluators with the same spec; an evaluator whose return type varies
+  by case).
 - The version is defined once, in `eval_preflight.__version__`; `pyproject.toml` reads it.
 - The sdist no longer includes `.github/` or `CLAUDE.md`.
 - README rewritten for the 0.1.0 release: the problem, install, CLI/Python/CI quickstart, the
