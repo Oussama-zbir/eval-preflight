@@ -44,7 +44,7 @@ name is the file name without its extension.
 | `measurements[].display_name` | string, required | The name the framework reported, e.g. `Judge` or `Judge_2`. |
 | `measurements[].kind` | `score` \| `assertion` \| `label` | The same for every measurement of an evaluator id across the run. |
 | `measurements[].value` | number, bool, string or null | `null` when the evaluator produced nothing. |
-| `measurements[].error` | string or null | Set when the evaluator failed on this case-run. |
+| `measurements[].error` | string or null | Set when the evaluator failed on this case-run. When error is set, value must be null; a measurement with both is rejected. |
 
 A run that breaks either evaluator-id rule is rejected (exit 2), not checked: two measurements
 with one id in a case-run would be pooled like repeats, and an id with two kinds has no single

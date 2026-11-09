@@ -95,7 +95,7 @@ def test_false_and_zero_count_as_coverage() -> None:
 
 def test_evaluator_seen_only_on_failed_tasks_has_no_eligible_case_runs() -> None:
     result = findings(
-        run(case("c1", m("e", 1.0, error="x"), task_error="boom")),
+        run(case("c1", m("e", 1.0), task_error="boom")),
         max_task_failure_rate=1.0,
     )
     assert result["e"].severity == "FAIL"

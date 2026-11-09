@@ -201,11 +201,21 @@ def _measurement(evaluator_id: str, kind: str, value: object) -> dict[str, objec
             ],
             "evaluator id 'e' has conflicting kinds",
         ),
+        (
+            [
+                {"case_id": "c1", "measurements": [_measurement("e", "score", 1.0)]},
+                {
+                    "case_id": "c2",
+                    "measurements": [{**_measurement("e", "score", 0.0), "error": "timeout"}],
+                },
+            ],
+            "measurement for evaluator 'e' in case-run ('c2', 0) has both a value and an error",
+        ),
     ],
-    ids=["duplicate-id", "conflicting-kinds"],
+    ids=["duplicate-id", "conflicting-kinds", "value-and-error"],
 )
 @pytest.mark.parametrize("as_baseline", [False, True], ids=["results", "baseline"])
-def test_ambiguous_evaluator_ids_exit_2(
+def test_invalid_runs_exit_2_with_a_load_error(
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
     rows: list[dict[str, object]],
@@ -219,6 +229,8 @@ def test_ambiguous_evaluator_ids_exit_2(
     code, out, err = run_cli(capsys, *args, "--json")
     assert code == 2
     assert out == ""
+    assert err.startswith("eval-preflight: error: ")
+    assert "Traceback" not in err
     assert message in err
     assert ("baseline:" in err) is as_baseline
 

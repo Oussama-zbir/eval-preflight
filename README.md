@@ -158,6 +158,8 @@ precise about the wrong number.
 - A run with two measurements under one evaluator id in a case-run, or one id with two kinds, is
   rejected (exit 2) rather than checked. pydantic-evals can produce both: two evaluators with the
   same spec, or an evaluator whose return type varies by case ([input format](docs/input-format.md)).
+  So is a measurement with both a value and an error: an exporter that writes `score: 0.0` next to
+  a judge failure must write `value: null` instead.
 - JSON reports from pydantic-evals do not record the producing version or the framework's averages;
   only the in-memory path can check reported aggregates.
 - Alpha: the data model is stable from 0.1.0; flags and messages may still change before 1.0.

@@ -74,3 +74,16 @@ class EvalRun(_Model):
                         f"{first[0]!r} in case-run {first[1]!r}, {ref.kind!r} in case-run {key!r}"
                     )
         return self
+
+    @model_validator(mode="after")
+    def _errors_carry_no_value(self) -> EvalRun:
+        # SPEC §15, amendment 5: an error measurement has a null value. Accepting both
+        # would count a failed evaluator as covered and aggregate its value (often 0.0).
+        for case in self.cases:
+            for measurement in case.measurements:
+                if measurement.value is not None and measurement.error is not None:
+                    raise ValueError(
+                        f"measurement for evaluator {measurement.evaluator.id!r} in case-run "
+                        f"{(case.case_id, case.run_index)!r} has both a value and an error"
+                    )
+        return self

@@ -101,8 +101,9 @@ class EvalRun(BaseModel):
 Rules: evaluator identity is `EvaluatorRef.id`. Display names are data to be checked, not trusted.
 A case-run is the pair `(case_id, run_index)`. Coverage denominators count case-runs whose task did not fail,
 unless stated otherwise. An `EvalRun` is rejected (`LoadError`, CLI exit 2) when a case-run is duplicated, when
-one case-run has two measurements with the same evaluator id, or when one evaluator id has more than one `kind`
-across the run (§15, amendment 4).
+one case-run has two measurements with the same evaluator id, when one evaluator id has more than one `kind`
+across the run (§15, amendment 4), or when a measurement has both a non-null `value` and a non-null `error`
+(§15, amendment 5).
 
 ## 6. Checks (MVP: exactly these seven)
 
@@ -365,6 +366,23 @@ Settled points (same date):
      (`_group_evaluator_outputs_by_type` in `pydantic_evals/dataset.py`), so an evaluator returning `True` on
      one case and `0.5` on another lands in two sections.
    A display name shared by two ids remains valid input: that is what `name-collision` reports.
+
+5. Decided by the maintainer on 2026-11-09, after an independent review of 0.1.0. The data model's shape is
+   unchanged; this is a validation rule on `EvalRun`, enforced like amendment 4 (every adapter and the Python API;
+   `load()` raises `LoadError` and the CLI exits 2, for the results file and for `--baseline`).
+   - **A measurement with both a non-null `value` and a non-null `error`: rejected**, whatever the value,
+     including `0.0` and `False`. Message: `measurement for evaluator <id!r> in case-run <key!r> has both a value
+     and an error`. A measurement with a value and a null error, or a null value and an error, stays valid.
+   - Why accepting it was wrong: the measurement represents an evaluator failure, but the checks read the value.
+     `evaluator-coverage` counted the case-run as covered (and `evaluator-errors` as errored), so a failing judge
+     did not lower coverage; `aggregation-consistency` aggregated, and `constant-output` counted, a value the
+     evaluator never produced; `name-collision`, which counts only measurements with a value, counted the
+     failure as evidence of a mislabelled evaluator.
+   - Where it comes from: neither built-in adapter produces it (both write `value: null` on an evaluator
+     failure), but generic files converted by hand-rolled exporters can. The pattern that prompted this
+     amendment is `score: 0.0` next to the error message, reported in review for NeMo's evaluator before
+     #2479 (not reproduced in this repository). Such a 0.0 is not a score, and a run full of them can look
+     complete and uniformly bad instead of broken.
 
 Clarifications answered by the spec author during implementation (2026-10-29):
 

@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from eval_preflight import CaseResult, EvalRun, Measurement
+from eval_preflight import CaseResult, EvalRun, Kind, Measurement
 from tests.builders import case, m, run
 
 
@@ -115,3 +115,44 @@ def test_one_kind_per_evaluator_id_is_allowed() -> None:
         case("c2", m("a", None, kind="assertion", error="x"), m("s", 0.5)),
     )
     assert len(result.cases) == 2
+
+
+def test_measurement_with_both_value_and_error_is_rejected() -> None:
+    with pytest.raises(
+        ValidationError,
+        match=(
+            # repr() quotes an id containing single quotes with double quotes.
+            r"measurement for evaluator \"Judge\(rubric='strict'\)\" in case-run \('c2', 1\) "
+            r"has both a value and an error"
+        ),
+    ):
+        run(
+            case("c1", m("Judge(rubric='strict')", 1.0)),
+            case("c2", m("Judge(rubric='strict')", 1.0, error="timeout"), run_index=1),
+        )
+
+
+@pytest.mark.parametrize(
+    ("value", "kind"),
+    [(0.0, "score"), (False, "assertion"), ("", "label")],
+    ids=["zero", "false", "empty-label"],
+)
+def test_falsy_value_with_an_error_is_rejected(value: float | bool | str, kind: Kind) -> None:
+    # Exporters that write score=0.0 next to the error message must not count as covered.
+    with pytest.raises(ValidationError, match="has both a value and an error"):
+        run(case("c1", m("e", value, kind=kind, error="timeout")))
+
+
+def test_value_with_an_error_is_rejected_on_a_failed_task() -> None:
+    with pytest.raises(ValidationError, match="has both a value and an error"):
+        run(case("c1", m("e", 0.5, error="x"), task_error="boom"))
+
+
+def test_value_without_an_error_is_allowed() -> None:
+    result = run(case("c1", m("e", 0.0, error=None)))
+    assert result.cases[0].measurements[0].value == 0.0
+
+
+def test_error_without_a_value_is_allowed() -> None:
+    result = run(case("c1", m("e", None, error="timeout")))
+    assert result.cases[0].measurements[0].error == "timeout"
