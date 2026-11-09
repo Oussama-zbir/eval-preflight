@@ -19,6 +19,8 @@ Ideas outside the current milestone, one line each. Not implemented unless asked
 - promptfoo: multi-prompt/provider exports (needs a decision on whether case ids include the provider).
 - promptfoo: a throwing `javascript`/`python` assertion is an unflagged FAIL; detect it only if promptfoo flags it.
 - promptfoo: check named-score sums (`prompts[].metrics.namedScores`) as reported aggregates.
+- constant-output: a run alternating `0.0` and `False` can print "returned False"; wording only.
+- aggregation-consistency: on task failures, "matches neither estimator" could say that values from failed case-runs were excluded.
 
 ## Resolved (SPEC.md §15, 2026-10-29)
 
