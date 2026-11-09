@@ -1,4 +1,4 @@
-.PHONY: check lint format typecheck test fixtures promptfoo-fixtures
+.PHONY: check lint format typecheck test fixtures promptfoo-fixtures dogfood
 
 check: lint typecheck test
 
@@ -23,3 +23,8 @@ fixtures:
 # Runs the real promptfoo (pinned in the script) through npx; needs Node.js.
 promptfoo-fixtures:
 	uv run --no-project scripts/make_promptfoo_fixtures.py
+
+# Runs two public pydantic-evals examples (versions pinned in the script); downloads the
+# pydantic-ai-examples wheel from PyPI and checks its sha256.
+dogfood:
+	uv run --no-project scripts/make_dogfood_reports.py

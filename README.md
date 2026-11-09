@@ -109,7 +109,8 @@ Flags, baselines and the JSON schema: [docs/ci.md](docs/ci.md).
 
 Evaluator identity comes from the framework's evaluator spec (`Judge(rubric='strict')`), never from
 the display name, because the display name is one of the things being checked. Each check, its
-rationale, thresholds and example output: [docs/checks.md](docs/checks.md).
+rationale, thresholds and example output: [docs/checks.md](docs/checks.md). What it found, and
+missed, on two public pydantic-evals examples: [docs/dogfood.md](docs/dogfood.md).
 
 Why aggregation gets its own check: with `repeat=2`, case `a` passing 1 assertion and case `b` failing
 3, the pooled assertion pass rate is 0.25 and the mean of per-case means is 0.5. pydantic-evals'
@@ -174,6 +175,7 @@ precise about the wrong number.
 $ uv sync
 $ make check      # ruff, ruff format --check, mypy --strict, pytest with coverage >= 95%
 $ make fixtures   # regenerate the pydantic-evals fixtures by running the pinned library
+$ make dogfood    # regenerate the reports behind docs/dogfood.md
 ```
 
 Golden scenarios A–E in [SPEC.md §9](SPEC.md) are the acceptance tests; the clean run must always

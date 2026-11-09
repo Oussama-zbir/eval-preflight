@@ -1,0 +1,3 @@
+pydantic-evals==2.66.0
+pydantic-ai-slim==2.66.0
+pydantic-ai-examples==2.66.0 (wheel, sha256 pinned)

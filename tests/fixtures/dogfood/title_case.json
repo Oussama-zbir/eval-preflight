@@ -1,0 +1,540 @@
+{
+  "name": "to_title_case",
+  "cases": [
+    {
+      "name": "basic_lowercase",
+      "inputs": "hello world",
+      "metadata": null,
+      "expected_output": "Hello World",
+      "output": "Hello World",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsInstance": {
+          "name": "IsInstance",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsInstance",
+            "arguments": [
+              "str"
+            ]
+          },
+          "evaluator_version": null
+        },
+        "EqualsExpected": {
+          "name": "EqualsExpected",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "EqualsExpected",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "has_capitals": {
+          "name": "has_capitals",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "Contains",
+            "arguments": {
+              "value": "H",
+              "evaluation_name": "has_capitals"
+            }
+          },
+          "evaluator_version": null
+        },
+        "MaxDuration": {
+          "name": "MaxDuration",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "MaxDuration",
+            "arguments": [
+              0.001
+            ]
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "basic_uppercase",
+      "inputs": "HELLO WORLD",
+      "metadata": null,
+      "expected_output": "Hello World",
+      "output": "Hello World",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsInstance": {
+          "name": "IsInstance",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsInstance",
+            "arguments": [
+              "str"
+            ]
+          },
+          "evaluator_version": null
+        },
+        "EqualsExpected": {
+          "name": "EqualsExpected",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "EqualsExpected",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "has_capitals": {
+          "name": "has_capitals",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "Contains",
+            "arguments": {
+              "value": "H",
+              "evaluation_name": "has_capitals"
+            }
+          },
+          "evaluator_version": null
+        },
+        "MaxDuration": {
+          "name": "MaxDuration",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "MaxDuration",
+            "arguments": [
+              0.001
+            ]
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "mixed_case",
+      "inputs": "HeLLo WoRLd",
+      "metadata": null,
+      "expected_output": "Hello World",
+      "output": "Hello World",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsInstance": {
+          "name": "IsInstance",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsInstance",
+            "arguments": [
+              "str"
+            ]
+          },
+          "evaluator_version": null
+        },
+        "EqualsExpected": {
+          "name": "EqualsExpected",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "EqualsExpected",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "has_capitals": {
+          "name": "has_capitals",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "Contains",
+            "arguments": {
+              "value": "H",
+              "evaluation_name": "has_capitals"
+            }
+          },
+          "evaluator_version": null
+        },
+        "MaxDuration": {
+          "name": "MaxDuration",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "MaxDuration",
+            "arguments": [
+              0.001
+            ]
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "empty_string",
+      "inputs": "",
+      "metadata": null,
+      "expected_output": "",
+      "output": "",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsInstance": {
+          "name": "IsInstance",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsInstance",
+            "arguments": [
+              "str"
+            ]
+          },
+          "evaluator_version": null
+        },
+        "EqualsExpected": {
+          "name": "EqualsExpected",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "EqualsExpected",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "has_capitals": {
+          "name": "has_capitals",
+          "value": false,
+          "reason": "Output string '' does not contain expected string 'H'",
+          "source": {
+            "name": "Contains",
+            "arguments": {
+              "value": "H",
+              "evaluation_name": "has_capitals"
+            }
+          },
+          "evaluator_version": null
+        },
+        "MaxDuration": {
+          "name": "MaxDuration",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "MaxDuration",
+            "arguments": [
+              0.001
+            ]
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "single_word",
+      "inputs": "hello",
+      "metadata": null,
+      "expected_output": "Hello",
+      "output": "Hello",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsInstance": {
+          "name": "IsInstance",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsInstance",
+            "arguments": [
+              "str"
+            ]
+          },
+          "evaluator_version": null
+        },
+        "EqualsExpected": {
+          "name": "EqualsExpected",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "EqualsExpected",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "has_capitals": {
+          "name": "has_capitals",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "Contains",
+            "arguments": {
+              "value": "H",
+              "evaluation_name": "has_capitals"
+            }
+          },
+          "evaluator_version": null
+        },
+        "MaxDuration": {
+          "name": "MaxDuration",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "MaxDuration",
+            "arguments": [
+              0.001
+            ]
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "with_punctuation",
+      "inputs": "hello, world!",
+      "metadata": null,
+      "expected_output": "Hello, World!",
+      "output": "Hello, World!",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsInstance": {
+          "name": "IsInstance",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsInstance",
+            "arguments": [
+              "str"
+            ]
+          },
+          "evaluator_version": null
+        },
+        "EqualsExpected": {
+          "name": "EqualsExpected",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "EqualsExpected",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "has_capitals": {
+          "name": "has_capitals",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "Contains",
+            "arguments": {
+              "value": "H",
+              "evaluation_name": "has_capitals"
+            }
+          },
+          "evaluator_version": null
+        },
+        "MaxDuration": {
+          "name": "MaxDuration",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "MaxDuration",
+            "arguments": [
+              0.001
+            ]
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "with_numbers",
+      "inputs": "hello 123 world",
+      "metadata": null,
+      "expected_output": "Hello 123 World",
+      "output": "Hello 123 World",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsInstance": {
+          "name": "IsInstance",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsInstance",
+            "arguments": [
+              "str"
+            ]
+          },
+          "evaluator_version": null
+        },
+        "EqualsExpected": {
+          "name": "EqualsExpected",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "EqualsExpected",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "has_capitals": {
+          "name": "has_capitals",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "Contains",
+            "arguments": {
+              "value": "H",
+              "evaluation_name": "has_capitals"
+            }
+          },
+          "evaluator_version": null
+        },
+        "MaxDuration": {
+          "name": "MaxDuration",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "MaxDuration",
+            "arguments": [
+              0.001
+            ]
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    },
+    {
+      "name": "apostrophes",
+      "inputs": "don't stop believin'",
+      "metadata": null,
+      "expected_output": "Don'T Stop Believin'",
+      "output": "Don'T Stop Believin'",
+      "metrics": {},
+      "attributes": {},
+      "scores": {},
+      "labels": {},
+      "assertions": {
+        "IsInstance": {
+          "name": "IsInstance",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "IsInstance",
+            "arguments": [
+              "str"
+            ]
+          },
+          "evaluator_version": null
+        },
+        "EqualsExpected": {
+          "name": "EqualsExpected",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "EqualsExpected",
+            "arguments": null
+          },
+          "evaluator_version": null
+        },
+        "has_capitals": {
+          "name": "has_capitals",
+          "value": false,
+          "reason": "Output string \"Don'T Stop Believin'\" does not contain expected string 'H'",
+          "source": {
+            "name": "Contains",
+            "arguments": {
+              "value": "H",
+              "evaluation_name": "has_capitals"
+            }
+          },
+          "evaluator_version": null
+        },
+        "MaxDuration": {
+          "name": "MaxDuration",
+          "value": true,
+          "reason": null,
+          "source": {
+            "name": "MaxDuration",
+            "arguments": [
+              0.001
+            ]
+          },
+          "evaluator_version": null
+        }
+      },
+      "task_duration": 0.0,
+      "total_duration": 0.0,
+      "source_case_name": null,
+      "trace_id": null,
+      "span_id": null,
+      "evaluator_failures": []
+    }
+  ],
+  "failures": [],
+  "analyses": [],
+  "report_evaluator_failures": [],
+  "experiment_metadata": null,
+  "trace_id": null,
+  "span_id": null,
+  "dataset_name": "title_case_validation"
+}
