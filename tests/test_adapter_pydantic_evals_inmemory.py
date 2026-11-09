@@ -103,3 +103,28 @@ def test_report_where_every_task_failed_has_no_aggregates() -> None:
     assert run.reported_aggregates == {}
     assert [(c.case_id, c.task_error) for c in run.cases] == [("c1", "RuntimeError: model down")]
     assert check(run).verdict == "FAIL"
+
+
+def test_case_scoped_evaluator_fails_coverage_although_nothing_was_lost() -> None:
+    # Known limitation (README, Limitations): the report records results, not which
+    # evaluators were attached to which case, so an evaluator attached to one case
+    # with Case(evaluators=...) reads as an evaluator that lost the other three.
+    from pydantic_evals.evaluators import Equals, IsInstance
+
+    async def task(inputs: str) -> str:
+        return inputs
+
+    cases: list[Case[str, str, None]] = [
+        Case(name="c1", inputs="x", evaluators=(IsInstance(type_name="str"),))
+    ]
+    cases += [Case(name=name, inputs="x") for name in ("c2", "c3", "c4")]
+    dataset = Dataset[str, str, None](name="scoped", cases=cases, evaluators=[Equals(value="x")])
+    report = dataset.evaluate_sync(task, progress=False)
+    assert all(not case.evaluator_failures for case in report.cases)
+
+    result = check_pydantic_evals(report)
+    coverage = {f.details["evaluator_id"]: f for f in result.by_check("evaluator-coverage")}
+    assert coverage["Equals('x')"].severity == "PASS"
+    assert coverage["IsInstance('str')"].severity == "FAIL"
+    assert coverage["IsInstance('str')"].message == "IsInstance('str') scored 1/4 case-runs (25%)"
+    assert {f.severity for f in result.by_check("evaluator-errors")} == {"PASS"}
