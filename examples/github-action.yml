@@ -22,7 +22,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install eval-preflight
-        run: pip install "eval-preflight==0.1.0"
+        run: pip install "eval-preflight==0.2.0"
 
       - name: Run evals
         run: python -m my_project.evals --output "$RESULTS"  # replace with your eval command

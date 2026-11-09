@@ -5,6 +5,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-11-09
+
+Adds the promptfoo adapter. Input that 0.1.0 accepted can now be rejected: a measurement with
+both a value and an error (see Changed).
+
 ### Added
 - promptfoo adapter (`--format promptfoo`, auto-detected) for `promptfoo eval -o results.json`
   exports. Judge failures (`metadata.graderError`), which promptfoo counts as failed assertions,

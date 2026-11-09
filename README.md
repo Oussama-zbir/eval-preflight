@@ -3,7 +3,7 @@
 A pre-flight check for eval results. It catches partial runs, failed judges, mislabelled scores and
 inconsistent aggregation, so the number you gate on is the number your eval actually produced.
 
-**Status: alpha (0.1.0).** The first release on PyPI.
+**Status: alpha (0.2.0).**
 [SPEC.md](SPEC.md) is the contract the code is built against.
 
 ## The problem in ten seconds
