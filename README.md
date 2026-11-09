@@ -162,6 +162,10 @@ precise about the wrong number.
   a judge failure must write `value: null` instead.
 - JSON reports from pydantic-evals do not record the producing version or the framework's averages;
   only the in-memory path can check reported aggregates.
+- pydantic-evals reports record evaluator results, not which evaluators were attached to which
+  case. An evaluator scoped to some cases (`Case(evaluators=...)`), or one that returns `{}` on some
+  cases, can therefore fail `evaluator-coverage` although nothing was lost. `--min-coverage` can
+  silence it, but would also hide a judge that silently dropped cases.
 - Alpha: the data model is stable from 0.1.0; flags and messages may still change before 1.0.
 
 ## Development
