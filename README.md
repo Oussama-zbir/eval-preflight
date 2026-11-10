@@ -146,6 +146,9 @@ does not say whether model A beats model B.
 They are complementary: a significance test on a mean computed from a quarter of the cases is
 precise about the wrong number.
 
+[docs/research-notes.md](docs/research-notes.md) records what other eval frameworks do when scoring
+is incomplete, per pinned version, with the run or source line behind each claim.
+
 ## Limitations
 
 - Three input formats: generic, pydantic-evals and promptfoo (one prompt and provider per export;

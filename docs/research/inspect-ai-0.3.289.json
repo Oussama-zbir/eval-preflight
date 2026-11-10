@@ -1,0 +1,315 @@
+{
+  "framework": "inspect-ai",
+  "generated_by": "scripts/research/inspect_ai_probe.py",
+  "scenarios": {
+    "scorer_raises": {
+      "command": [
+        "inspect",
+        "eval",
+        "task.py@raises"
+      ],
+      "error": "RuntimeError('judge quota exhausted')",
+      "exit_code": 0,
+      "results": null,
+      "samples": {
+        "c1": {
+          "error": null,
+          "scores": {
+            "flaky_judge": 1.0
+          }
+        },
+        "c2": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        },
+        "c3": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        },
+        "c4": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        }
+      },
+      "status": "error"
+    },
+    "scorer_raises_eval_set": {
+      "command": [
+        "inspect",
+        "eval-set",
+        "task.py@raises",
+        "--retry-attempts",
+        "0"
+      ],
+      "error": "RuntimeError('judge quota exhausted')",
+      "exit_code": 1,
+      "results": null,
+      "samples": {
+        "c1": {
+          "error": null,
+          "scores": {
+            "flaky_judge": 1.0
+          }
+        },
+        "c2": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        },
+        "c3": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        },
+        "c4": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        }
+      },
+      "status": "error"
+    },
+    "scorer_raises_fail_on_error_0.8": {
+      "command": [
+        "inspect",
+        "eval",
+        "task.py@raises",
+        "--fail-on-error",
+        "0.8"
+      ],
+      "error": null,
+      "exit_code": 0,
+      "results": {
+        "completed_samples": 1,
+        "scores": [
+          {
+            "metrics": {
+              "mean": 1.0
+            },
+            "name": "flaky_judge",
+            "scored_samples": 1,
+            "unscored_samples": 0
+          }
+        ],
+        "total_samples": 4
+      },
+      "samples": {
+        "c1": {
+          "error": null,
+          "scores": {
+            "flaky_judge": 1.0
+          }
+        },
+        "c2": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        },
+        "c3": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        },
+        "c4": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        }
+      },
+      "status": "success"
+    },
+    "scorer_raises_no_fail_on_error": {
+      "command": [
+        "inspect",
+        "eval",
+        "task.py@raises",
+        "--no-fail-on-error"
+      ],
+      "error": null,
+      "exit_code": 0,
+      "results": {
+        "completed_samples": 1,
+        "scores": [
+          {
+            "metrics": {
+              "mean": 1.0
+            },
+            "name": "flaky_judge",
+            "scored_samples": 1,
+            "unscored_samples": 0
+          }
+        ],
+        "total_samples": 4
+      },
+      "samples": {
+        "c1": {
+          "error": null,
+          "scores": {
+            "flaky_judge": 1.0
+          }
+        },
+        "c2": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        },
+        "c3": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        },
+        "c4": {
+          "error": "RuntimeError('judge quota exhausted')",
+          "scores": {}
+        }
+      },
+      "status": "success"
+    },
+    "scorer_returns_nan": {
+      "command": [
+        "inspect",
+        "eval",
+        "task.py@returns_nan"
+      ],
+      "error": null,
+      "exit_code": 0,
+      "results": {
+        "completed_samples": 4,
+        "scores": [
+          {
+            "metrics": {
+              "mean": 1.0
+            },
+            "name": "judge_nan",
+            "scored_samples": 1,
+            "unscored_samples": 3
+          }
+        ],
+        "total_samples": 4
+      },
+      "samples": {
+        "c1": {
+          "error": null,
+          "scores": {
+            "judge_nan": 1.0
+          }
+        },
+        "c2": {
+          "error": null,
+          "scores": {
+            "judge_nan": "nan"
+          }
+        },
+        "c3": {
+          "error": null,
+          "scores": {
+            "judge_nan": "nan"
+          }
+        },
+        "c4": {
+          "error": null,
+          "scores": {
+            "judge_nan": "nan"
+          }
+        }
+      },
+      "status": "success"
+    },
+    "scorer_returns_none": {
+      "command": [
+        "inspect",
+        "eval",
+        "task.py@returns_none"
+      ],
+      "error": null,
+      "exit_code": 0,
+      "results": {
+        "completed_samples": 4,
+        "scores": [
+          {
+            "metrics": {
+              "mean": 1.0
+            },
+            "name": "judge_none",
+            "scored_samples": 1,
+            "unscored_samples": 0
+          }
+        ],
+        "total_samples": 4
+      },
+      "samples": {
+        "c1": {
+          "error": null,
+          "scores": {
+            "judge_none": 1.0
+          }
+        },
+        "c2": {
+          "error": null,
+          "scores": {}
+        },
+        "c3": {
+          "error": null,
+          "scores": {}
+        },
+        "c4": {
+          "error": null,
+          "scores": {}
+        }
+      },
+      "status": "success"
+    },
+    "two_scorers_same_name": {
+      "command": [
+        "inspect",
+        "eval",
+        "task.py@same_name"
+      ],
+      "error": null,
+      "exit_code": 0,
+      "results": {
+        "completed_samples": 4,
+        "scores": [
+          {
+            "metrics": {
+              "mean": 0.0
+            },
+            "name": "judge",
+            "scored_samples": 1,
+            "unscored_samples": 0
+          },
+          {
+            "metrics": {
+              "mean": 1.0
+            },
+            "name": "judge1",
+            "scored_samples": 4,
+            "unscored_samples": 0
+          }
+        ],
+        "total_samples": 4
+      },
+      "samples": {
+        "c1": {
+          "error": null,
+          "scores": {
+            "judge": 0.0,
+            "judge1": 1.0
+          }
+        },
+        "c2": {
+          "error": null,
+          "scores": {
+            "judge1": 1.0
+          }
+        },
+        "c3": {
+          "error": null,
+          "scores": {
+            "judge1": 1.0
+          }
+        },
+        "c4": {
+          "error": null,
+          "scores": {
+            "judge1": 1.0
+          }
+        }
+      },
+      "status": "success"
+    }
+  },
+  "version": "0.3.289"
+}

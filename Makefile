@@ -1,4 +1,4 @@
-.PHONY: check lint format typecheck test fixtures promptfoo-fixtures dogfood
+.PHONY: check lint format typecheck test fixtures promptfoo-fixtures dogfood research
 
 check: lint typecheck test
 
@@ -28,3 +28,7 @@ promptfoo-fixtures:
 # pydantic-ai-examples wheel from PyPI and checks its sha256.
 dogfood:
 	uv run --no-project scripts/make_dogfood_reports.py
+
+# Probes other eval frameworks for docs/research-notes.md (versions pinned in each script).
+research:
+	uv run --no-project scripts/research/inspect_ai_probe.py
