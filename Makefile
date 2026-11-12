@@ -29,6 +29,8 @@ promptfoo-fixtures:
 dogfood:
 	uv run --no-project scripts/make_dogfood_reports.py
 
-# Probes other eval frameworks for docs/research-notes.md (versions pinned in each script).
+# Probes eval frameworks for docs/research-notes.md (versions pinned in each script); the
+# promptfoo probe needs Node.js.
 research:
 	uv run --no-project scripts/research/inspect_ai_probe.py
+	uv run --no-project scripts/research/promptfoo_probe.py

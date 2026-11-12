@@ -17,7 +17,8 @@ Ideas outside the current milestone, one line each. Not implemented unless asked
 - Option to show full case lists instead of truncating at five in terminal output.
 - Optional `--source-version` flag for JSON reports, which do not record the producing version.
 - promptfoo: multi-prompt/provider exports (needs a decision on whether case ids include the provider).
-- promptfoo: a throwing `javascript`/`python` assertion is an unflagged FAIL; detect it only if promptfoo flags it.
+- promptfoo: a throwing or `undefined`-returning `javascript` assertion is an unflagged FAIL (verified in 0.125.1,
+  docs/research-notes.md); its only marker is the reason prefix `Custom function threw error:`. Detect it only if asked.
 - Coverage on case-scoped evaluators: pydantic-evals reports do not record which evaluators a case had,
   so per-case evaluators and `{}`-returning evaluators fail coverage (docs/dogfood.md, finding 2). Needs a design decision.
 - promptfoo: check named-score sums (`prompts[].metrics.namedScores`) as reported aggregates.

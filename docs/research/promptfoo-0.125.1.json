@@ -1,0 +1,901 @@
+{
+  "framework": "promptfoo",
+  "generated_by": "scripts/research/promptfoo_probe.py",
+  "scenarios": {
+    "assertion_returns_undefined": {
+      "command": [
+        "promptfoo",
+        "eval",
+        "-c",
+        "assertion_returns_undefined.json",
+        "--no-cache",
+        "--no-write",
+        "--no-table",
+        "--max-concurrency",
+        "1"
+      ],
+      "config": {
+        "assert": [
+          {
+            "type": "contains",
+            "value": "answer"
+          },
+          {
+            "type": "javascript",
+            "value": "if (context.vars.q === 'c1') return true;\nreturn undefined;"
+          }
+        ],
+        "task_raises_on": []
+      },
+      "env": {},
+      "exit_code": 100,
+      "prompt_metrics": {
+        "namedScores": {},
+        "score": 2.5,
+        "testErrorCount": 0,
+        "testFailCount": 3,
+        "testPassCount": 1
+      },
+      "rows": {
+        "c1": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "javascript"
+            }
+          ],
+          "error": null,
+          "failureReason": 0,
+          "namedScores": {},
+          "score": 1,
+          "success": true
+        },
+        "c2": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": false,
+              "reason": "Custom function threw error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.\nStack Trace: Error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.",
+              "score": 0,
+              "type": "javascript"
+            }
+          ],
+          "error": "Custom function threw error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.\nStack Trace: Error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        },
+        "c3": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": false,
+              "reason": "Custom function threw error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.\nStack Trace: Error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.",
+              "score": 0,
+              "type": "javascript"
+            }
+          ],
+          "error": "Custom function threw error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.\nStack Trace: Error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        },
+        "c4": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": false,
+              "reason": "Custom function threw error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.\nStack Trace: Error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.",
+              "score": 0,
+              "type": "javascript"
+            }
+          ],
+          "error": "Custom function threw error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.\nStack Trace: Error: Custom function must return a boolean, a finite number, or a GradingResult object with finite scores and weights. Got type undefined.",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        }
+      },
+      "stats": {
+        "errors": 0,
+        "failures": 3,
+        "successes": 1
+      }
+    },
+    "assertion_throws": {
+      "command": [
+        "promptfoo",
+        "eval",
+        "-c",
+        "assertion_throws.json",
+        "--no-cache",
+        "--no-write",
+        "--no-table",
+        "--max-concurrency",
+        "1"
+      ],
+      "config": {
+        "assert": [
+          {
+            "type": "contains",
+            "value": "answer"
+          },
+          {
+            "type": "javascript",
+            "value": "if (context.vars.q !== 'c1') throw new Error('grader bug');\nreturn true;"
+          }
+        ],
+        "task_raises_on": []
+      },
+      "env": {},
+      "exit_code": 100,
+      "prompt_metrics": {
+        "namedScores": {},
+        "score": 2.5,
+        "testErrorCount": 0,
+        "testFailCount": 3,
+        "testPassCount": 1
+      },
+      "rows": {
+        "c1": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "javascript"
+            }
+          ],
+          "error": null,
+          "failureReason": 0,
+          "namedScores": {},
+          "score": 1,
+          "success": true
+        },
+        "c2": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": false,
+              "reason": "Custom function threw error: grader bug\nStack Trace: Error: grader bug\nif (context.vars.q !== 'c1') throw new Error('grader bug');\nreturn true;",
+              "score": 0,
+              "type": "javascript"
+            }
+          ],
+          "error": "Custom function threw error: grader bug\nStack Trace: Error: grader bug\nif (context.vars.q !== 'c1') throw new Error('grader bug');\nreturn true;",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        },
+        "c3": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": false,
+              "reason": "Custom function threw error: grader bug\nStack Trace: Error: grader bug\nif (context.vars.q !== 'c1') throw new Error('grader bug');\nreturn true;",
+              "score": 0,
+              "type": "javascript"
+            }
+          ],
+          "error": "Custom function threw error: grader bug\nStack Trace: Error: grader bug\nif (context.vars.q !== 'c1') throw new Error('grader bug');\nreturn true;",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        },
+        "c4": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": false,
+              "reason": "Custom function threw error: grader bug\nStack Trace: Error: grader bug\nif (context.vars.q !== 'c1') throw new Error('grader bug');\nreturn true;",
+              "score": 0,
+              "type": "javascript"
+            }
+          ],
+          "error": "Custom function threw error: grader bug\nStack Trace: Error: grader bug\nif (context.vars.q !== 'c1') throw new Error('grader bug');\nreturn true;",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        }
+      },
+      "stats": {
+        "errors": 0,
+        "failures": 3,
+        "successes": 1
+      }
+    },
+    "judge_errors": {
+      "command": [
+        "promptfoo",
+        "eval",
+        "-c",
+        "judge_errors.json",
+        "--no-cache",
+        "--no-write",
+        "--no-table",
+        "--max-concurrency",
+        "1"
+      ],
+      "config": {
+        "assert": [
+          {
+            "type": "contains",
+            "value": "answer"
+          },
+          {
+            "provider": "file://flaky_judge.js",
+            "type": "llm-rubric",
+            "value": "is polite"
+          }
+        ],
+        "task_raises_on": []
+      },
+      "env": {},
+      "exit_code": 100,
+      "prompt_metrics": {
+        "namedScores": {},
+        "score": 2.5,
+        "testErrorCount": 0,
+        "testFailCount": 3,
+        "testPassCount": 1
+      },
+      "rows": {
+        "c1": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "polite",
+              "score": 1,
+              "type": "llm-rubric"
+            }
+          ],
+          "error": null,
+          "failureReason": 0,
+          "namedScores": {},
+          "score": 1,
+          "success": true
+        },
+        "c2": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": true,
+              "metric": null,
+              "pass": false,
+              "reason": "judge quota exhausted",
+              "score": 0,
+              "type": "llm-rubric"
+            }
+          ],
+          "error": "judge quota exhausted",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        },
+        "c3": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": true,
+              "metric": null,
+              "pass": false,
+              "reason": "judge quota exhausted",
+              "score": 0,
+              "type": "llm-rubric"
+            }
+          ],
+          "error": "judge quota exhausted",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        },
+        "c4": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": true,
+              "metric": null,
+              "pass": false,
+              "reason": "judge quota exhausted",
+              "score": 0,
+              "type": "llm-rubric"
+            }
+          ],
+          "error": "judge quota exhausted",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        }
+      },
+      "stats": {
+        "errors": 0,
+        "failures": 3,
+        "successes": 1
+      }
+    },
+    "judge_errors_threshold_25": {
+      "command": [
+        "promptfoo",
+        "eval",
+        "-c",
+        "judge_errors_threshold_25.json",
+        "--no-cache",
+        "--no-write",
+        "--no-table",
+        "--max-concurrency",
+        "1"
+      ],
+      "config": {
+        "assert": [
+          {
+            "type": "contains",
+            "value": "answer"
+          },
+          {
+            "provider": "file://flaky_judge.js",
+            "type": "llm-rubric",
+            "value": "is polite"
+          }
+        ],
+        "task_raises_on": []
+      },
+      "env": {
+        "PROMPTFOO_PASS_RATE_THRESHOLD": "25"
+      },
+      "exit_code": 0,
+      "prompt_metrics": {
+        "namedScores": {},
+        "score": 2.5,
+        "testErrorCount": 0,
+        "testFailCount": 3,
+        "testPassCount": 1
+      },
+      "rows": {
+        "c1": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "polite",
+              "score": 1,
+              "type": "llm-rubric"
+            }
+          ],
+          "error": null,
+          "failureReason": 0,
+          "namedScores": {},
+          "score": 1,
+          "success": true
+        },
+        "c2": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": true,
+              "metric": null,
+              "pass": false,
+              "reason": "judge quota exhausted",
+              "score": 0,
+              "type": "llm-rubric"
+            }
+          ],
+          "error": "judge quota exhausted",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        },
+        "c3": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": true,
+              "metric": null,
+              "pass": false,
+              "reason": "judge quota exhausted",
+              "score": 0,
+              "type": "llm-rubric"
+            }
+          ],
+          "error": "judge quota exhausted",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        },
+        "c4": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            },
+            {
+              "graderError": true,
+              "metric": null,
+              "pass": false,
+              "reason": "judge quota exhausted",
+              "score": 0,
+              "type": "llm-rubric"
+            }
+          ],
+          "error": "judge quota exhausted",
+          "failureReason": 1,
+          "namedScores": {},
+          "score": 0.5,
+          "success": false
+        }
+      },
+      "stats": {
+        "errors": 0,
+        "failures": 3,
+        "successes": 1
+      }
+    },
+    "task_errors": {
+      "command": [
+        "promptfoo",
+        "eval",
+        "-c",
+        "task_errors.json",
+        "--no-cache",
+        "--no-write",
+        "--no-table",
+        "--max-concurrency",
+        "1"
+      ],
+      "config": {
+        "assert": [
+          {
+            "type": "contains",
+            "value": "answer"
+          }
+        ],
+        "task_raises_on": [
+          "c2",
+          "c3",
+          "c4"
+        ]
+      },
+      "env": {},
+      "exit_code": 100,
+      "prompt_metrics": {
+        "namedScores": {},
+        "score": 1,
+        "testErrorCount": 3,
+        "testFailCount": 0,
+        "testPassCount": 1
+      },
+      "rows": {
+        "c1": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            }
+          ],
+          "error": null,
+          "failureReason": 0,
+          "namedScores": {},
+          "score": 1,
+          "success": true
+        },
+        "c2": {
+          "assertions": [],
+          "error": "Error: upstream timeout",
+          "failureReason": 2,
+          "namedScores": {},
+          "score": 0,
+          "success": false
+        },
+        "c3": {
+          "assertions": [],
+          "error": "Error: upstream timeout",
+          "failureReason": 2,
+          "namedScores": {},
+          "score": 0,
+          "success": false
+        },
+        "c4": {
+          "assertions": [],
+          "error": "Error: upstream timeout",
+          "failureReason": 2,
+          "namedScores": {},
+          "score": 0,
+          "success": false
+        }
+      },
+      "stats": {
+        "errors": 3,
+        "failures": 0,
+        "successes": 1
+      }
+    },
+    "task_errors_threshold_25": {
+      "command": [
+        "promptfoo",
+        "eval",
+        "-c",
+        "task_errors_threshold_25.json",
+        "--no-cache",
+        "--no-write",
+        "--no-table",
+        "--max-concurrency",
+        "1"
+      ],
+      "config": {
+        "assert": [
+          {
+            "type": "contains",
+            "value": "answer"
+          }
+        ],
+        "task_raises_on": [
+          "c2",
+          "c3",
+          "c4"
+        ]
+      },
+      "env": {
+        "PROMPTFOO_PASS_RATE_THRESHOLD": "25"
+      },
+      "exit_code": 0,
+      "prompt_metrics": {
+        "namedScores": {},
+        "score": 1,
+        "testErrorCount": 3,
+        "testFailCount": 0,
+        "testPassCount": 1
+      },
+      "rows": {
+        "c1": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": null,
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "contains"
+            }
+          ],
+          "error": null,
+          "failureReason": 0,
+          "namedScores": {},
+          "score": 1,
+          "success": true
+        },
+        "c2": {
+          "assertions": [],
+          "error": "Error: upstream timeout",
+          "failureReason": 2,
+          "namedScores": {},
+          "score": 0,
+          "success": false
+        },
+        "c3": {
+          "assertions": [],
+          "error": "Error: upstream timeout",
+          "failureReason": 2,
+          "namedScores": {},
+          "score": 0,
+          "success": false
+        },
+        "c4": {
+          "assertions": [],
+          "error": "Error: upstream timeout",
+          "failureReason": 2,
+          "namedScores": {},
+          "score": 0,
+          "success": false
+        }
+      },
+      "stats": {
+        "errors": 3,
+        "failures": 0,
+        "successes": 1
+      }
+    },
+    "two_assertions_same_metric": {
+      "command": [
+        "promptfoo",
+        "eval",
+        "-c",
+        "two_assertions_same_metric.json",
+        "--no-cache",
+        "--no-write",
+        "--no-table",
+        "--max-concurrency",
+        "1"
+      ],
+      "config": {
+        "assert": [
+          {
+            "metric": "judge",
+            "type": "javascript",
+            "value": "0.25"
+          },
+          {
+            "metric": "judge",
+            "type": "javascript",
+            "value": "1"
+          }
+        ],
+        "task_raises_on": []
+      },
+      "env": {},
+      "exit_code": 0,
+      "prompt_metrics": {
+        "namedScores": {
+          "judge": 5
+        },
+        "score": 2.5,
+        "testErrorCount": 0,
+        "testFailCount": 0,
+        "testPassCount": 4
+      },
+      "rows": {
+        "c1": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": "judge",
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 0.25,
+              "type": "javascript"
+            },
+            {
+              "graderError": null,
+              "metric": "judge",
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "javascript"
+            }
+          ],
+          "error": null,
+          "failureReason": 0,
+          "namedScores": {
+            "judge": 0.625
+          },
+          "score": 0.625,
+          "success": true
+        },
+        "c2": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": "judge",
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 0.25,
+              "type": "javascript"
+            },
+            {
+              "graderError": null,
+              "metric": "judge",
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "javascript"
+            }
+          ],
+          "error": null,
+          "failureReason": 0,
+          "namedScores": {
+            "judge": 0.625
+          },
+          "score": 0.625,
+          "success": true
+        },
+        "c3": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": "judge",
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 0.25,
+              "type": "javascript"
+            },
+            {
+              "graderError": null,
+              "metric": "judge",
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "javascript"
+            }
+          ],
+          "error": null,
+          "failureReason": 0,
+          "namedScores": {
+            "judge": 0.625
+          },
+          "score": 0.625,
+          "success": true
+        },
+        "c4": {
+          "assertions": [
+            {
+              "graderError": null,
+              "metric": "judge",
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 0.25,
+              "type": "javascript"
+            },
+            {
+              "graderError": null,
+              "metric": "judge",
+              "pass": true,
+              "reason": "Assertion passed",
+              "score": 1,
+              "type": "javascript"
+            }
+          ],
+          "error": null,
+          "failureReason": 0,
+          "namedScores": {
+            "judge": 0.625
+          },
+          "score": 0.625,
+          "success": true
+        }
+      },
+      "stats": {
+        "errors": 0,
+        "failures": 0,
+        "successes": 4
+      }
+    }
+  },
+  "version": "0.125.1"
+}

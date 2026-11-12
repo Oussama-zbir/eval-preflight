@@ -15,6 +15,11 @@ All notable changes to this project are documented here. The format follows
   scoring is incomplete, one pinned version at a time. Inspect AI 0.3.289 is probed by
   `scripts/research/inspect_ai_probe.py` (`make research`); pydantic-evals and promptfoo entries
   cite the existing fixtures. The other six frameworks are listed as not yet verified.
+- Research notes: promptfoo 0.125.1 probed through the CLI by
+  `scripts/research/promptfoo_probe.py` (`make research`, needs Node.js). The exit code is a pass
+  rate gate in which task errors count against the rate, so `PROMPTFOO_PASS_RATE_THRESHOLD=25`
+  passes a run whose task raised on 3 of 4 cases; a throwing or `undefined`-returning `javascript`
+  assertion is recorded as a plain failure with no grader-error flag.
 
 ## [0.2.0] — 2026-11-09
 
