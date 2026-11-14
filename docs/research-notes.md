@@ -25,8 +25,8 @@ Each framework is checked against the same scenarios, chosen to match eval-prefl
 | pydantic-evals | 2.61.0, 2.66.0 | Verified | [pydantic-evals](#pydantic-evals) |
 | promptfoo | 0.125.1 | Verified | [promptfoo](#promptfoo) |
 | Inspect AI | 0.3.289 | Verified | [Inspect AI](#inspect-ai) |
+| deepeval | 4.3.4 | Verified | [deepeval](#deepeval) |
 | Logfire | | Not yet verified | |
-| deepeval | | Not yet verified | |
 | ragas | | Not yet verified | |
 | Braintrust | | Not yet verified | |
 | LangSmith | | Not yet verified | |
@@ -143,4 +143,57 @@ byte-identical output.
 
 What a gate on Inspect logs needs, from the above: the log status, and per scorer
 `scored_samples` against `total_samples`. eval-preflight does not read Inspect logs yet (an
+adapter is in [BACKLOG.md](../BACKLOG.md)).
+
+## deepeval
+
+Version 4.3.4. Every scenario runs `deepeval test run` on one parametrized pytest test (`assert_test`
+over 4 cases) with deterministic metrics, no API key and telemetry off:
+[`scripts/research/deepeval_probe.py`](../scripts/research/deepeval_probe.py) (`make research`).
+Output, including exit codes, pytest's counts and the test run deepeval saves to
+`.deepeval/.latest_test_run.json`: [`research/deepeval-4.3.4.json`](research/deepeval-4.3.4.json).
+Two runs write byte-identical output. Source lines below are from the `deepeval-4.3.4` wheel on
+PyPI; the GitHub repository has no tag for 4.3.4 (the latest is `v4.1.8`).
+
+| Scenario (c2-c4 of 4 cases) | Flag | Exit | pytest | Saved run: passed / failed | Saved `metricsScores` |
+|---|---|---|---|---|---|
+| Custom metric raises | | 1 | 1 passed, 3 failed | 4 / 0 | passes 1, fails 0, errors 3 |
+| Same | `--ignore-errors` | 1 | 1 passed, 3 failed | 1 / 3 | passes 1, fails 0, errors 3 |
+| Custom metric sets no score | | 0 | 4 passed | 4 / 0 | passes 1, fails 0, errors 3 |
+| `ExactMatchMetric`, no `expected_output` | | 1 | 1 passed, 3 failed | 1 / 3 | passes 1, fails 0, errors 3 |
+| Same | `--skip-on-missing-params` | 0 | 4 passed | 1 / 0 (c2-c4 absent) | passes 1, fails 0, errors 0 |
+| Two metrics named `judge` (strict, lenient) | | 1 | 3 passed, 1 failed | 3 / 1 | one `judge` entry: passes 4, fails 1, errors 3 |
+
+A test case starts as passed (`success=True`,
+`deepeval/test_case/api.py` L58) and each metric can only turn it to failed: `success is False`
+fails it, `None` leaves it as it was (`deepeval/test_run/api.py` L86-L93). Separately, the
+run-level `metricsScores` counts a metric result as an error whenever its score or success is
+`None` (`deepeval/test_run/test_run.py` L290-L291).
+
+1. **Metric raises.** The exception propagates out of `assert_test`, so pytest fails those cases
+   and the CLI exits 1: a CI gate on the exit code does catch it. `deepeval.evaluate()` re-raises
+   too. But the saved test run says 4 passed, 0 failed: the three cases record the metric with
+   score `null`, success `null` and error `null`, so the exception text is not in the file. Only
+   `metricsScores` (`errors: 3`) shows anything went wrong.
+2. **Errors tolerated.** `--ignore-errors` does not let the run pass. The metric's error is
+   recorded and its success set to `false` (`deepeval/metrics/indicator.py` L193-L197), so the
+   cases fail and the CLI still exits 1; the saved file is now correct (1 / 3, with the error
+   text). A missing required field (`expected_output` for `ExactMatchMetric`) is recorded the same
+   way even without the flag, because the parameter check stores the error on the metric before
+   raising (`deepeval/metrics/utils/test_case.py` L224-L226). The tolerant setting is `--skip-on-missing-params`, and it only covers
+   missing fields: the metric is marked skipped and not recorded
+   (`indicator.py` L165-L167), so c2-c4 pass pytest and are absent from the saved run. The CLI
+   exits 0, the saved run reports 1 passed and 0 errors, and nothing in it says that 4 cases ran.
+3. **No value.** A custom metric whose `measure` returns without setting `score` or `success` is
+   a silent pass: the CLI exits 0, pytest reports 4 passed and the saved run 4 passed. The gap is
+   visible only as `errors: 3` in `metricsScores`.
+4. **Same name.** Both results are kept on every case, in the order the metrics were passed, but
+   under the same `name`, so a reader of the file can tell them apart only by position. The
+   run-level `metricsScores` merges them into one `judge` entry: `scores` `[0.0, 1.0, 1.0, 1.0,
+   1.0]` holds the strict metric's one score and the lenient metric's four, and its `errors: 3` are
+   the strict metric's three unscored cases.
+
+What a gate on deepeval needs, from the above: per metric, the number of scored results against
+the number of test cases that ran, taken from pytest's count rather than the saved run, which
+omits skipped cases. eval-preflight does not read deepeval test runs yet (an
 adapter is in [BACKLOG.md](../BACKLOG.md)).

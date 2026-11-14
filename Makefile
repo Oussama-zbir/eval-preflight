@@ -34,3 +34,4 @@ dogfood:
 research:
 	uv run --no-project scripts/research/inspect_ai_probe.py
 	uv run --no-project scripts/research/promptfoo_probe.py
+	uv run --no-project scripts/research/deepeval_probe.py

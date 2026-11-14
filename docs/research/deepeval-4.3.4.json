@@ -1,0 +1,450 @@
+{
+  "framework": "deepeval",
+  "generated_by": "scripts/research/deepeval_probe.py",
+  "scenarios": {
+    "evaluate_metric_raises": {
+      "call": "deepeval.evaluate(cases, [Judge('raise')])",
+      "outcome": "raised RuntimeError: judge quota exhausted"
+    },
+    "metric_raises": {
+      "command": [
+        "deepeval",
+        "test",
+        "run",
+        "test_probe.py"
+      ],
+      "exit_code": 1,
+      "pytest": {
+        "failed": 3,
+        "passed": 1
+      },
+      "saved_test_run": {
+        "metricsScores": [
+          {
+            "errors": 3,
+            "fails": 0,
+            "metric": "judge",
+            "passes": 1,
+            "scores": [
+              1.0
+            ]
+          }
+        ],
+        "testCases": {
+          "c1": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": 1.0,
+                "success": true
+              }
+            ],
+            "success": true
+          },
+          "c2": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": null,
+                "success": null
+              }
+            ],
+            "success": true
+          },
+          "c3": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": null,
+                "success": null
+              }
+            ],
+            "success": true
+          },
+          "c4": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": null,
+                "success": null
+              }
+            ],
+            "success": true
+          }
+        },
+        "testFailed": 0,
+        "testPassed": 4
+      }
+    },
+    "metric_raises_ignore_errors": {
+      "command": [
+        "deepeval",
+        "test",
+        "run",
+        "test_probe.py",
+        "--ignore-errors"
+      ],
+      "exit_code": 1,
+      "pytest": {
+        "failed": 3,
+        "passed": 1
+      },
+      "saved_test_run": {
+        "metricsScores": [
+          {
+            "errors": 3,
+            "fails": 0,
+            "metric": "judge",
+            "passes": 1,
+            "scores": [
+              1.0
+            ]
+          }
+        ],
+        "testCases": {
+          "c1": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": 1.0,
+                "success": true
+              }
+            ],
+            "success": true
+          },
+          "c2": {
+            "metricsData": [
+              {
+                "error": "judge quota exhausted",
+                "name": "judge",
+                "score": null,
+                "success": false
+              }
+            ],
+            "success": false
+          },
+          "c3": {
+            "metricsData": [
+              {
+                "error": "judge quota exhausted",
+                "name": "judge",
+                "score": null,
+                "success": false
+              }
+            ],
+            "success": false
+          },
+          "c4": {
+            "metricsData": [
+              {
+                "error": "judge quota exhausted",
+                "name": "judge",
+                "score": null,
+                "success": false
+              }
+            ],
+            "success": false
+          }
+        },
+        "testFailed": 3,
+        "testPassed": 1
+      }
+    },
+    "metric_sets_no_score": {
+      "command": [
+        "deepeval",
+        "test",
+        "run",
+        "test_probe.py"
+      ],
+      "exit_code": 0,
+      "pytest": {
+        "passed": 4
+      },
+      "saved_test_run": {
+        "metricsScores": [
+          {
+            "errors": 3,
+            "fails": 0,
+            "metric": "judge",
+            "passes": 1,
+            "scores": [
+              1.0
+            ]
+          }
+        ],
+        "testCases": {
+          "c1": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": 1.0,
+                "success": true
+              }
+            ],
+            "success": true
+          },
+          "c2": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": null,
+                "success": null
+              }
+            ],
+            "success": true
+          },
+          "c3": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": null,
+                "success": null
+              }
+            ],
+            "success": true
+          },
+          "c4": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": null,
+                "success": null
+              }
+            ],
+            "success": true
+          }
+        },
+        "testFailed": 0,
+        "testPassed": 4
+      }
+    },
+    "missing_params": {
+      "command": [
+        "deepeval",
+        "test",
+        "run",
+        "test_probe.py"
+      ],
+      "exit_code": 1,
+      "pytest": {
+        "failed": 3,
+        "passed": 1
+      },
+      "saved_test_run": {
+        "metricsScores": [
+          {
+            "errors": 3,
+            "fails": 0,
+            "metric": "Exact Match",
+            "passes": 1,
+            "scores": [
+              1.0
+            ]
+          }
+        ],
+        "testCases": {
+          "c1": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "Exact Match",
+                "score": 1.0,
+                "success": true
+              }
+            ],
+            "success": true
+          },
+          "c2": {
+            "metricsData": [
+              {
+                "error": "'expected_output' cannot be None for the 'Exact Match' metric",
+                "name": "Exact Match",
+                "score": null,
+                "success": false
+              }
+            ],
+            "success": false
+          },
+          "c3": {
+            "metricsData": [
+              {
+                "error": "'expected_output' cannot be None for the 'Exact Match' metric",
+                "name": "Exact Match",
+                "score": null,
+                "success": false
+              }
+            ],
+            "success": false
+          },
+          "c4": {
+            "metricsData": [
+              {
+                "error": "'expected_output' cannot be None for the 'Exact Match' metric",
+                "name": "Exact Match",
+                "score": null,
+                "success": false
+              }
+            ],
+            "success": false
+          }
+        },
+        "testFailed": 3,
+        "testPassed": 1
+      }
+    },
+    "missing_params_skip": {
+      "command": [
+        "deepeval",
+        "test",
+        "run",
+        "test_probe.py",
+        "--skip-on-missing-params"
+      ],
+      "exit_code": 0,
+      "pytest": {
+        "passed": 4
+      },
+      "saved_test_run": {
+        "metricsScores": [
+          {
+            "errors": 0,
+            "fails": 0,
+            "metric": "Exact Match",
+            "passes": 1,
+            "scores": [
+              1.0
+            ]
+          }
+        ],
+        "testCases": {
+          "c1": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "Exact Match",
+                "score": 1.0,
+                "success": true
+              }
+            ],
+            "success": true
+          }
+        },
+        "testFailed": 0,
+        "testPassed": 1
+      }
+    },
+    "two_metrics_same_name": {
+      "command": [
+        "deepeval",
+        "test",
+        "run",
+        "test_probe.py"
+      ],
+      "exit_code": 1,
+      "pytest": {
+        "failed": 1,
+        "passed": 3
+      },
+      "saved_test_run": {
+        "metricsScores": [
+          {
+            "errors": 3,
+            "fails": 1,
+            "metric": "judge",
+            "passes": 4,
+            "scores": [
+              0.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ],
+        "testCases": {
+          "c1": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": 0.0,
+                "success": false
+              },
+              {
+                "error": null,
+                "name": "judge",
+                "score": 1.0,
+                "success": true
+              }
+            ],
+            "success": false
+          },
+          "c2": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": null,
+                "success": null
+              },
+              {
+                "error": null,
+                "name": "judge",
+                "score": 1.0,
+                "success": true
+              }
+            ],
+            "success": true
+          },
+          "c3": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": null,
+                "success": null
+              },
+              {
+                "error": null,
+                "name": "judge",
+                "score": 1.0,
+                "success": true
+              }
+            ],
+            "success": true
+          },
+          "c4": {
+            "metricsData": [
+              {
+                "error": null,
+                "name": "judge",
+                "score": null,
+                "success": null
+              },
+              {
+                "error": null,
+                "name": "judge",
+                "score": 1.0,
+                "success": true
+              }
+            ],
+            "success": true
+          }
+        },
+        "testFailed": 1,
+        "testPassed": 3
+      }
+    }
+  },
+  "version": "4.3.4"
+}

@@ -20,6 +20,11 @@ All notable changes to this project are documented here. The format follows
   rate gate in which task errors count against the rate, so `PROMPTFOO_PASS_RATE_THRESHOLD=25`
   passes a run whose task raised on 3 of 4 cases; a throwing or `undefined`-returning `javascript`
   assertion is recorded as a plain failure with no grader-error flag.
+- Research notes: deepeval 4.3.4 probed through `deepeval test run` by
+  `scripts/research/deepeval_probe.py` (`make research`). A custom metric that returns without a
+  score passes every case with exit 0; `--skip-on-missing-params` drops unscored cases from the
+  saved test run, also with exit 0; a metric that raises fails the CLI, but the saved run records
+  those cases as passed with no error text.
 
 ## [0.2.0] — 2026-11-09
 
