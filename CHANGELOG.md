@@ -25,6 +25,12 @@ All notable changes to this project are documented here. The format follows
   score passes every case with exit 0; `--skip-on-missing-params` drops unscored cases from the
   saved test run, also with exit 0; a metric that raises fails the CLI, but the saved run records
   those cases as passed with no error text.
+- Research notes: ragas 0.4.4 probed through `evaluate()` and `@experiment` by
+  `scripts/research/ragas_probe.py` (`make research`). Failed metrics become NaN and the headline
+  is a NaN-skipping mean, so 1 scored row of 4 reports the same 1.0 as a full run; a metric
+  returning `None` makes `evaluate()` raise and lose every score; two metrics with the same name
+  overwrite each other; an experiment function that raises or returns `None` drops its row from
+  the saved results.
 
 ## [0.2.0] — 2026-11-09
 

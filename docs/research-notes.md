@@ -26,8 +26,8 @@ Each framework is checked against the same scenarios, chosen to match eval-prefl
 | promptfoo | 0.125.1 | Verified | [promptfoo](#promptfoo) |
 | Inspect AI | 0.3.289 | Verified | [Inspect AI](#inspect-ai) |
 | deepeval | 4.3.4 | Verified | [deepeval](#deepeval) |
+| ragas | 0.4.4 | Verified | [ragas](#ragas) |
 | Logfire | | Not yet verified | |
-| ragas | | Not yet verified | |
 | Braintrust | | Not yet verified | |
 | LangSmith | | Not yet verified | |
 | Phoenix | | Not yet verified | |
@@ -197,3 +197,65 @@ What a gate on deepeval needs, from the above: per metric, the number of scored 
 the number of test cases that ran, taken from pytest's count rather than the saved run, which
 omits skipped cases. eval-preflight does not read deepeval test runs yet (an
 adapter is in [BACKLOG.md](../BACKLOG.md)).
+
+## ragas
+
+Version 0.4.4. ragas is a library with two ways to score a dataset, and both are probed with
+deterministic metrics, no LLM, no API key and analytics off:
+[`scripts/research/ragas_probe.py`](../scripts/research/ragas_probe.py) (`make research`). Output,
+including `repr(result)`, per-row scores and the CSV each experiment saves:
+[`research/ragas-0.4.4.json`](research/ragas-0.4.4.json). Two runs write byte-identical output.
+The cited files are identical in the `ragas-0.4.4` wheel and the `v0.4.4` tag on GitHub.
+
+`evaluate()` (deprecated in 0.4, still documented), one custom `SingleTurnMetric` named `judge`:
+
+| Scenario (c2-c4 of 4 cases) | Setting | Raises | `repr(result)` | Per-row `judge` | Errors logged |
+|---|---|---|---|---|---|
+| Metric raises | default | no | `{'judge': 1.0000}` | 1.0, NaN, NaN, NaN | 3 |
+| Same | `raise_exceptions=True` | `RuntimeError` | | | 0 |
+| Metric returns NaN | default | no | `{'judge': 1.0000}` | 1.0, NaN, NaN, NaN | 0 |
+| Metric returns `None` | default | `TypeError` (from `np.isnan`) | | | 0 |
+| Two metrics named `judge` (strict 0.0, lenient 1.0) | default | no | `{'judge': 1.0000}` | 1.0 × 4 | 0 |
+
+`@experiment` over a local CSV dataset, a `@numeric_metric` named `judge`:
+
+| Scenario (c2-c4 of 4 rows) | Raises | Saved rows | `judge` in saved CSV | pandas `mean()` | Warnings printed |
+|---|---|---|---|---|---|
+| Metric raises | no | 4 | empty on c2-c4, error text in `reason` | 1.0 (count 1) | 0 |
+| Metric returns `None` | no | 4 | empty on c2-c4, validation text in `reason` | 1.0 (count 1) | 0 |
+| Experiment function raises | no | 1 | c2-c4 absent | 1.0 (count 1) | 3 |
+| Experiment function returns `None` | no | 1 | c2-c4 absent | 1.0 (count 1) | 0 |
+
+1. **Metric raises.** By default `evaluate()` does not raise: the executor logs `Exception raised
+   in Job[n]` and returns NaN for that job
+   ([`executor.py` L68-L84](https://github.com/vibrantlabsai/ragas/blob/v0.4.4/src/ragas/executor.py#L68-L84)). The headline is the NaN-skipping mean
+   ([`utils.py` L46-L55](https://github.com/vibrantlabsai/ragas/blob/v0.4.4/src/ragas/utils.py#L46-L55), used by
+   [`dataset_schema.py` L443-L446](https://github.com/vibrantlabsai/ragas/blob/v0.4.4/src/ragas/dataset_schema.py#L443-L446)), so `{'judge': 1.0000}` from 1
+   of 4 rows looks exactly like a full run. `raise_exceptions=True` makes the whole call raise and
+   returns nothing. In `@experiment`, a `@numeric_metric` never raises: errors become
+   `value=None` with the message in `reason`
+   ([`metrics/decorator.py` L301-L304](https://github.com/vibrantlabsai/ragas/blob/v0.4.4/src/ragas/metrics/decorator.py#L301-L304)); the saved CSV keeps
+   the row with an empty `judge`, and a pandas mean over the column is 1.0 from one value.
+2. **Errors tolerated.** That is the default in both APIs. Neither has an error threshold:
+   `evaluate()` either tolerates every error or raises on the first. A failure of the experiment function itself is printed as a warning and
+   the row is dropped from the saved results
+   ([`experiment.py` L180-L189](https://github.com/vibrantlabsai/ragas/blob/v0.4.4/src/ragas/experiment.py#L180-L189)), so the CSV has 1 row for a 4-row
+   dataset and nothing in it records that 3 rows failed.
+3. **No value.** In `evaluate()`, a metric returning NaN is indistinguishable from one that raised,
+   except that nothing is logged. A metric returning `None` crashes result construction
+   (`np.isnan` on an object array), so the scores of every case are lost. In `@experiment`, a
+   `None` from the metric is recorded like an error (empty value, reason text); a `None` from the
+   experiment function silently drops the row, with no warning at all
+   ([`experiment.py` L182-L184](https://github.com/vibrantlabsai/ragas/blob/v0.4.4/src/ragas/experiment.py#L182-L184)).
+4. **Same name.** `evaluate()` keys each row's scores by metric name
+   ([`evaluation.py` L292-L300](https://github.com/vibrantlabsai/ragas/blob/v0.4.4/src/ragas/evaluation.py#L292-L300)), so the second `judge` overwrites the
+   first on every row: the strict metric's four 0.0 scores are gone and the result reports 1.0,
+   with no warning. In `@experiment`, the user builds the row, so names are the user's problem.
+
+Rows in a saved experiment are in completion order (`asyncio.as_completed`), not dataset order.
+Not yet verified: the `ragas evals` CLI.
+
+What a gate on ragas needs, from the above: per metric, the count of non-NaN values against the
+dataset size (not the mean), and for `@experiment`, the saved row count against the dataset row
+count. Duplicate metric names must be rejected before `evaluate()`, because its output cannot show
+them. eval-preflight does not read ragas results yet.

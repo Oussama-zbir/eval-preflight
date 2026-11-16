@@ -1,0 +1,140 @@
+{
+  "framework": "ragas",
+  "generated_by": "scripts/research/ragas_probe.py",
+  "scenarios": {
+    "evaluate_metric_raises": {
+      "call": "evaluate(dataset, 1 metric(s), defaults)",
+      "logged_job_errors": 3,
+      "printed_task_warnings": 0,
+      "raised": null,
+      "repr": "{'judge': 1.0000}",
+      "scores": [
+        {
+          "judge": 1.0
+        },
+        {
+          "judge": "nan"
+        },
+        {
+          "judge": "nan"
+        },
+        {
+          "judge": "nan"
+        }
+      ]
+    },
+    "evaluate_metric_raises_raise_exceptions": {
+      "call": "evaluate(dataset, 1 metric(s), {'raise_exceptions': True})",
+      "logged_job_errors": 0,
+      "printed_task_warnings": 0,
+      "raised": "RuntimeError: judge quota exhausted"
+    },
+    "evaluate_metric_returns_nan": {
+      "call": "evaluate(dataset, 1 metric(s), defaults)",
+      "logged_job_errors": 0,
+      "printed_task_warnings": 0,
+      "raised": null,
+      "repr": "{'judge': 1.0000}",
+      "scores": [
+        {
+          "judge": 1.0
+        },
+        {
+          "judge": "nan"
+        },
+        {
+          "judge": "nan"
+        },
+        {
+          "judge": "nan"
+        }
+      ]
+    },
+    "evaluate_metric_returns_none": {
+      "call": "evaluate(dataset, 1 metric(s), defaults)",
+      "logged_job_errors": 0,
+      "printed_task_warnings": 0,
+      "raised": "TypeError: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''"
+    },
+    "evaluate_two_metrics_same_name": {
+      "call": "evaluate(dataset, 2 metric(s), defaults)",
+      "logged_job_errors": 0,
+      "printed_task_warnings": 0,
+      "raised": null,
+      "repr": "{'judge': 1.0000}",
+      "scores": [
+        {
+          "judge": 1.0
+        },
+        {
+          "judge": 1.0
+        },
+        {
+          "judge": 1.0
+        },
+        {
+          "judge": 1.0
+        }
+      ]
+    },
+    "experiment_metric_raises": {
+      "dataset_rows": 4,
+      "logged_job_errors": 0,
+      "pandas_judge_count": 1,
+      "pandas_judge_mean": 1.0,
+      "printed_task_warnings": 0,
+      "raised": null,
+      "saved_csv": [
+        "case_id,judge,reason",
+        "c4,,Error executing metric judge: judge quota exhausted",
+        "c3,,Error executing metric judge: judge quota exhausted",
+        "c2,,Error executing metric judge: judge quota exhausted",
+        "c1,1.0,"
+      ],
+      "saved_rows": 4
+    },
+    "experiment_metric_returns_none": {
+      "dataset_rows": 4,
+      "logged_job_errors": 0,
+      "pandas_judge_count": 1,
+      "pandas_judge_mean": 1.0,
+      "printed_task_warnings": 0,
+      "raised": null,
+      "saved_csv": [
+        "case_id,judge,reason",
+        "c4,,Metric judge returned 'None' but expected a numeric value",
+        "c3,,Metric judge returned 'None' but expected a numeric value",
+        "c2,,Metric judge returned 'None' but expected a numeric value",
+        "c1,1.0,"
+      ],
+      "saved_rows": 4
+    },
+    "experiment_task_raises": {
+      "dataset_rows": 4,
+      "logged_job_errors": 0,
+      "pandas_judge_count": 1,
+      "pandas_judge_mean": 1.0,
+      "printed_task_warnings": 3,
+      "raised": null,
+      "saved_csv": [
+        "case_id,judge,reason",
+        "c1,1.0,"
+      ],
+      "saved_rows": 1
+    },
+    "experiment_task_returns_none": {
+      "dataset_rows": 4,
+      "logged_job_errors": 0,
+      "pandas_judge_count": 1,
+      "pandas_judge_mean": 1.0,
+      "printed_task_warnings": 0,
+      "raised": null,
+      "saved_csv": [
+        "case_id,judge,reason",
+        "c1,1.0,"
+      ],
+      "saved_rows": 1
+    }
+  },
+  "version": "0.4.4"
+}
