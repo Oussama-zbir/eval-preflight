@@ -28,7 +28,7 @@ Each framework is checked against the same scenarios, chosen to match eval-prefl
 | deepeval | 4.3.4 | Verified | [deepeval](#deepeval) |
 | ragas | 0.4.4 | Verified | [ragas](#ragas) |
 | Logfire | | Not yet verified | |
-| Braintrust | | Not yet verified | |
+| Braintrust | 0.51.0 (Python SDK) | Verified | [Braintrust](#braintrust) |
 | LangSmith | | Not yet verified | |
 | Phoenix | | Not yet verified | |
 
@@ -259,3 +259,59 @@ What a gate on ragas needs, from the above: per metric, the count of non-NaN val
 dataset size (not the mean), and for `@experiment`, the saved row count against the dataset row
 count. Duplicate metric names must be rejected before `evaluate()`, because its output cannot show
 them. eval-preflight does not read ragas results yet.
+
+## Braintrust
+
+Python SDK 0.51.0. Every scenario runs one `Eval` over 4 cases with deterministic scorers, no
+account and no API key, in local mode (`no_send_logs`; the CLI then skips `login`,
+[`cli/eval.py` L317-L322](https://github.com/braintrustdata/braintrust-sdk-python/blob/py-sdk-v0.51.0/py/src/braintrust/cli/eval.py#L317-L322)):
+[`scripts/research/braintrust_probe.py`](../scripts/research/braintrust_probe.py) (`make research`).
+Each scenario is run through `braintrust eval --no-send-logs --jsonl`, for the exit code and the
+summary a CI log shows, and through `Eval(..., no_send_logs=True)` in-process, for the per-case
+results. Output: [`research/braintrust-0.51.0.json`](research/braintrust-0.51.0.json). Two runs
+write byte-identical output. The cited files are identical in the `braintrust-0.51.0` wheel and
+the `py-sdk-v0.51.0` tag of `braintrustdata/braintrust-sdk-python`.
+
+| Scenario (c2-c4 of 4 cases) | Setting | Exit | CLI prints | `judge` per case | Exception lines |
+|---|---|---|---|---|---|
+| Scorer raises | default | 0 | `judge` 1.0 | 1.0, absent × 3 (`scorer_errors` in metadata) | 3 |
+| Same | `default_error_score_handler` | 0 | `judge` 0.25 | 1.0, 0 × 3 | 3 |
+| Scorer returns `None` | default | 0 | `judge` 1.0 | 1.0, `null` × 3 | 0 |
+| Two scorers return `Score(name="judge")` (strict 0.0, lenient 1.0) | default | 0 | `judge` 1.0 | 1.0 × 4 | 0 |
+| Task raises | default | 1 | 3 errors, no summary | 1.0, absent × 3 | 0 |
+| Same | `default_error_score_handler` | 1 | 3 errors, no summary | 1.0, 0 × 3 | 0 |
+
+Only a task error fails the run: the default reporter counts results whose `error` is set
+([`framework.py` L677](https://github.com/braintrustdata/braintrust-sdk-python/blob/py-sdk-v0.51.0/py/src/braintrust/framework.py#L677)), and that field holds only the task's
+exception. A scorer's exception is caught per scorer, written to `metadata.scorer_errors` and
+printed to stderr ([`framework.py` L1932-L1941](https://github.com/braintrustdata/braintrust-sdk-python/blob/py-sdk-v0.51.0/py/src/braintrust/framework.py#L1932-L1941)). The
+summary is the mean of the scores that exist, with no count beside it
+([`framework.py` L2090-L2097](https://github.com/braintrustdata/braintrust-sdk-python/blob/py-sdk-v0.51.0/py/src/braintrust/framework.py#L2090-L2097)). That is how the local
+summary is built; with logs sent, the summary comes from the Braintrust server, which this probe
+does not run.
+
+1. **Scorer raises.** The CLI exits 0 and prints `judge` 1.0, the same line as a run in which all
+   4 cases scored 1.0. The only signs are three "Found exceptions for the following scorers" lines
+   on stderr and `scorer_errors` in each case's metadata. A task that raises does fail the CLI
+   (exit 1, the errors printed instead of the summary). In-process, `Eval()` returns normally in
+   both cases and its summary is again `judge` 1.0 from 1 of 4.
+2. **Errors tolerated.** Tolerating is the default for scorer errors. The opt-in
+   `error_score_handler` (default `None`,
+   [`framework.py` L446](https://github.com/braintrustdata/braintrust-sdk-python/blob/py-sdk-v0.51.0/py/src/braintrust/framework.py#L446)) goes the other way: the SDK's
+   `default_error_score_handler` scores every scorer that did not run as 0
+   ([`framework.py` L1556-L1563](https://github.com/braintrustdata/braintrust-sdk-python/blob/py-sdk-v0.51.0/py/src/braintrust/framework.py#L1556-L1563)), so the summary drops to
+   0.25. That is the honest number for a pass rate, but a 0 written by the handler cannot be told
+   apart from a real 0 in `scores`; only `scorer_errors` (scorer failed) or the task error
+   records the difference.
+3. **No value.** A bare `None` becomes `Score(name, score=None)`
+   ([`framework.py` L1644](https://github.com/braintrustdata/braintrust-sdk-python/blob/py-sdk-v0.51.0/py/src/braintrust/framework.py#L1644)): the case records `judge: null`, nothing
+   is printed, and the summary skips it. Exit 0, `judge` 1.0 from 1 of 4, with no warning.
+4. **Same name.** Each case's scores are a dict keyed by score name, filled in scorer order
+   ([`framework.py` L1900-L1906](https://github.com/braintrustdata/braintrust-sdk-python/blob/py-sdk-v0.51.0/py/src/braintrust/framework.py#L1900-L1906)), so the second `judge`
+   overwrites the first: the strict scorer's four 0.0 scores are gone and the run reports 1.0 with
+   no warning.
+
+What a gate on Braintrust needs, from the above: per score name, the number of non-null values
+against the number of cases, plus `scorer_errors` and task errors counted separately from real
+zeros, and a check for duplicate score names before the run, because the results cannot show them.
+eval-preflight does not read Braintrust experiments yet.

@@ -36,3 +36,4 @@ research:
 	uv run --no-project scripts/research/promptfoo_probe.py
 	uv run --no-project scripts/research/deepeval_probe.py
 	uv run --no-project scripts/research/ragas_probe.py
+	uv run --no-project scripts/research/braintrust_probe.py

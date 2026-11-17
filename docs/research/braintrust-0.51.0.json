@@ -1,0 +1,304 @@
+{
+  "cli": "braintrust eval --no-send-logs --jsonl --no-progress-bars eval_probe.py",
+  "framework": "braintrust",
+  "generated_by": "scripts/research/braintrust_probe.py",
+  "scenarios": {
+    "scorer_raises": {
+      "cli": {
+        "exit_code": 0,
+        "printed": {
+          "summary_scores": {
+            "judge": 1.0
+          }
+        },
+        "scorer_exception_lines": 3
+      },
+      "in_process": {
+        "rows": [
+          {
+            "case": "c1",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 1.0
+            },
+            "task_error": null
+          },
+          {
+            "case": "c2",
+            "scorer_errors": [
+              "judge"
+            ],
+            "scores": {},
+            "task_error": null
+          },
+          {
+            "case": "c3",
+            "scorer_errors": [
+              "judge"
+            ],
+            "scores": {},
+            "task_error": null
+          },
+          {
+            "case": "c4",
+            "scorer_errors": [
+              "judge"
+            ],
+            "scores": {},
+            "task_error": null
+          }
+        ],
+        "summary_scores": {
+          "judge": 1.0
+        }
+      }
+    },
+    "scorer_raises_error_score_handler": {
+      "cli": {
+        "exit_code": 0,
+        "printed": {
+          "summary_scores": {
+            "judge": 0.25
+          }
+        },
+        "scorer_exception_lines": 3
+      },
+      "in_process": {
+        "rows": [
+          {
+            "case": "c1",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 1.0
+            },
+            "task_error": null
+          },
+          {
+            "case": "c2",
+            "scorer_errors": [
+              "judge"
+            ],
+            "scores": {
+              "judge": 0
+            },
+            "task_error": null
+          },
+          {
+            "case": "c3",
+            "scorer_errors": [
+              "judge"
+            ],
+            "scores": {
+              "judge": 0
+            },
+            "task_error": null
+          },
+          {
+            "case": "c4",
+            "scorer_errors": [
+              "judge"
+            ],
+            "scores": {
+              "judge": 0
+            },
+            "task_error": null
+          }
+        ],
+        "summary_scores": {
+          "judge": 0.25
+        }
+      }
+    },
+    "scorer_returns_none": {
+      "cli": {
+        "exit_code": 0,
+        "printed": {
+          "summary_scores": {
+            "judge": 1.0
+          }
+        },
+        "scorer_exception_lines": 0
+      },
+      "in_process": {
+        "rows": [
+          {
+            "case": "c1",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 1.0
+            },
+            "task_error": null
+          },
+          {
+            "case": "c2",
+            "scorer_errors": [],
+            "scores": {
+              "judge": null
+            },
+            "task_error": null
+          },
+          {
+            "case": "c3",
+            "scorer_errors": [],
+            "scores": {
+              "judge": null
+            },
+            "task_error": null
+          },
+          {
+            "case": "c4",
+            "scorer_errors": [],
+            "scores": {
+              "judge": null
+            },
+            "task_error": null
+          }
+        ],
+        "summary_scores": {
+          "judge": 1.0
+        }
+      }
+    },
+    "task_raises": {
+      "cli": {
+        "exit_code": 1,
+        "printed": {
+          "errors_reported": 3
+        },
+        "scorer_exception_lines": 0
+      },
+      "in_process": {
+        "rows": [
+          {
+            "case": "c1",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 1.0
+            },
+            "task_error": null
+          },
+          {
+            "case": "c2",
+            "scorer_errors": [],
+            "scores": {},
+            "task_error": "RuntimeError: model timeout"
+          },
+          {
+            "case": "c3",
+            "scorer_errors": [],
+            "scores": {},
+            "task_error": "RuntimeError: model timeout"
+          },
+          {
+            "case": "c4",
+            "scorer_errors": [],
+            "scores": {},
+            "task_error": "RuntimeError: model timeout"
+          }
+        ],
+        "summary_scores": {
+          "judge": 1.0
+        }
+      }
+    },
+    "task_raises_error_score_handler": {
+      "cli": {
+        "exit_code": 1,
+        "printed": {
+          "errors_reported": 3
+        },
+        "scorer_exception_lines": 0
+      },
+      "in_process": {
+        "rows": [
+          {
+            "case": "c1",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 1.0
+            },
+            "task_error": null
+          },
+          {
+            "case": "c2",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 0
+            },
+            "task_error": "RuntimeError: model timeout"
+          },
+          {
+            "case": "c3",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 0
+            },
+            "task_error": "RuntimeError: model timeout"
+          },
+          {
+            "case": "c4",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 0
+            },
+            "task_error": "RuntimeError: model timeout"
+          }
+        ],
+        "summary_scores": {
+          "judge": 0.25
+        }
+      }
+    },
+    "two_scorers_same_name": {
+      "cli": {
+        "exit_code": 0,
+        "printed": {
+          "summary_scores": {
+            "judge": 1.0
+          }
+        },
+        "scorer_exception_lines": 0
+      },
+      "in_process": {
+        "rows": [
+          {
+            "case": "c1",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 1.0
+            },
+            "task_error": null
+          },
+          {
+            "case": "c2",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 1.0
+            },
+            "task_error": null
+          },
+          {
+            "case": "c3",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 1.0
+            },
+            "task_error": null
+          },
+          {
+            "case": "c4",
+            "scorer_errors": [],
+            "scores": {
+              "judge": 1.0
+            },
+            "task_error": null
+          }
+        ],
+        "summary_scores": {
+          "judge": 1.0
+        }
+      }
+    }
+  },
+  "version": "0.51.0"
+}

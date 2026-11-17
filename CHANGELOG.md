@@ -31,6 +31,11 @@ All notable changes to this project are documented here. The format follows
   returning `None` makes `evaluate()` raise and lose every score; two metrics with the same name
   overwrite each other; an experiment function that raises or returns `None` drops its row from
   the saved results.
+- Research notes: the Braintrust Python SDK 0.51.0 probed locally (`--no-send-logs`) by
+  `scripts/research/braintrust_probe.py` (`make research`). A scorer that raises or returns `None`
+  on 3 of 4 cases leaves the CLI at exit 0 with the same summary score as a full run; only task
+  errors fail it. The opt-in `default_error_score_handler` scores failed scorers as 0; two scorers
+  returning the same score name overwrite each other.
 
 ## [0.2.0] — 2026-11-09
 
