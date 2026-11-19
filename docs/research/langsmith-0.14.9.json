@@ -1,0 +1,587 @@
+{
+  "call": "evaluate(target, data=examples, evaluators=..., upload_results=False)",
+  "framework": "langsmith",
+  "generated_by": "scripts/research/langsmith_probe.py",
+  "scenarios": {
+    "evaluator_raises": {
+      "errors_logged": {
+        "evaluator": 3,
+        "target": 0
+      },
+      "raised": null,
+      "rows": [
+        {
+          "case": "c1",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 1.0
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c2",
+          "results": [
+            {
+              "comment": "RuntimeError('judge quota exhausted')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "RuntimeError('judge quota exhausted')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c3",
+          "results": [
+            {
+              "comment": "RuntimeError('judge quota exhausted')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "RuntimeError('judge quota exhausted')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c4",
+          "results": [
+            {
+              "comment": "RuntimeError('judge quota exhausted')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "RuntimeError('judge quota exhausted')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": null
+        }
+      ],
+      "to_pandas": {
+        "feedback_columns": {
+          "feedback.judge": {
+            "count": 1,
+            "mean": 1.0,
+            "values": [
+              1.0,
+              null,
+              null,
+              null
+            ]
+          }
+        },
+        "rows": 4
+      }
+    },
+    "evaluator_returns_none": {
+      "errors_logged": {
+        "evaluator": 3,
+        "target": 0
+      },
+      "raised": null,
+      "rows": [
+        {
+          "case": "c1",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 1.0
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c2",
+          "results": [
+            {
+              "comment": "ValueError('Expected a non-empty dict, str, bool, int, float, list, EvaluationResult, or EvaluationResults. Got None')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "ValueError('Expected a non-empty dict, str, bool, int, float, list, EvaluationResult, or EvaluationResults. Got None')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c3",
+          "results": [
+            {
+              "comment": "ValueError('Expected a non-empty dict, str, bool, int, float, list, EvaluationResult, or EvaluationResults. Got None')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "ValueError('Expected a non-empty dict, str, bool, int, float, list, EvaluationResult, or EvaluationResults. Got None')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c4",
+          "results": [
+            {
+              "comment": "ValueError('Expected a non-empty dict, str, bool, int, float, list, EvaluationResult, or EvaluationResults. Got None')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "ValueError('Expected a non-empty dict, str, bool, int, float, list, EvaluationResult, or EvaluationResults. Got None')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": null
+        }
+      ],
+      "to_pandas": {
+        "feedback_columns": {
+          "feedback.judge": {
+            "count": 1,
+            "mean": 1.0,
+            "values": [
+              1.0,
+              null,
+              null,
+              null
+            ]
+          }
+        },
+        "rows": 4
+      }
+    },
+    "evaluator_returns_score_none": {
+      "errors_logged": {
+        "evaluator": 0,
+        "target": 0
+      },
+      "raised": null,
+      "rows": [
+        {
+          "case": "c1",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 1.0
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c2",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c3",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c4",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": null
+        }
+      ],
+      "to_pandas": {
+        "feedback_columns": {
+          "feedback.judge": {
+            "count": 1,
+            "mean": 1.0,
+            "values": [
+              1.0,
+              null,
+              null,
+              null
+            ]
+          }
+        },
+        "rows": 4
+      }
+    },
+    "lambda_evaluator_raises": {
+      "errors_logged": {
+        "evaluator": 3,
+        "target": 0
+      },
+      "raised": null,
+      "rows": [
+        {
+          "case": "c1",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 1.0
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c2",
+          "results": [],
+          "run_error": null
+        },
+        {
+          "case": "c3",
+          "results": [],
+          "run_error": null
+        },
+        {
+          "case": "c4",
+          "results": [],
+          "run_error": null
+        }
+      ],
+      "to_pandas": {
+        "feedback_columns": {
+          "feedback.judge": {
+            "count": 1,
+            "mean": 1.0,
+            "values": [
+              1.0,
+              null,
+              null,
+              null
+            ]
+          }
+        },
+        "rows": 4
+      }
+    },
+    "target_raises": {
+      "errors_logged": {
+        "evaluator": 3,
+        "target": 3
+      },
+      "raised": null,
+      "rows": [
+        {
+          "case": "c1",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 1.0
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c2",
+          "results": [
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": "RuntimeError: model timeout"
+        },
+        {
+          "case": "c3",
+          "results": [
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": "RuntimeError: model timeout"
+        },
+        {
+          "case": "c4",
+          "results": [
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": "RuntimeError: model timeout"
+        }
+      ],
+      "to_pandas": {
+        "feedback_columns": {
+          "feedback.judge": {
+            "count": 1,
+            "mean": 1.0,
+            "values": [
+              1.0,
+              null,
+              null,
+              null
+            ]
+          }
+        },
+        "rows": 4
+      }
+    },
+    "target_raises_error_handling_ignore": {
+      "errors_logged": {
+        "evaluator": 3,
+        "target": 3
+      },
+      "raised": null,
+      "rows": [
+        {
+          "case": "c1",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 1.0
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c2",
+          "results": [
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": "RuntimeError: model timeout"
+        },
+        {
+          "case": "c3",
+          "results": [
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": "RuntimeError: model timeout"
+        },
+        {
+          "case": "c4",
+          "results": [
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            },
+            {
+              "comment": "KeyError('answer')",
+              "error": true,
+              "key": "judge",
+              "score": null
+            }
+          ],
+          "run_error": "RuntimeError: model timeout"
+        }
+      ],
+      "to_pandas": {
+        "feedback_columns": {
+          "feedback.judge": {
+            "count": 1,
+            "mean": 1.0,
+            "values": [
+              1.0,
+              null,
+              null,
+              null
+            ]
+          }
+        },
+        "rows": 4
+      }
+    },
+    "two_evaluators_same_key": {
+      "errors_logged": {
+        "evaluator": 0,
+        "target": 0
+      },
+      "raised": null,
+      "rows": [
+        {
+          "case": "c1",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 0.0
+            },
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 1.0
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c2",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 0.0
+            },
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 1.0
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c3",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 0.0
+            },
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 1.0
+            }
+          ],
+          "run_error": null
+        },
+        {
+          "case": "c4",
+          "results": [
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 0.0
+            },
+            {
+              "comment": null,
+              "error": false,
+              "key": "judge",
+              "score": 1.0
+            }
+          ],
+          "run_error": null
+        }
+      ],
+      "to_pandas": {
+        "feedback_columns": {
+          "feedback.judge": {
+            "count": 4,
+            "mean": 1.0,
+            "values": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        },
+        "rows": 4
+      }
+    }
+  },
+  "version": "0.14.9"
+}

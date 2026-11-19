@@ -36,6 +36,12 @@ All notable changes to this project are documented here. The format follows
   on 3 of 4 cases leaves the CLI at exit 0 with the same summary score as a full run; only task
   errors fail it. The opt-in `default_error_score_handler` scores failed scorers as 0; two scorers
   returning the same score name overwrite each other.
+- Research notes: the LangSmith Python SDK 0.14.9 probed locally (`evaluate(...,
+  upload_results=False)`) by `scripts/research/langsmith_probe.py` (`make research`).
+  `evaluate()` never fails on evaluator or target errors, and the `to_pandas()` column mean is 1.0
+  from 1 of 4 cases; error results are filed under keys read statically from the evaluator's
+  source (none for a lambda, one per `return`), a `score: None` result is accepted silently, and
+  two evaluators returning the same key overwrite each other in `to_pandas()`.
 
 ## [0.2.0] — 2026-11-09
 

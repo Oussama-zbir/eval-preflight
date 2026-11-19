@@ -29,7 +29,7 @@ Each framework is checked against the same scenarios, chosen to match eval-prefl
 | ragas | 0.4.4 | Verified | [ragas](#ragas) |
 | Logfire | | Not yet verified | |
 | Braintrust | 0.51.0 (Python SDK) | Verified | [Braintrust](#braintrust) |
-| LangSmith | | Not yet verified | |
+| LangSmith | 0.14.9 (Python SDK) | Verified | [LangSmith](#langsmith) |
 | Phoenix | | Not yet verified | |
 
 Adjacent tools named in SPEC §2 (`evaltrust`, `limen-eval`, `Threadborne/eval-integrity`,
@@ -315,3 +315,72 @@ What a gate on Braintrust needs, from the above: per score name, the number of n
 against the number of cases, plus `scorer_errors` and task errors counted separately from real
 zeros, and a check for duplicate score names before the run, because the results cannot show them.
 eval-preflight does not read Braintrust experiments yet.
+
+## LangSmith
+
+Python SDK 0.14.9. Every scenario runs `evaluate()` over 4 in-memory examples with an exact-match
+evaluator, no account, no API key and no network: `upload_results=False` (marked beta), and a client
+pointed at a closed loopback port
+([`scripts/research/langsmith_probe.py`](../scripts/research/langsmith_probe.py), `make research`).
+Output, including each case's evaluation results, the `feedback.*` columns of `to_pandas()` and
+the error lines LangSmith logged: [`research/langsmith-0.14.9.json`](research/langsmith-0.14.9.json).
+Two runs write byte-identical output. 0.14.9 is pinned because it is the latest release with a
+GitHub tag; the cited files are identical in the `langsmith-0.14.9` wheel and the `v0.14.9` tag,
+and 0.15.0 (2026-11-17, untagged) only reformats `langsmith/evaluation/`.
+
+`evaluate()` never raised and, with results not uploaded, prints no summary; the table's mean is
+pandas' over the `feedback.judge` column of `to_pandas()`, the documented way to read local results.
+
+| Scenario (c2-c4 of 4 cases) | Setting | `judge` results on c2-c4 | `feedback.judge` | Mean | Errors logged |
+|---|---|---|---|---|---|
+| Evaluator raises | | 2 per case, `score` `None`, `extra.error` | 1.0, None × 3 | 1.0 | 3 |
+| Same, evaluator is a lambda | | none | 1.0, None × 3 | 1.0 | 3 |
+| Evaluator returns `None` | | 2 per case, `score` `None`, `extra.error` (`ValueError`) | 1.0, None × 3 | 1.0 | 3 |
+| Evaluator returns `{"key": "judge", "score": None}` | | 1 per case, `score` `None`, no error flag | 1.0, None × 3 | 1.0 | 0 |
+| Two evaluators return key `judge` (strict 0.0, lenient 1.0) | | 2 per case (0.0 and 1.0) | 1.0 × 4 | 1.0 | 0 |
+| Target raises | `error_handling="log"` (default) | 2 per case, `KeyError('answer')` | 1.0, None × 3 | 1.0 | 3 target, 3 evaluator |
+| Same | `error_handling="ignore"` | same | same | 1.0 | same |
+
+An evaluator's exception is caught per evaluator and logged, and an error result is added for
+each of its `feedback_keys`, with `score` `None`, the exception's `repr` as `comment` and
+`extra={"error": True}`
+([`evaluation/_runner.py` L1744-L1781](https://github.com/langchain-ai/langsmith-sdk/blob/v0.14.9/python/langsmith/evaluation/_runner.py#L1744-L1781)).
+Those keys are not taken from the evaluator's results: they are read statically from its source,
+one per `return` of a literal `key`, without de-duplication, falling back to the function name,
+and empty when the evaluator is not a `def` (a lambda, for example)
+([`evaluation/_key_extraction.py` L111-L140](https://github.com/langchain-ai/langsmith-sdk/blob/v0.14.9/python/langsmith/evaluation/_key_extraction.py#L111-L140)).
+The probe's evaluator returns `"judge"` in two places, hence two error results per failed case.
+`to_pandas()` builds one column per key with a dict comprehension, so a later result with the
+same key overwrites an earlier one, and an error result contributes `None`
+([`evaluation/_runner.py` L2342-L2345](https://github.com/langchain-ai/langsmith-sdk/blob/v0.14.9/python/langsmith/evaluation/_runner.py#L2342-L2345)).
+
+1. **Evaluator raises.** `evaluate()` returns normally and the column's mean is 1.0 from 1 of 4
+   cases, the same as a full run. The in-memory results do mark the failure (`extra.error`, the
+   exception in `comment`), but `to_pandas()` drops both and keeps only `None`. If the evaluator
+   is a lambda, its key cannot be read from source, so no error result is added at all: the
+   failed cases have no `judge` result, and the only trace is the logged error.
+2. **Errors tolerated.** That is the only mode; `evaluate()` has no option to fail on evaluator
+   errors. `error_handling` is about target errors and, locally, changes nothing: the target's
+   exception is logged and the run kept either way
+   ([`evaluation/_runner.py` L2051-L2073](https://github.com/langchain-ai/langsmith-sdk/blob/v0.14.9/python/langsmith/evaluation/_runner.py#L2051-L2073)); per its
+   docstring, `"ignore"` keeps such runs out of the experiment on the server
+   ([L194-L198](https://github.com/langchain-ai/langsmith-sdk/blob/v0.14.9/python/langsmith/evaluation/_runner.py#L194-L198)), which this probe does not run. The
+   evaluators still run on the failed target's output, so whether a target error shows as an
+   evaluator error, a low score or a pass depends on the evaluator; here, `outputs["answer"]`
+   raised `KeyError` and the mean stayed 1.0.
+3. **No value.** Returning `None` is rejected
+   ([`evaluation/evaluator.py` L937-L941](https://github.com/langchain-ai/langsmith-sdk/blob/v0.14.9/python/langsmith/evaluation/evaluator.py#L937-L941)) and recorded
+   like a raise. Returning a result with `score: None` is accepted silently: no error flag, no log
+   line, and the mean is 1.0 from 1 of 4.
+4. **Same name.** The in-memory results keep both on every case, in evaluator order, under the same
+   key, so they can be told apart only by position. `to_pandas()` keeps the last: the strict
+   evaluator's four 0.0 scores are gone and the column reads 1.0 on every case, with no warning.
+
+With results uploaded, aggregates are computed by the LangSmith server, and LangSmith's pytest
+integration is a separate path; neither is probed here.
+
+What a gate on LangSmith results needs, from the above: per feedback key, the number of non-null
+scores against the number of examples, read from the result objects rather than `to_pandas()`, and
+a count of `extra.error` results and target errors. Lambda evaluators and duplicate keys must be
+checked before the run, because the results cannot show them. eval-preflight does not read
+LangSmith experiments yet (an adapter is in [BACKLOG.md](../BACKLOG.md)).
