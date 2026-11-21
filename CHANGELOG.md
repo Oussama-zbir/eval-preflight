@@ -42,6 +42,12 @@ All notable changes to this project are documented here. The format follows
   from 1 of 4 cases; error results are filed under keys read statically from the evaluator's
   source (none for a lambda, one per `return`), a `score: None` result is accepted silently, and
   two evaluators returning the same key overwrite each other in `to_pandas()`.
+- Research notes: Arize Phoenix probed by `scripts/research/phoenix_probe.py` (`make research`)
+  against a local `phoenix serve` 22.0.0 (client 3.7.0, evals 3.10.0). Experiments never fail on
+  evaluator errors and the server's mean is 1.0 from 1 of 4 cases, though its summary also reports
+  `scoreCount` and `errorCount`; two evaluators with the same name collapse to one before running.
+  `evaluate_dataframe` by default retries a failing row 10 times, then stops without raising and
+  leaves the remaining rows unscored.
 
 ## [0.2.0] — 2026-11-09
 

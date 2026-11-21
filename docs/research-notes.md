@@ -30,7 +30,7 @@ Each framework is checked against the same scenarios, chosen to match eval-prefl
 | Logfire | | Not yet verified | |
 | Braintrust | 0.51.0 (Python SDK) | Verified | [Braintrust](#braintrust) |
 | LangSmith | 0.14.9 (Python SDK) | Verified | [LangSmith](#langsmith) |
-| Phoenix | | Not yet verified | |
+| Phoenix | 22.0.0 (server), client 3.7.0, evals 3.10.0 | Verified | [Phoenix](#phoenix) |
 
 Adjacent tools named in SPEC §2 (`evaltrust`, `limen-eval`, `Threadborne/eval-integrity`,
 `elanthus/preflight-eval-results`) are not yet checked either.
@@ -384,3 +384,101 @@ scores against the number of examples, read from the result objects rather than 
 a count of `extra.error` results and target errors. Lambda evaluators and duplicate keys must be
 checked before the run, because the results cannot show them. eval-preflight does not read
 LangSmith experiments yet (an adapter is in [BACKLOG.md](../BACKLOG.md)).
+
+## Phoenix
+
+Arize Phoenix has two ways to score a set of cases, and the probe runs both
+([`scripts/research/phoenix_probe.py`](../scripts/research/phoenix_probe.py), `make research`):
+experiments (`phoenix.client` 3.7.0, `Client().experiments.run_experiment`), where the task and
+evaluators run in the client and a Phoenix server stores the results and computes the summary the
+UI shows; and `phoenix.evals.evaluate_dataframe` (`arize-phoenix-evals` 3.10.0), which scores a
+DataFrame locally. A `dry_run` experiment still fetches its dataset from a server, so the probe
+starts a real `phoenix serve` (`arize-phoenix` 22.0.0) on loopback with a throwaway SQLite
+database, `PHOENIX_ALLOW_EXTERNAL_RESOURCES=false` and telemetry off; no account and no network.
+Output, with each case's evaluation runs, the server's GraphQL `annotationSummaries` and
+`errorRate`, and each `evaluate_dataframe` row:
+[`research/phoenix-22.0.0.json`](research/phoenix-22.0.0.json). Two runs write byte-identical
+output. Every cited file is identical in the wheels and the tags `arize-phoenix-v22.0.0`,
+`arize-phoenix-client-v3.7.0` and `arize-phoenix-evals-v3.10.0`.
+
+Neither API raised in any scenario. Experiments print `Experiment completed: N task runs,
+M evaluator runs, K evaluations`; the server summary is per evaluation name.
+
+| Scenario (c2-c4 of 4 cases) | Experiment: printed summary | Server `judge`: mean, count, `scoreCount`, `errorCount` |
+|---|---|---|
+| Evaluator raises | 4 task runs, 1 evaluator runs, 1 evaluations | 1.0, 4, 1, 3 |
+| Evaluator returns `None` | same | 1.0, 4, 1, 3 |
+| Evaluator returns `{"score": None}` | 4 task runs, 1 evaluator runs, 4 evaluations | 1.0, 4, 1, 0 |
+| Two evaluators named `judge` (strict 0.0, lenient 1.0) | 4 task runs, 1 evaluator runs, 4 evaluations | 1.0, 4, 4, 0 |
+| Task raises (`retries=3`, the default) | 4 task runs, 1 evaluator runs, 4 evaluations | 0.25, 4, 4, 0; experiment `errorRate` 0.75 |
+
+| Scenario (c2-c4 of 4 cases) | `evaluate_dataframe` setting | `judge_execution_details` c1-c4 | Scored | Mean |
+|---|---|---|---|---|
+| Evaluator raises | defaults | COMPLETED, FAILED (11 attempts), DID NOT RUN × 2 | 1 | 1.0 |
+| Same | `exit_on_error=False, max_retries=0` | COMPLETED, FAILED × 3 | 1 | 1.0 |
+| Evaluator returns `None` | defaults | COMPLETED, FAILED (11 attempts), DID NOT RUN × 2 | 1 | 1.0 |
+| Evaluator returns `{"score": None}` | defaults | COMPLETED × 4 | 1 | 1.0 |
+| Two evaluators named `judge` | defaults | COMPLETED × 4 (one column) | 4 | 1.0 |
+
+"Mean" for `evaluate_dataframe` is pandas' over the `score` field of the `judge_score` column;
+the function returns per-row results and no aggregate.
+
+**Experiments.** An evaluator's exception is caught per case, printed, and stored as an
+evaluation with no result and the exception's `repr` as `error`
+([`resources/experiments/__init__.py` L2033-L2052](https://github.com/Arize-ai/phoenix/blob/arize-phoenix-client-v3.7.0/packages/phoenix-client/src/phoenix/client/resources/experiments/__init__.py#L2033-L2052)).
+The server's annotation summary averages scores with SQL `AVG`, which skips nulls, and reports
+`count`, `errorCount` and `scoreCount` next to it
+([`dataloaders/experiment_annotation_summaries.py` L67-L114](https://github.com/Arize-ai/phoenix/blob/arize-phoenix-v22.0.0/src/phoenix/server/api/dataloaders/experiment_annotation_summaries.py#L67-L114)).
+
+1. **Evaluator raises.** `run_experiment` returns normally. The printed summary counts only
+   evaluations with a result
+   ([L1022-L1045](https://github.com/Arize-ai/phoenix/blob/arize-phoenix-client-v3.7.0/packages/phoenix-client/src/phoenix/client/resources/experiments/__init__.py#L1022-L1045)),
+   so it says 1 evaluation where 4 were expected, but nothing compares the two. The server's mean
+   is 1.0 from 1 of 4, the same as a full run, but the same summary carries `scoreCount` 1 and
+   `errorCount` 3, so the gap is visible to anyone who reads them.
+2. **Errors tolerated.** That is the only mode for evaluators; there is no option to fail on them.
+3. **No value.** Returning `None` is rejected (`ValueError: Unsupported evaluation result type`)
+   and recorded like a raise. Returning `{"score": None}` is accepted silently: no error, the
+   printed summary says 4 evaluations, and only `scoreCount` 1 of `count` 4 shows that three cases
+   have no score.
+4. **Same name.** Evaluators are put in a dict keyed by name, so the later one replaces the
+   earlier before anything runs
+   ([L385-L403](https://github.com/Arize-ai/phoenix/blob/arize-phoenix-client-v3.7.0/packages/phoenix-client/src/phoenix/client/resources/experiments/__init__.py#L385-L403)).
+   The strict evaluator never ran: one evaluation per case, all 1.0, "1 evaluator runs", no
+   warning. The results cannot show it; only the evaluator list can.
+
+A task that raises is retried (`retries=3`: 4 attempts per case, each printed) and kept as a run
+with an `error`; the evaluators then run on its `None` output, so what the evaluation shows depends
+on the evaluator (here 0.0, mean 0.25). The task errors do show in the experiment's `errorRate`
+0.75.
+
+**`evaluate_dataframe`.** Each (row, evaluator) pair runs through a `SyncExecutor` whose defaults
+are `max_retries=10` and `exit_on_error=True`; `evaluate_dataframe` passes neither unless the
+caller does
+([`evaluators.py` L1538-L1553](https://github.com/Arize-ai/phoenix/blob/arize-phoenix-evals-v3.10.0/packages/phoenix-evals/src/phoenix/evals/evaluators.py#L1538-L1553),
+[`executors.py` L485-L491, L519-L573](https://github.com/Arize-ai/phoenix/blob/arize-phoenix-evals-v3.10.0/packages/phoenix-evals/src/phoenix/evals/executors.py#L485-L573)).
+
+1. **Evaluator raises.** With the defaults, the first failing row is attempted 11 times, then the
+   executor stops: the remaining rows are `DID NOT RUN`, their score cells are empty, and
+   `evaluate_dataframe` returns normally, so the 1 scored row of 4 gives the same 1.0 as a full
+   run. Each row's status is in `<evaluator>_execution_details`; apart from one printed
+   `Retries exhausted` line, that column is the only record that the run stopped.
+2. **Errors tolerated.** `exit_on_error=False` runs every row; failed rows are `FAILED` with
+   their exceptions listed, and the score column is still 1 of 4.
+3. **No value.** `None` raises `ValueError` inside the evaluator wrapper, so it behaves exactly
+   like a raise, including 10 retries of a deterministic error. `{"score": None}` is `COMPLETED`
+   with no score.
+4. **Same name.** Both evaluators run and write to the same `judge_score` and
+   `judge_execution_details` columns; the later one's values replace the earlier's (here 1.0 on
+   every row). The docstring says so
+   ([`evaluators.py` L1517-L1523](https://github.com/Arize-ai/phoenix/blob/arize-phoenix-evals-v3.10.0/packages/phoenix-evals/src/phoenix/evals/evaluators.py#L1517-L1523)).
+
+Not probed: the Phoenix UI's rendering of these summaries, `async_evaluate_dataframe`, and
+annotations logged on traces rather than experiments.
+
+What a gate on Phoenix results needs, from the above: for experiments, `scoreCount` against the
+number of expected runs per evaluation name, plus `errorCount` and the experiment's `errorRate`
+(the server already computes all three), and a check before the run that evaluator names are
+unique. For `evaluate_dataframe`, the `status` of every `*_execution_details` cell and the number
+of non-empty scores per column, with evaluator names checked before the run. eval-preflight does
+not read Phoenix results yet.

@@ -1,0 +1,575 @@
+{
+  "calls": {
+    "dataframe": "phoenix.evals.evaluate_dataframe(dataframe=..., evaluators=[...], hide_tqdm_bar=True)",
+    "experiment": "Client().experiments.run_experiment(dataset=..., task=..., evaluators=[...]) against a local `phoenix serve` (SQLite)"
+  },
+  "framework": "phoenix",
+  "generated_by": "scripts/research/phoenix_probe.py",
+  "scenarios": {
+    "dataframe_evaluator_raises": {
+      "gave_up_lines_printed": 1,
+      "raised": null,
+      "retry_lines_printed": 10,
+      "rows": [
+        {
+          "case": "c1",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "COMPLETED"
+          },
+          "judge_score": 1.0
+        },
+        {
+          "case": "c2",
+          "judge_execution_details": {
+            "exceptions": 11,
+            "status": "FAILED"
+          },
+          "judge_score": null
+        },
+        {
+          "case": "c3",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "DID NOT RUN"
+          },
+          "judge_score": null
+        },
+        {
+          "case": "c4",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "DID NOT RUN"
+          },
+          "judge_score": null
+        }
+      ],
+      "score_columns": {
+        "judge_score": {
+          "count": 1,
+          "mean": 1.0
+        }
+      }
+    },
+    "dataframe_evaluator_raises_continue": {
+      "gave_up_lines_printed": 3,
+      "raised": null,
+      "retry_lines_printed": 0,
+      "rows": [
+        {
+          "case": "c1",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "COMPLETED"
+          },
+          "judge_score": 1.0
+        },
+        {
+          "case": "c2",
+          "judge_execution_details": {
+            "exceptions": 1,
+            "status": "FAILED"
+          },
+          "judge_score": null
+        },
+        {
+          "case": "c3",
+          "judge_execution_details": {
+            "exceptions": 1,
+            "status": "FAILED"
+          },
+          "judge_score": null
+        },
+        {
+          "case": "c4",
+          "judge_execution_details": {
+            "exceptions": 1,
+            "status": "FAILED"
+          },
+          "judge_score": null
+        }
+      ],
+      "score_columns": {
+        "judge_score": {
+          "count": 1,
+          "mean": 1.0
+        }
+      }
+    },
+    "dataframe_evaluator_returns_none": {
+      "gave_up_lines_printed": 1,
+      "raised": null,
+      "retry_lines_printed": 10,
+      "rows": [
+        {
+          "case": "c1",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "COMPLETED"
+          },
+          "judge_score": 1.0
+        },
+        {
+          "case": "c2",
+          "judge_execution_details": {
+            "exceptions": 11,
+            "status": "FAILED"
+          },
+          "judge_score": null
+        },
+        {
+          "case": "c3",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "DID NOT RUN"
+          },
+          "judge_score": null
+        },
+        {
+          "case": "c4",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "DID NOT RUN"
+          },
+          "judge_score": null
+        }
+      ],
+      "score_columns": {
+        "judge_score": {
+          "count": 1,
+          "mean": 1.0
+        }
+      }
+    },
+    "dataframe_evaluator_returns_score_none": {
+      "gave_up_lines_printed": 0,
+      "raised": null,
+      "retry_lines_printed": 0,
+      "rows": [
+        {
+          "case": "c1",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "COMPLETED"
+          },
+          "judge_score": 1.0
+        },
+        {
+          "case": "c2",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "COMPLETED"
+          },
+          "judge_score": null
+        },
+        {
+          "case": "c3",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "COMPLETED"
+          },
+          "judge_score": null
+        },
+        {
+          "case": "c4",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "COMPLETED"
+          },
+          "judge_score": null
+        }
+      ],
+      "score_columns": {
+        "judge_score": {
+          "count": 1,
+          "mean": 1.0
+        }
+      }
+    },
+    "dataframe_two_evaluators_same_name": {
+      "gave_up_lines_printed": 0,
+      "raised": null,
+      "retry_lines_printed": 0,
+      "rows": [
+        {
+          "case": "c1",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "COMPLETED"
+          },
+          "judge_score": 1.0
+        },
+        {
+          "case": "c2",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "COMPLETED"
+          },
+          "judge_score": 1.0
+        },
+        {
+          "case": "c3",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "COMPLETED"
+          },
+          "judge_score": 1.0
+        },
+        {
+          "case": "c4",
+          "judge_execution_details": {
+            "exceptions": 0,
+            "status": "COMPLETED"
+          },
+          "judge_score": 1.0
+        }
+      ],
+      "score_columns": {
+        "judge_score": {
+          "count": 4,
+          "mean": 1.0
+        }
+      }
+    },
+    "experiment_evaluator_raises": {
+      "evaluation_runs": [
+        {
+          "case": "c1",
+          "error": null,
+          "name": "judge",
+          "score": 1.0
+        },
+        {
+          "case": "c2",
+          "error": "RuntimeError('judge quota exhausted')",
+          "name": "judge",
+          "score": null
+        },
+        {
+          "case": "c3",
+          "error": "RuntimeError('judge quota exhausted')",
+          "name": "judge",
+          "score": null
+        },
+        {
+          "case": "c4",
+          "error": "RuntimeError('judge quota exhausted')",
+          "name": "judge",
+          "score": null
+        }
+      ],
+      "evaluator_errors_printed": 3,
+      "raised": null,
+      "server": {
+        "annotationSummaries": [
+          {
+            "annotationName": "judge",
+            "count": 4,
+            "errorCount": 3,
+            "labelCount": 0,
+            "maxScore": 1.0,
+            "meanScore": 1.0,
+            "minScore": 1.0,
+            "scoreCount": 1
+          }
+        ],
+        "errorRate": 0.0,
+        "expectedRunCount": 4,
+        "runCount": 4
+      },
+      "summary_line": "Experiment completed: 4 task runs, 1 evaluator runs, 1 evaluations",
+      "task_errors_printed": 0,
+      "task_runs": [
+        {
+          "case": "c1",
+          "error": null
+        },
+        {
+          "case": "c2",
+          "error": null
+        },
+        {
+          "case": "c3",
+          "error": null
+        },
+        {
+          "case": "c4",
+          "error": null
+        }
+      ]
+    },
+    "experiment_evaluator_returns_none": {
+      "evaluation_runs": [
+        {
+          "case": "c1",
+          "error": null,
+          "name": "judge",
+          "score": 1.0
+        },
+        {
+          "case": "c2",
+          "error": "ValueError(\"Unsupported evaluation result type: <class 'NoneType'>\")",
+          "name": "judge",
+          "score": null
+        },
+        {
+          "case": "c3",
+          "error": "ValueError(\"Unsupported evaluation result type: <class 'NoneType'>\")",
+          "name": "judge",
+          "score": null
+        },
+        {
+          "case": "c4",
+          "error": "ValueError(\"Unsupported evaluation result type: <class 'NoneType'>\")",
+          "name": "judge",
+          "score": null
+        }
+      ],
+      "evaluator_errors_printed": 3,
+      "raised": null,
+      "server": {
+        "annotationSummaries": [
+          {
+            "annotationName": "judge",
+            "count": 4,
+            "errorCount": 3,
+            "labelCount": 0,
+            "maxScore": 1.0,
+            "meanScore": 1.0,
+            "minScore": 1.0,
+            "scoreCount": 1
+          }
+        ],
+        "errorRate": 0.0,
+        "expectedRunCount": 4,
+        "runCount": 4
+      },
+      "summary_line": "Experiment completed: 4 task runs, 1 evaluator runs, 1 evaluations",
+      "task_errors_printed": 0,
+      "task_runs": [
+        {
+          "case": "c1",
+          "error": null
+        },
+        {
+          "case": "c2",
+          "error": null
+        },
+        {
+          "case": "c3",
+          "error": null
+        },
+        {
+          "case": "c4",
+          "error": null
+        }
+      ]
+    },
+    "experiment_evaluator_returns_score_none": {
+      "evaluation_runs": [
+        {
+          "case": "c1",
+          "error": null,
+          "name": "judge",
+          "score": 1.0
+        },
+        {
+          "case": "c2",
+          "error": null,
+          "name": "judge",
+          "score": null
+        },
+        {
+          "case": "c3",
+          "error": null,
+          "name": "judge",
+          "score": null
+        },
+        {
+          "case": "c4",
+          "error": null,
+          "name": "judge",
+          "score": null
+        }
+      ],
+      "evaluator_errors_printed": 0,
+      "raised": null,
+      "server": {
+        "annotationSummaries": [
+          {
+            "annotationName": "judge",
+            "count": 4,
+            "errorCount": 0,
+            "labelCount": 0,
+            "maxScore": 1.0,
+            "meanScore": 1.0,
+            "minScore": 1.0,
+            "scoreCount": 1
+          }
+        ],
+        "errorRate": 0.0,
+        "expectedRunCount": 4,
+        "runCount": 4
+      },
+      "summary_line": "Experiment completed: 4 task runs, 1 evaluator runs, 4 evaluations",
+      "task_errors_printed": 0,
+      "task_runs": [
+        {
+          "case": "c1",
+          "error": null
+        },
+        {
+          "case": "c2",
+          "error": null
+        },
+        {
+          "case": "c3",
+          "error": null
+        },
+        {
+          "case": "c4",
+          "error": null
+        }
+      ]
+    },
+    "experiment_task_raises": {
+      "evaluation_runs": [
+        {
+          "case": "c1",
+          "error": null,
+          "name": "judge",
+          "score": 1.0
+        },
+        {
+          "case": "c2",
+          "error": null,
+          "name": "judge",
+          "score": 0.0
+        },
+        {
+          "case": "c3",
+          "error": null,
+          "name": "judge",
+          "score": 0.0
+        },
+        {
+          "case": "c4",
+          "error": null,
+          "name": "judge",
+          "score": 0.0
+        }
+      ],
+      "evaluator_errors_printed": 0,
+      "raised": null,
+      "server": {
+        "annotationSummaries": [
+          {
+            "annotationName": "judge",
+            "count": 4,
+            "errorCount": 0,
+            "labelCount": 0,
+            "maxScore": 1.0,
+            "meanScore": 0.25,
+            "minScore": 0.0,
+            "scoreCount": 4
+          }
+        ],
+        "errorRate": 0.75,
+        "expectedRunCount": 4,
+        "runCount": 4
+      },
+      "summary_line": "Experiment completed: 4 task runs, 1 evaluator runs, 4 evaluations",
+      "task_errors_printed": 12,
+      "task_runs": [
+        {
+          "case": "c1",
+          "error": null
+        },
+        {
+          "case": "c2",
+          "error": "RuntimeError('model timeout')"
+        },
+        {
+          "case": "c3",
+          "error": "RuntimeError('model timeout')"
+        },
+        {
+          "case": "c4",
+          "error": "RuntimeError('model timeout')"
+        }
+      ]
+    },
+    "experiment_two_evaluators_same_name": {
+      "evaluation_runs": [
+        {
+          "case": "c1",
+          "error": null,
+          "name": "judge",
+          "score": 1.0
+        },
+        {
+          "case": "c2",
+          "error": null,
+          "name": "judge",
+          "score": 1.0
+        },
+        {
+          "case": "c3",
+          "error": null,
+          "name": "judge",
+          "score": 1.0
+        },
+        {
+          "case": "c4",
+          "error": null,
+          "name": "judge",
+          "score": 1.0
+        }
+      ],
+      "evaluator_errors_printed": 0,
+      "raised": null,
+      "server": {
+        "annotationSummaries": [
+          {
+            "annotationName": "judge",
+            "count": 4,
+            "errorCount": 0,
+            "labelCount": 0,
+            "maxScore": 1.0,
+            "meanScore": 1.0,
+            "minScore": 1.0,
+            "scoreCount": 4
+          }
+        ],
+        "errorRate": 0.0,
+        "expectedRunCount": 4,
+        "runCount": 4
+      },
+      "summary_line": "Experiment completed: 4 task runs, 1 evaluator runs, 4 evaluations",
+      "task_errors_printed": 0,
+      "task_runs": [
+        {
+          "case": "c1",
+          "error": null
+        },
+        {
+          "case": "c2",
+          "error": null
+        },
+        {
+          "case": "c3",
+          "error": null
+        },
+        {
+          "case": "c4",
+          "error": null
+        }
+      ]
+    }
+  },
+  "versions": {
+    "arize-phoenix": "22.0.0",
+    "arize-phoenix-client": "3.7.0",
+    "arize-phoenix-evals": "3.10.0"
+  }
+}
