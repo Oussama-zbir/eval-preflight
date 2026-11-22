@@ -1,0 +1,729 @@
+{
+  "call": "logfire.configure(send_to_logfire=False, console=False, metrics=False) with OTEL_EXPORTER_OTLP_TRACES_ENDPOINT on loopback; Dataset(...).evaluate_sync(task, name=<scenario>, progress=False)",
+  "framework": "logfire",
+  "generated_by": "scripts/research/logfire_probe.py",
+  "scenarios": {
+    "evaluator_on_c1_only": {
+      "exported_spans": {
+        "case_spans": {
+          "c1": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c2": {
+            "assertions": {},
+            "evaluator_spans": [],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {},
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c3": {
+            "assertions": {},
+            "evaluator_spans": [],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {},
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c4": {
+            "assertions": {},
+            "evaluator_spans": [],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {},
+            "status": "STATUS_CODE_UNSET"
+          }
+        },
+        "experiment_span": {
+          "assertion_pass_rate": null,
+          "averages_assertions": null,
+          "averages_scores": {
+            "Judge": 1.0
+          },
+          "exceptions": [],
+          "metadata_keys": [
+            "averages",
+            "n_cases"
+          ],
+          "n_cases": 4,
+          "report_evaluator_failures": null,
+          "status": "STATUS_CODE_UNSET"
+        }
+      },
+      "report": {
+        "averages_scores": {
+          "Judge": 1.0
+        },
+        "cases": {
+          "c1": {
+            "evaluator_failures": [],
+            "scores": {
+              "Judge": 1.0
+            }
+          },
+          "c2": {
+            "evaluator_failures": [],
+            "scores": {}
+          },
+          "c3": {
+            "evaluator_failures": [],
+            "scores": {}
+          },
+          "c4": {
+            "evaluator_failures": [],
+            "scores": {}
+          }
+        },
+        "failures": {}
+      }
+    },
+    "evaluator_raises": {
+      "exported_spans": {
+        "case_spans": {
+          "c1": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c2": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [
+                  "RuntimeError: judge quota exhausted"
+                ],
+                "status": "STATUS_CODE_ERROR"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {},
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c3": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [
+                  "RuntimeError: judge quota exhausted"
+                ],
+                "status": "STATUS_CODE_ERROR"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {},
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c4": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [
+                  "RuntimeError: judge quota exhausted"
+                ],
+                "status": "STATUS_CODE_ERROR"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {},
+            "status": "STATUS_CODE_UNSET"
+          }
+        },
+        "experiment_span": {
+          "assertion_pass_rate": null,
+          "averages_assertions": null,
+          "averages_scores": {
+            "Judge": 1.0
+          },
+          "exceptions": [],
+          "metadata_keys": [
+            "averages",
+            "n_cases"
+          ],
+          "n_cases": 4,
+          "report_evaluator_failures": null,
+          "status": "STATUS_CODE_UNSET"
+        }
+      },
+      "report": {
+        "averages_scores": {
+          "Judge": 1.0
+        },
+        "cases": {
+          "c1": {
+            "evaluator_failures": [],
+            "scores": {
+              "Judge": 1.0
+            }
+          },
+          "c2": {
+            "evaluator_failures": [
+              "Judge: RuntimeError: judge quota exhausted"
+            ],
+            "scores": {}
+          },
+          "c3": {
+            "evaluator_failures": [
+              "Judge: RuntimeError: judge quota exhausted"
+            ],
+            "scores": {}
+          },
+          "c4": {
+            "evaluator_failures": [
+              "Judge: RuntimeError: judge quota exhausted"
+            ],
+            "scores": {}
+          }
+        },
+        "failures": {}
+      }
+    },
+    "evaluator_returns_empty": {
+      "exported_spans": {
+        "case_spans": {
+          "c1": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c2": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {},
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c3": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {},
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c4": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {},
+            "status": "STATUS_CODE_UNSET"
+          }
+        },
+        "experiment_span": {
+          "assertion_pass_rate": null,
+          "averages_assertions": null,
+          "averages_scores": {
+            "Judge": 1.0
+          },
+          "exceptions": [],
+          "metadata_keys": [
+            "averages",
+            "n_cases"
+          ],
+          "n_cases": 4,
+          "report_evaluator_failures": null,
+          "status": "STATUS_CODE_UNSET"
+        }
+      },
+      "report": {
+        "averages_scores": {
+          "Judge": 1.0
+        },
+        "cases": {
+          "c1": {
+            "evaluator_failures": [],
+            "scores": {
+              "Judge": 1.0
+            }
+          },
+          "c2": {
+            "evaluator_failures": [],
+            "scores": {}
+          },
+          "c3": {
+            "evaluator_failures": [],
+            "scores": {}
+          },
+          "c4": {
+            "evaluator_failures": [],
+            "scores": {}
+          }
+        },
+        "failures": {}
+      }
+    },
+    "same_name_first_raises": {
+      "exported_spans": {
+        "case_spans": {
+          "c1": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              },
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 0.0,
+              "Judge_2": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c2": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [
+                  "RuntimeError: judge quota exhausted"
+                ],
+                "status": "STATUS_CODE_ERROR"
+              },
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c3": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [
+                  "RuntimeError: judge quota exhausted"
+                ],
+                "status": "STATUS_CODE_ERROR"
+              },
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c4": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [
+                  "RuntimeError: judge quota exhausted"
+                ],
+                "status": "STATUS_CODE_ERROR"
+              },
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          }
+        },
+        "experiment_span": {
+          "assertion_pass_rate": null,
+          "averages_assertions": null,
+          "averages_scores": {
+            "Judge": 0.75,
+            "Judge_2": 1.0
+          },
+          "exceptions": [],
+          "metadata_keys": [
+            "averages",
+            "n_cases"
+          ],
+          "n_cases": 4,
+          "report_evaluator_failures": null,
+          "status": "STATUS_CODE_UNSET"
+        }
+      },
+      "report": {
+        "averages_scores": {
+          "Judge": 0.75,
+          "Judge_2": 1.0
+        },
+        "cases": {
+          "c1": {
+            "evaluator_failures": [],
+            "scores": {
+              "Judge": 0.0,
+              "Judge_2": 1.0
+            }
+          },
+          "c2": {
+            "evaluator_failures": [
+              "Judge: RuntimeError: judge quota exhausted"
+            ],
+            "scores": {
+              "Judge": 1.0
+            }
+          },
+          "c3": {
+            "evaluator_failures": [
+              "Judge: RuntimeError: judge quota exhausted"
+            ],
+            "scores": {
+              "Judge": 1.0
+            }
+          },
+          "c4": {
+            "evaluator_failures": [
+              "Judge: RuntimeError: judge quota exhausted"
+            ],
+            "scores": {
+              "Judge": 1.0
+            }
+          }
+        },
+        "failures": {}
+      }
+    },
+    "task_raises": {
+      "exported_spans": {
+        "case_spans": {
+          "c1": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c2": {
+            "assertions": null,
+            "evaluator_spans": [],
+            "exceptions": [
+              "RuntimeError: model timeout"
+            ],
+            "has_output_attribute": false,
+            "labels": null,
+            "scores": null,
+            "status": "STATUS_CODE_ERROR"
+          },
+          "c3": {
+            "assertions": null,
+            "evaluator_spans": [],
+            "exceptions": [
+              "RuntimeError: model timeout"
+            ],
+            "has_output_attribute": false,
+            "labels": null,
+            "scores": null,
+            "status": "STATUS_CODE_ERROR"
+          },
+          "c4": {
+            "assertions": null,
+            "evaluator_spans": [],
+            "exceptions": [
+              "RuntimeError: model timeout"
+            ],
+            "has_output_attribute": false,
+            "labels": null,
+            "scores": null,
+            "status": "STATUS_CODE_ERROR"
+          }
+        },
+        "experiment_span": {
+          "assertion_pass_rate": null,
+          "averages_assertions": null,
+          "averages_scores": {
+            "Judge": 1.0
+          },
+          "exceptions": [],
+          "metadata_keys": [
+            "averages",
+            "n_cases"
+          ],
+          "n_cases": 4,
+          "report_evaluator_failures": null,
+          "status": "STATUS_CODE_UNSET"
+        }
+      },
+      "report": {
+        "averages_scores": {
+          "Judge": 1.0
+        },
+        "cases": {
+          "c1": {
+            "evaluator_failures": [],
+            "scores": {
+              "Judge": 1.0
+            }
+          }
+        },
+        "failures": {
+          "c2": "RuntimeError: model timeout",
+          "c3": "RuntimeError: model timeout",
+          "c4": "RuntimeError: model timeout"
+        }
+      }
+    },
+    "two_evaluators_same_name": {
+      "exported_spans": {
+        "case_spans": {
+          "c1": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              },
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 0.0,
+              "Judge_2": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c2": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              },
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 0.0,
+              "Judge_2": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c3": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              },
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 0.0,
+              "Judge_2": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          },
+          "c4": {
+            "assertions": {},
+            "evaluator_spans": [
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              },
+              {
+                "evaluator_name": "Judge",
+                "exceptions": [],
+                "status": "STATUS_CODE_UNSET"
+              }
+            ],
+            "exceptions": [],
+            "has_output_attribute": true,
+            "labels": {},
+            "scores": {
+              "Judge": 0.0,
+              "Judge_2": 1.0
+            },
+            "status": "STATUS_CODE_UNSET"
+          }
+        },
+        "experiment_span": {
+          "assertion_pass_rate": null,
+          "averages_assertions": null,
+          "averages_scores": {
+            "Judge": 0.0,
+            "Judge_2": 1.0
+          },
+          "exceptions": [],
+          "metadata_keys": [
+            "averages",
+            "n_cases"
+          ],
+          "n_cases": 4,
+          "report_evaluator_failures": null,
+          "status": "STATUS_CODE_UNSET"
+        }
+      },
+      "report": {
+        "averages_scores": {
+          "Judge": 0.0,
+          "Judge_2": 1.0
+        },
+        "cases": {
+          "c1": {
+            "evaluator_failures": [],
+            "scores": {
+              "Judge": 0.0,
+              "Judge_2": 1.0
+            }
+          },
+          "c2": {
+            "evaluator_failures": [],
+            "scores": {
+              "Judge": 0.0,
+              "Judge_2": 1.0
+            }
+          },
+          "c3": {
+            "evaluator_failures": [],
+            "scores": {
+              "Judge": 0.0,
+              "Judge_2": 1.0
+            }
+          },
+          "c4": {
+            "evaluator_failures": [],
+            "scores": {
+              "Judge": 0.0,
+              "Judge_2": 1.0
+            }
+          }
+        },
+        "failures": {}
+      }
+    }
+  },
+  "versions": {
+    "logfire": "6.0.0",
+    "pydantic-evals": "2.71.0"
+  }
+}

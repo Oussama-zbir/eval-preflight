@@ -27,7 +27,7 @@ Each framework is checked against the same scenarios, chosen to match eval-prefl
 | Inspect AI | 0.3.289 | Verified | [Inspect AI](#inspect-ai) |
 | deepeval | 4.3.4 | Verified | [deepeval](#deepeval) |
 | ragas | 0.4.4 | Verified | [ragas](#ragas) |
-| Logfire | | Not yet verified | |
+| Logfire | 6.0.0 (SDK), with pydantic-evals 2.71.0 | Verified (exported spans) | [Logfire](#logfire) |
 | Braintrust | 0.51.0 (Python SDK) | Verified | [Braintrust](#braintrust) |
 | LangSmith | 0.14.9 (Python SDK) | Verified | [LangSmith](#langsmith) |
 | Phoenix | 22.0.0 (server), client 3.7.0, evals 3.10.0 | Verified | [Phoenix](#phoenix) |
@@ -482,3 +482,72 @@ number of expected runs per evaluation name, plus `errorCount` and the experimen
 unique. For `evaluate_dataframe`, the `status` of every `*_execution_details` cell and the number
 of non-empty scores per column, with evaluator names checked before the run. eval-preflight does
 not read Phoenix results yet.
+
+## Logfire
+
+Here Logfire is the destination, not the runner: pydantic-evals emits OpenTelemetry spans while
+`Dataset.evaluate` runs, with `logfire.experiment.*` attributes for Logfire's experiment views. So
+the question for Logfire is what those spans carry when scoring is incomplete. The probe
+([`scripts/research/logfire_probe.py`](../scripts/research/logfire_probe.py), `make research`)
+runs pydantic-evals 2.71.0 under `logfire.configure(send_to_logfire=False)` (SDK 6.0.0) with
+`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` pointed at an OTLP/HTTP receiver on loopback. Logfire adds that
+exporter to the same span pipeline as its own
+([`config.py` L1328-L1342, L1507, L1559-L1572](https://github.com/pydantic/logfire/blob/v6.0.0/logfire-sdk/logfire/_internal/config.py#L1328-L1572)), so the receiver decodes the
+protobuf spans a Logfire project would get; no account, no token, no network. Output, with each
+scenario's in-process `EvaluationReport` next to the exported spans:
+[`research/logfire-6.0.0.json`](research/logfire-6.0.0.json). Two runs write byte-identical output.
+Every cited file is identical in the wheels and the tags `v2.71.0` (pydantic-ai) and `v6.0.0`
+(logfire). The Logfire UI itself is not probed.
+
+pydantic-evals emits one `evaluate {name}` span per run, carrying `n_cases` and
+`logfire.experiment.metadata` (`n_cases` plus the report's `averages`)
+([`dataset.py` L340-L363, L1110-L1145](https://github.com/pydantic/pydantic-ai/blob/v2.71.0/pydantic_evals/pydantic_evals/dataset.py#L1110-L1145)); one `case: {case_name}`
+child per case, carrying that case's `scores`, `assertions` and `labels`
+([L1209-L1262](https://github.com/pydantic/pydantic-ai/blob/v2.71.0/pydantic_evals/pydantic_evals/dataset.py#L1209-L1262)); and one `evaluator: {evaluator_name}` child per
+evaluator call ([`evaluators/_run_evaluator.py` L84-L123](https://github.com/pydantic/pydantic-ai/blob/v2.71.0/pydantic_evals/pydantic_evals/evaluators/_run_evaluator.py#L84-L123)).
+
+| Scenario (c2-c4 of 4 cases) | Experiment span: `averages.scores` | Case span `scores` on c2-c4 | Evaluator spans on c2-c4 |
+|---|---|---|---|
+| `Judge` raises | `Judge` 1.0 | `{}` | one, status ERROR, `exception` event |
+| `Judge` returns `{}` | `Judge` 1.0 | `{}` | one, status UNSET |
+| `Judge` attached to c1 only | `Judge` 1.0 | `{}` | none |
+| Two `Judge`s, strict 0.0 and lenient 1.0 | `Judge` 0.0, `Judge_2` 1.0 | `Judge` 0.0, `Judge_2` 1.0 | two, both named `Judge` |
+| Same, strict raises on c2-c4 | `Judge` 0.75, `Judge_2` 1.0 | `Judge` 1.0 | two named `Judge`, one ERROR |
+| Task raises | `Judge` 1.0 | attribute absent; case span ERROR | none |
+
+The experiment span's `n_cases` is 4 in every scenario, and `averages` matches the in-process
+report's `averages()` exactly.
+
+1. **Evaluator raises.** Nothing on the experiment span records it: there is no error count and no
+   failure list (`logfire.experiment.report_evaluator_failures` is only for report-level
+   evaluators), and the span status stays UNSET. The case span has `scores: {}` and no failure
+   attribute either; the in-process report's `evaluator_failures` is not exported. The error is
+   only on the child evaluator span (status ERROR, an `exception` event with the message). So
+   `averages.scores.Judge` is 1.0 from 1 of 4 cases, as in pydantic-evals' own report, and the
+   count it came from has to be rebuilt by counting case spans with the key.
+2. **Errors tolerated.** Not applicable: pydantic-evals never fails a run on evaluator errors.
+3. **No value.** Returning `{}` gives the same experiment and case span attributes as raising, but
+   the evaluator span is a clean UNSET with no event. An evaluator attached to c1 only gives the
+   same attributes again, with no evaluator span at all on c2-c4. The child spans therefore tell
+   the three apart, which the saved report cannot ([dogfood.md, finding 2](dogfood.md)), but only
+   for a reader that walks the trace tree.
+4. **Same name.** The suffixing of pydantic-evals happens before export, so the spans carry the
+   same names as the report, including the shift from
+   [pydantic/pydantic-ai#10636](https://github.com/pydantic/pydantic-ai/issues/10636): when the
+   strict `Judge` raises on c2-c4, the lenient one's 1.0 is filed as `Judge` on those cases, and the
+   experiment span's `Judge` average is 0.75, a mix of two evaluators. Both evaluator spans are
+   named `Judge`, so the trace cannot say which result came from which.
+
+A task that raises is recorded on the case span (status ERROR, `exception` event, no `output` or
+`scores` attributes) and the case is left out of the averages, so `Judge` is again 1.0 from 1 of
+4; only `n_cases` 4 against the number of case spans with scores shows the gap.
+
+Not probed: the Logfire UI and its query API, `repeat` > 1 (which adds
+`logfire.experiment.repeat` and `logfire.experiment.source_case_name`), and scores attached to
+production traces rather than to an experiment.
+
+What a gate on Logfire data needs, from the above: per score name, the number of case spans
+carrying it against `n_cases`; the evaluator spans with status ERROR under each case; and, because
+names are suffixed before export, a check before the run that evaluator names are unique.
+eval-preflight does not read OTel spans; it reads the pydantic-evals report, which has the same
+counts (and the per-case `evaluator_failures` the spans lack).

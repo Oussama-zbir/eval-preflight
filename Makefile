@@ -39,3 +39,4 @@ research:
 	uv run --no-project scripts/research/braintrust_probe.py
 	uv run --no-project scripts/research/langsmith_probe.py
 	uv run --no-project scripts/research/phoenix_probe.py
+	uv run --no-project scripts/research/logfire_probe.py

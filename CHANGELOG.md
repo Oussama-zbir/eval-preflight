@@ -48,6 +48,11 @@ All notable changes to this project are documented here. The format follows
   `scoreCount` and `errorCount`; two evaluators with the same name collapse to one before running.
   `evaluate_dataframe` by default retries a failing row 10 times, then stops without raising and
   leaves the remaining rows unscored.
+- Research notes: Logfire 6.0.0 probed by `scripts/research/logfire_probe.py` (`make research`),
+  which exports pydantic-evals 2.71.0 spans over OTLP to a receiver on loopback. The experiment
+  span's averages are 1.0 from 1 of 4 cases with no error count; evaluator errors appear only as
+  ERROR child spans, and case spans do not carry the report's `evaluator_failures`. The child
+  spans do distinguish a raising evaluator, one that returned nothing and one never attached.
 
 ## [0.2.0] — 2026-11-09
 
