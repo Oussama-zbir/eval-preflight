@@ -22,6 +22,11 @@ Neither run raised. Both produce a clean-looking table. eval-preflight reads the
 and answers one question before anyone acts on the number: *can these numbers be trusted as a
 description of this run?*
 
+It is not only pydantic-evals. In seven of nine eval frameworks probed at pinned versions, a judge
+that scored 1 case of 4 reports the same headline as one that scored all 4; only two put the count
+next to it. The table and the three pydantic-evals findings:
+[docs/nine-frameworks.md](docs/nine-frameworks.md).
+
 ```console
 $ eval-preflight check name_shift.json
 eval-preflight  name_shift · 4 cases · pydantic-evals
