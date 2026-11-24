@@ -138,6 +138,33 @@ CI also installs the newest pydantic-evals 2.x, on every push and weekly, runs t
 regenerates the fixtures, failing if a single byte changes ([`ci.yml`](.github/workflows/ci.yml), job
 `upstream`).
 
+## How it works
+
+```text
+  input                     adapters/              model.py         checks/              report.py
+  results.json  ──────────► generic        ─┐
+  (auto-detected format)    pydantic_evals ─┼────► EvalRun ───────► 7 checks ──────────► CheckResult
+  EvaluationReport ───────► (in memory)    ─┤      (schema          each returns         verdict = worst
+  (check_pydantic_evals)    promptfoo      ─┘       frozen          its Findings         finding
+                                │                   since 0.1.0)                           │
+                                │                                               ┌──────────┼──────────┐
+                                ▼                                            terminal    --json    exit 0 / 1
+                    LoadError: input not readable unambiguously → exit 2
+```
+
+- **One data model between formats and checks.** Adapters only translate a framework's output into
+  [`EvalRun`](src/eval_preflight/model.py); no check reads a framework format, so a new adapter
+  gets all seven checks without touching them. Its schema is frozen since 0.1.0 (SPEC.md §5).
+- **Ambiguous input is rejected, not interpreted.** A duplicate case-run, two measurements under one
+  evaluator id in a case-run, one id with two kinds, a measurement with both a value and an error,
+  or a pydantic-evals result without its evaluator `source` raises `LoadError` (exit 2). Each of
+  these would otherwise change a verdict silently, for example by pooling a duplicate like a
+  repeat ([`tests/test_model.py`](tests/test_model.py)).
+- **Checks are functions of the run and their thresholds.** Each returns its own findings, PASS
+  ones included, so the report shows what was checked as well as what failed. The verdict is the
+  worst severity; the terminal output, the JSON report and the exit code are three views of one
+  `CheckResult`, and the CLI and `check()` share the same path ([`cli.py`](src/eval_preflight/cli.py)).
+
 ## Relation to other eval tools
 
 eval-preflight runs *before* the statistics. It says whether a run's numbers describe that run; it

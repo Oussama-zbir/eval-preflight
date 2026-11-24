@@ -6,6 +6,9 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- README "How it works": the adapter → `EvalRun` → checks → `CheckResult` pipeline as a
+  diagram, and the three design decisions behind it (one model between formats and checks,
+  ambiguous input rejected with exit 2, every output a view of one `CheckResult`).
 - [docs/nine-frameworks.md](docs/nine-frameworks.md), linked from the README: the launch
   write-up. The three pydantic-evals findings with eval-preflight's output, and a one-table
   summary of the nine research-notes entries (evaluator errors, empty results, same-name
